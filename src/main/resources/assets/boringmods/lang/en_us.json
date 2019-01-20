@@ -1,3 +1,11 @@
 {
-
+  "quickinfo.days": "Days %d, %02d:%02d",
+  "quickinfo.up": "Up",
+  "quickinfo.down": "Down",
+  "quickinfo.north": "North",
+  "quickinfo.south": "South",
+  "quickinfo.west": "West",
+  "quickinfo.east": "East",
+  "quickinfo.light.client":"Client: %d total, %d sky, %d block",
+  "quickinfo.light.server": "Server: %d sky, %d block"
 }

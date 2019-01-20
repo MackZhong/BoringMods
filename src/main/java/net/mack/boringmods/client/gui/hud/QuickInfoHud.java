@@ -1,19 +1,23 @@
 package net.mack.boringmods.client.gui.hud;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.datafixers.DataFixUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.impl.client.render.ColorProviderRegistryImpl;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.FontRenderer;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.fluid.Fluid;
@@ -39,10 +43,8 @@ import net.minecraft.world.chunk.light.LightingProvider;
 
 import javax.annotation.Nullable;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Environment(EnvType.CLIENT)
@@ -66,7 +68,7 @@ public class QuickInfoHud extends Drawable {
         this.logger.info("QuickInfo Hud initialized.");
     }
 
-    public void resetChunk() {
+    private void resetChunk() {
         this.chunkFuture = null;
         this.chunkClient = null;
         this.logger.info("Reset Chunk.");
@@ -90,22 +92,30 @@ public class QuickInfoHud extends Drawable {
         if (null == this.lightingArray)
             return;
         for (Byte l : this.lightingArray.asByteArray()) {
-            Byte b = l.byteValue();
+            Byte b = l;
         }
     }
 
     private void drawInfos() {
-        int top = 2;
+        int maxLineWidth = 0;
+        List<String> lines = getInfos();
+        for (String line : lines) {
+            maxLineWidth = Math.max(maxLineWidth, this.fontRenderer.getStringWidth(line));
+        }
+        maxLineWidth += 4;
+
+        int top = 0;
         int scaleWidth = this.client.window.getScaledWidth();
-        int lineHeight = this.fontRenderer.fontHeight + 1;
-        for (String line : getInfos()) {
-            if (!Strings.isNullOrEmpty(line)) {
-                int lineWidth = this.fontRenderer.getStringWidth(line);
-                int left = scaleWidth - lineWidth - 2;
-                drawRect(left - 1, top - 1, left + lineWidth + 1, top + lineHeight + 1, Color.blue.getRGB());
-                this.fontRenderer.draw(line, left, top, Color.lightGray.getRGB());
-                top += lineHeight + 1;
-            }
+        int lineHeight = this.fontRenderer.fontHeight + 2;
+        int left = scaleWidth - maxLineWidth;
+        drawRect(left, top, left + maxLineWidth, top + lines.size() * lineHeight + 2, 0x88B0B0B0);
+        top ++;
+        left ++;
+        maxLineWidth --;
+        for (String line : lines) {
+            drawRect(left, top, left + maxLineWidth, top + lineHeight, 0xAA0000AA);
+            this.fontRenderer.draw(line, left + 1, top + 1, 0x00E0E0E0);
+            top += lineHeight;
         }
     }
 
@@ -116,8 +126,9 @@ public class QuickInfoHud extends Drawable {
             player = this.client.player;
         }
         BlockPos pos = player.getPos();
+        pos = new BlockPos(pos.getX(), (int) player.getBoundingBox().minY, pos.getZ());
         Direction facing = player.getHorizontalFacing();
-        infos.add(String.format("%d, %d, %d : %s", pos.getX(), pos.getY(), pos.getZ(), facing.asString()));
+        infos.add(String.format("%d, %d, %d : %s", pos.getX(), pos.getY(), pos.getZ(), I18n.translate("quickinfo." + facing.asString())));
 
         infos.add(getTimeDesc());
 
@@ -131,12 +142,12 @@ public class QuickInfoHud extends Drawable {
         if (world.isBlockLoaded(pos)) {
             WorldChunk chunk = this.getClientChunk();
             if (!chunk.isEmpty()) {
-                infos.add(String.format("Client: %d total, %d sky, %d block",
+                infos.add(I18n.translate("quickinfo.light.client",
                         chunk.getLightLevel(pos, 0), world.getLightLevel(LightType.SKY_LIGHT, pos), world.getLightLevel(LightType.BLOCK_LIGHT, pos)));
                 chunk = this.getChunk();
                 if (null != chunk) {
                     LightingProvider provider = world.getChunkManager().getLightingProvider();
-                    infos.add(String.format("Server: %d sky, %d block",
+                    infos.add(I18n.translate("quickinfo.light.server",
                             provider.get(LightType.SKY_LIGHT).getLightLevel(pos), provider.get(LightType.BLOCK_LIGHT).getLightLevel(pos)));
                     this.lightingArray = provider.get(LightType.BLOCK_LIGHT).getChunkLightArray(pos.getX(), pos.getY(), pos.getZ());
                 }
@@ -148,38 +159,69 @@ public class QuickInfoHud extends Drawable {
         if (null != net) {
             tagManager = net.getTagManager();
         }
+
+        // Entity
         Entity entity = this.client.targetedEntity;
         if (null != entity) {
-            infos.add(TextFormat.UNDERLINE + String.valueOf(Registry.ENTITY_TYPE.getRawId(entity.getType())));
+            infos.add(TextFormat.UNDERLINE + String.valueOf(Registry.ENTITY_TYPE.getId(entity.getType())));
             TextFormat format = TextFormat.GRAY;
             if (entity instanceof Monster) {
                 format = TextFormat.RED;
             } else if (entity instanceof PassiveEntity) {
                 format = TextFormat.GREEN;
             }
-            infos.add(format + entity.getDisplayName().getFormattedText());
+//            infos.add("EntityName: " + format + entity.getEntityName());
+            infos.add("Name: " + format + entity.getName().getFormattedText());
+            infos.add("DisplayName: " + format + entity.getDisplayName().getFormattedText());
+            if (null != entity.getCustomName())
+                infos.add("CustomName: " + format + entity.getCustomName().getFormattedText());
+//            infos.add(String.format("age: %d", entity.age));
 //        } else if (null != this.client.hitResult && this.client.hitResult.getType() == HitResult.Type.BLOCK) {
         } else if (null != this.client.hitResult && this.client.hitResult.getType() == HitResult.Type.BLOCK) {
+            // Block
             pos = ((BlockHitResult) this.client.hitResult).getBlockPos();
             BlockState state = world.getBlockState(pos);
-            Block block = state.getBlock();
-            infos.add(TextFormat.UNDERLINE + String.valueOf(Registry.BLOCK.getId(block)));
-            infos.add(block.getTextComponent().getFormattedText());
+            if (!state.isAir()) {
+                Block block = state.getBlock();
+                infos.add(TextFormat.UNDERLINE + String.valueOf(Registry.BLOCK.getId(block)));
+                infos.add(block.getTextComponent().getFormattedText());
 
-            // properties
-            ImmutableSetMultimap<Property<?>, Comparable<?>> entries = state.getEntries().asMultimap();
-            for (Property<?> key : entries.keySet()) {
-                ImmutableSet<Comparable<?>> value = entries.get(key);
-            }
+                // properties
+                ImmutableMap<Property<?>, Comparable<?>> entries = state.getEntries();
+//                    logger.info("Entries(): " + entries);
+//                    ImmutableSet<Map.Entry<Property<?>, Comparable<?>>> entrySet = entries.entrySet();
+//                    logger.info("EntrySet(): " + entrySet);
+                for (Property<?> property : entries.keySet()) {
+                    infos.add(String.format("%s=%s", property.getName(), entries.get(property)));
+                    infos.add(property.getValues().toString());
+//                        logger.info(property);
+//                        logger.info(entries.get(property));
+                }
+//
+//                    logger.info("Properties(): " + state.getProperties());
+//                    for (Property<?> p : state.getProperties()) {
+//                        logger.info(p.getName());
+//                        logger.info("\t" + state.get(p).toString());
+//                    }
+//
+//                ImmutableSetMultimap<Property<?>, Comparable<?>> entries = state.getEntries().asMultimap();
+//                for (Property<?> key : entries.keySet()) {
+//                    ImmutableSet<Comparable<?>> values = entries.get(key);
+//                    for (Comparable<?> v : values) {
+//                        infos.add(key.getName() + " " + v.toString());
+//                    }
+//                }
 
-            // tags
-            if (null != tagManager) {
-                for (Identifier id : tagManager.blocks().getTagsFor(block)) {
-                    infos.add(String.format("#%s", id));
+                // tags
+                if (null != tagManager) {
+                    for (Identifier id : tagManager.blocks().getTagsFor(block)) {
+                        infos.add(String.format("#%s", id));
+                    }
                 }
             }
         }
 
+        // Fluid
         HitResult hitFluid = player.rayTrace(20.0D, 0.0F, true);
 //        if (null != hitFluid && hitFluid.getType() == HitResult.Type.BLOCK) {
         if (null != hitFluid && hitFluid.getType() == HitResult.Type.BLOCK) {
@@ -192,6 +234,12 @@ public class QuickInfoHud extends Drawable {
                         state.getBlockState().getBlock().getTextComponent().getFormattedText());
 
                 // properties
+                ImmutableMap<Property<?>, Comparable<?>> entries = state.getEntries();
+                for (Property<?> property : entries.keySet()) {
+                    infos.add(String.format("%s=%s", property.getName(), entries.get(property)));
+                    infos.add(property.getValues().toString());
+                    infos.add(property.getValues().toArray().toString());
+                }
 
                 // tags
                 if (null != tagManager) {
@@ -212,7 +260,7 @@ public class QuickInfoHud extends Drawable {
         long hours = ((timeOfDays + 6000) / 1000) % 24;
         long minutes = ((timeOfDays % 1000) * 60) / 1000;
 
-        return String.format("Days %d, %02d:%02d", realDays, hours, minutes);
+        return I18n.translate("quickinfo.days", realDays, hours, minutes);
     }
 
     private World getWorld() {
