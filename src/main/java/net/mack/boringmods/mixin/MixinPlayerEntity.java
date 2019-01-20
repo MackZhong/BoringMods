@@ -15,7 +15,7 @@ public abstract class MixinPlayerEntity {
     @Redirect(method = "updateMovement",
             at = @At(
                     value = "INVOKE"
-                    , args = "log=true"
+//                    , args = "log=true"
                     , ordinal = 1
                     , target = "Lnet/minecraft/util/math/BoundingBox;expand(DDD)Lnet/minecraft/util/math/BoundingBox;"
                     // net.minecraft.entity.Entity.getBoundingBox

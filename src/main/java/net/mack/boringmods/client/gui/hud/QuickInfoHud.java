@@ -90,7 +90,7 @@ public class QuickInfoHud extends Drawable {
         if (null == this.lightingArray)
             return;
         for (Byte l : this.lightingArray.asByteArray()) {
-                Byte b = l.byteValue();
+            Byte b = l.byteValue();
         }
     }
 
@@ -104,6 +104,7 @@ public class QuickInfoHud extends Drawable {
                 int left = scaleWidth - lineWidth - 2;
                 drawRect(left - 1, top - 1, left + lineWidth + 1, top + lineHeight + 1, Color.blue.getRGB());
                 this.fontRenderer.draw(line, left, top, Color.lightGray.getRGB());
+                top += lineHeight + 1;
             }
         }
     }
@@ -159,7 +160,7 @@ public class QuickInfoHud extends Drawable {
             infos.add(format + entity.getDisplayName().getFormattedText());
 //        } else if (null != this.client.hitResult && this.client.hitResult.getType() == HitResult.Type.BLOCK) {
         } else if (null != this.client.hitResult && this.client.hitResult.getType() == HitResult.Type.BLOCK) {
-            pos = ((BlockHitResult)this.client.hitResult).getBlockPos();
+            pos = ((BlockHitResult) this.client.hitResult).getBlockPos();
             BlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
             infos.add(TextFormat.UNDERLINE + String.valueOf(Registry.BLOCK.getId(block)));
@@ -182,19 +183,21 @@ public class QuickInfoHud extends Drawable {
         HitResult hitFluid = player.rayTrace(20.0D, 0.0F, true);
 //        if (null != hitFluid && hitFluid.getType() == HitResult.Type.BLOCK) {
         if (null != hitFluid && hitFluid.getType() == HitResult.Type.BLOCK) {
-            pos = ((BlockHitResult)hitFluid).getBlockPos();
+            pos = ((BlockHitResult) hitFluid).getBlockPos();
             FluidState state = world.getFluidState(pos);
-            Fluid fluid = state.getFluid();
-            infos.add(TextFormat.UNDERLINE + String.valueOf(Registry.FLUID.getId(fluid)));
-            infos.add(((fluid instanceof LavaFluid) ? TextFormat.RED : null) +
-                    state.getBlockState().getBlock().getTextComponent().getFormattedText());
+            if (!state.isEmpty()) {
+                Fluid fluid = state.getFluid();
+                infos.add(TextFormat.UNDERLINE + String.valueOf(Registry.FLUID.getId(fluid)));
+                infos.add(((fluid instanceof LavaFluid) ? TextFormat.RED : TextFormat.RESET) +
+                        state.getBlockState().getBlock().getTextComponent().getFormattedText());
 
-            // properties
+                // properties
 
-            // tags
-            if (null != tagManager) {
-                for (Identifier id : tagManager.fluids().getTagsFor(fluid)) {
-                    infos.add(String.format("#%s", id));
+                // tags
+                if (null != tagManager) {
+                    for (Identifier id : tagManager.fluids().getTagsFor(fluid)) {
+                        infos.add(String.format("#%s", id));
+                    }
                 }
             }
         }
@@ -204,7 +207,7 @@ public class QuickInfoHud extends Drawable {
 
     private String getTimeDesc() {
         long totalTime = this.getWorld().getTimeOfDay();
-        long realDays = (totalTime + 6000) % 24000;
+        long realDays = (totalTime + 6000) / 24000;
         long timeOfDays = totalTime % 24000;
         long hours = ((timeOfDays + 6000) / 1000) % 24;
         long minutes = ((timeOfDays % 1000) * 60) / 1000;
