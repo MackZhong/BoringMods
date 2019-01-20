@@ -1,0 +1,16 @@
+{
+  "id": "boringmods",
+  "name": "Boring Mods",
+  "version": "1.0-Snapshot",
+  "side": "universal",
+  "description": "Minecraft Mods boring.",
+  "license": "Apache-2.0",
+  "initializers": [
+    "net.mack.boringmods.impl.ModInitializer",
+    "net.mack.boringmods.impl.ClientInitializer"
+  ],
+  "mixins": {
+    "client": "net.mack.boringmods.mixins.client.json",
+    "common": "net.mack.boringmods.mixins.common.json"
+  }
+}

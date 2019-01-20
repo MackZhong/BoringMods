@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "net.mack.boringmods.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.7.11"
+}

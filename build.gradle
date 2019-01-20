@@ -1,0 +1,34 @@
+plugins {
+    id 'fabric-loom' version '0.2.0-SNAPSHOT'
+}
+
+subprojects {
+    group = 'net.mack.boringmods'
+    version = '1.0-Snapshot'
+
+}
+
+group = 'net.mack'
+version = '-fabric-' + mc_version + '-' + mod_version +'-' + build_number
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+minecraft {
+    refmapName = name + '-refmap.json'
+}
+
+repositories {
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${mc_version}"
+    mappings "net.fabricmc:yarn:${mc_version}.${mapping}"
+    modCompile "net.fabricmc:fabric-loader:${loader}"
+
+    // Fabric API. This is technically optional, but you probably want it anyway.
+    modCompile "net.fabricmc:fabric:${fabric_api}"
+    
+    compile "com.google.code.findbugs:jsr305:3.0.2"
+}
