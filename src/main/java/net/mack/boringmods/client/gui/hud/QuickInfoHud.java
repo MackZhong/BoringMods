@@ -42,7 +42,6 @@ import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.chunk.light.LightingProvider;
 
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -132,27 +131,27 @@ public class QuickInfoHud extends Drawable {
 
         infos.add(getTimeDesc());
 
-        // Lighting
-        ChunkPos posChunk = new ChunkPos(pos);
-        if (!Objects.equals(this.chunkPos, posChunk)) {
-            this.chunkPos = posChunk;
-            this.resetChunk();
-        }
         World world = this.getWorld();
-        if (world.isBlockLoaded(pos)) {
-            WorldChunk chunk = this.getClientChunk();
-            if (!chunk.isEmpty()) {
-                infos.add(I18n.translate("quickinfo.light.client",
-                        chunk.getLightLevel(pos, 0), world.getLightLevel(LightType.SKY_LIGHT, pos), world.getLightLevel(LightType.BLOCK_LIGHT, pos)));
-                chunk = this.getChunk();
-                if (null != chunk) {
-                    LightingProvider provider = world.getChunkManager().getLightingProvider();
-                    infos.add(I18n.translate("quickinfo.light.server",
-                            provider.get(LightType.SKY_LIGHT).getLightLevel(pos), provider.get(LightType.BLOCK_LIGHT).getLightLevel(pos)));
-                    this.lightingArray = provider.get(LightType.BLOCK_LIGHT).getChunkLightArray(pos.getX(), pos.getY(), pos.getZ());
-                }
-            }
-        }
+//        // Lighting
+//        ChunkPos posChunk = new ChunkPos(pos);
+//        if (!Objects.equals(this.chunkPos, posChunk)) {
+//            this.chunkPos = posChunk;
+//            this.resetChunk();
+//        }
+//        if (world.isBlockLoaded(pos)) {
+//            WorldChunk chunk = this.getClientChunk();
+//            if (!chunk.isEmpty()) {
+//                infos.add(I18n.translate("quickinfo.light.client",
+//                        chunk.getLightLevel(pos, 0), world.getLightLevel(LightType.SKY_LIGHT, pos), world.getLightLevel(LightType.BLOCK_LIGHT, pos)));
+//                chunk = this.getChunk();
+//                if (null != chunk) {
+//                    LightingProvider provider = world.getChunkManager().getLightingProvider();
+//                    infos.add(I18n.translate("quickinfo.light.server",
+//                            provider.get(LightType.SKY_LIGHT).getLightLevel(pos), provider.get(LightType.BLOCK_LIGHT).getLightLevel(pos)));
+//                    this.lightingArray = provider.get(LightType.BLOCK_LIGHT).getChunkLightArray(pos.getX(), pos.getY(), pos.getZ());
+//                }
+//            }
+//        }
 
         ClientPlayNetworkHandler net = this.client.getNetworkHandler();
         TagManager tagManager = null;
@@ -170,13 +169,11 @@ public class QuickInfoHud extends Drawable {
             } else if (entity instanceof PassiveEntity) {
                 format = TextFormat.GREEN;
             }
-//            infos.add("EntityName: " + format + entity.getEntityName());
+
             infos.add("Name: " + format + entity.getName().getFormattedText());
             infos.add("DisplayName: " + format + entity.getDisplayName().getFormattedText());
             if (null != entity.getCustomName())
                 infos.add("CustomName: " + format + entity.getCustomName().getFormattedText());
-//            infos.add(String.format("age: %d", entity.age));
-//        } else if (null != this.client.hitResult && this.client.hitResult.getType() == HitResult.Type.BLOCK) {
         } else if (null != this.client.hitResult && this.client.hitResult.getType() == HitResult.Type.BLOCK) {
             // Block
             pos = ((BlockHitResult) this.client.hitResult).getBlockPos();
@@ -186,44 +183,24 @@ public class QuickInfoHud extends Drawable {
                 infos.add(TextFormat.UNDERLINE + String.valueOf(Registry.BLOCK.getId(block)));
                 infos.add(block.getTextComponent().getFormattedText());
 
-                // properties
-                ImmutableMap<Property<?>, Comparable<?>> entries = state.getEntries();
-//                    logger.info("Entries(): " + entries);
-//                    ImmutableSet<Map.Entry<Property<?>, Comparable<?>>> entrySet = entries.entrySet();
-//                    logger.info("EntrySet(): " + entrySet);
-                for (Property<?> property : entries.keySet()) {
-                    infos.add(String.format("%s=%s", property.getName(), entries.get(property)));
-                    infos.add(property.getValues().toString());
-//                        logger.info(property);
-//                        logger.info(entries.get(property));
-                }
+//                // properties
+//                ImmutableMap<Property<?>, Comparable<?>> entries = state.getEntries();
+//                for (Property<?> property : entries.keySet()) {
+//                    infos.add(String.format("%s=%s", property.getName(), entries.get(property)));
+//                    infos.add(property.getValues().toString());
+//                }
 //
-//                    logger.info("Properties(): " + state.getProperties());
-//                    for (Property<?> p : state.getProperties()) {
-//                        logger.info(p.getName());
-//                        logger.info("\t" + state.get(p).toString());
-//                    }
-//
-//                ImmutableSetMultimap<Property<?>, Comparable<?>> entries = state.getEntries().asMultimap();
-//                for (Property<?> key : entries.keySet()) {
-//                    ImmutableSet<Comparable<?>> values = entries.get(key);
-//                    for (Comparable<?> v : values) {
-//                        infos.add(key.getName() + " " + v.toString());
+//                // tags
+//                if (null != tagManager) {
+//                    for (Identifier id : tagManager.blocks().getTagsFor(block)) {
+//                        infos.add(String.format("#%s", id));
 //                    }
 //                }
-
-                // tags
-                if (null != tagManager) {
-                    for (Identifier id : tagManager.blocks().getTagsFor(block)) {
-                        infos.add(String.format("#%s", id));
-                    }
-                }
             }
         }
 
         // Fluid
         HitResult hitFluid = player.rayTrace(20.0D, 0.0F, true);
-//        if (null != hitFluid && hitFluid.getType() == HitResult.Type.BLOCK) {
         if (null != hitFluid && hitFluid.getType() == HitResult.Type.BLOCK) {
             pos = ((BlockHitResult) hitFluid).getBlockPos();
             FluidState state = world.getFluidState(pos);
@@ -233,20 +210,20 @@ public class QuickInfoHud extends Drawable {
                 infos.add(((fluid instanceof LavaFluid) ? TextFormat.RED : TextFormat.RESET) +
                         state.getBlockState().getBlock().getTextComponent().getFormattedText());
 
-                // properties
-                ImmutableMap<Property<?>, Comparable<?>> entries = state.getEntries();
-                for (Property<?> property : entries.keySet()) {
-                    infos.add(String.format("%s=%s", property.getName(), entries.get(property)));
-                    infos.add(property.getValues().toString());
-                    infos.add(property.getValues().toArray().toString());
-                }
-
-                // tags
-                if (null != tagManager) {
-                    for (Identifier id : tagManager.fluids().getTagsFor(fluid)) {
-                        infos.add(String.format("#%s", id));
-                    }
-                }
+//                // properties
+//                ImmutableMap<Property<?>, Comparable<?>> entries = state.getEntries();
+//                for (Property<?> property : entries.keySet()) {
+//                    infos.add(String.format("%s=%s", property.getName(), entries.get(property)));
+//                    infos.add(property.getValues().toString());
+//                    infos.add(property.getValues().toArray().toString());
+//                }
+//
+//                // tags
+//                if (null != tagManager) {
+//                    for (Identifier id : tagManager.fluids().getTagsFor(fluid)) {
+//                        infos.add(String.format("#%s", id));
+//                    }
+//                }
             }
         }
 
