@@ -5,15 +5,14 @@ plugins {
 subprojects {
     group = 'net.mack.boringmods'
     version = '1.0-Snapshot'
-
 }
 
-group = 'net.mack'
+archivesBaseName = project.name
+group = 'net.mack.boringmods'
 version = 'fabric-' + mc_version + '-' + mod_version + '-' + build_number
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-
 
 minecraft {
     refmapName = name + '-refmap.json'

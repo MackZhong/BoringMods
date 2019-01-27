@@ -29,8 +29,8 @@ public abstract class MixinInGameHud {
             value = "RETURN"
     ))
     private void onInit(MinecraftClient mcClient, CallbackInfo ci) {
-        this.hudInfo = new QuickInfoHud(mcClient);
         this.logger.info("InGameHud initialization, and Info HUD.");
+        this.hudInfo = new QuickInfoHud(mcClient);
     }
 
     @Inject(method = "draw"

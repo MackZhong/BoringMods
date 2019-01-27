@@ -96,12 +96,12 @@ public class QuickInfoHud extends Drawable {
     }
 
     private void drawInfos() {
-        int maxLineWidth = 0;
+        int maxLineWidth = 10;
         List<String> lines = getInfos();
         for (String line : lines) {
             maxLineWidth = Math.max(maxLineWidth, this.fontRenderer.getStringWidth(line));
         }
-        maxLineWidth += 4;
+        maxLineWidth = (int)(Math.ceil(maxLineWidth / 5.0D  + 0.5D) * 5);
 
         int top = 0;
         int scaleWidth = this.client.window.getScaledWidth();
@@ -127,31 +127,32 @@ public class QuickInfoHud extends Drawable {
         BlockPos pos = player.getPos();
         pos = new BlockPos(pos.getX(), (int) player.getBoundingBox().minY, pos.getZ());
         Direction facing = player.getHorizontalFacing();
-        infos.add(String.format("%d, %d, %d : %s", pos.getX(), pos.getY(), pos.getZ(), I18n.translate("quickinfo." + facing.asString())));
+        infos.add(String.format("%d, %d, %d %s", pos.getX(), pos.getY(), pos.getZ(), I18n.translate("quickinfo." + facing.asString())));
 
         infos.add(getTimeDesc());
 
         World world = this.getWorld();
-//        // Lighting
-//        ChunkPos posChunk = new ChunkPos(pos);
-//        if (!Objects.equals(this.chunkPos, posChunk)) {
-//            this.chunkPos = posChunk;
-//            this.resetChunk();
-//        }
-//        if (world.isBlockLoaded(pos)) {
-//            WorldChunk chunk = this.getClientChunk();
-//            if (!chunk.isEmpty()) {
-//                infos.add(I18n.translate("quickinfo.light.client",
-//                        chunk.getLightLevel(pos, 0), world.getLightLevel(LightType.SKY_LIGHT, pos), world.getLightLevel(LightType.BLOCK_LIGHT, pos)));
-//                chunk = this.getChunk();
-//                if (null != chunk) {
-//                    LightingProvider provider = world.getChunkManager().getLightingProvider();
-//                    infos.add(I18n.translate("quickinfo.light.server",
-//                            provider.get(LightType.SKY_LIGHT).getLightLevel(pos), provider.get(LightType.BLOCK_LIGHT).getLightLevel(pos)));
-//                    this.lightingArray = provider.get(LightType.BLOCK_LIGHT).getChunkLightArray(pos.getX(), pos.getY(), pos.getZ());
-//                }
-//            }
-//        }
+        // Lighting
+        pos = ((BlockHitResult) this.client.hitResult).getBlockPos();
+        ChunkPos posChunk = new ChunkPos(pos);
+        if (!Objects.equals(this.chunkPos, posChunk)) {
+            this.chunkPos = posChunk;
+            this.resetChunk();
+        }
+        if (world.isBlockLoaded(pos)) {
+            WorldChunk chunk = this.getClientChunk();
+            if (!chunk.isEmpty()) {
+                infos.add(I18n.translate("quickinfo.light.client",
+                        chunk.getLightLevel(pos, 0), world.getLightLevel(LightType.SKY_LIGHT, pos), world.getLightLevel(LightType.BLOCK_LIGHT, pos)));
+                chunk = this.getChunk();
+                if (null != chunk) {
+                    LightingProvider provider = world.getChunkManager().getLightingProvider();
+                    infos.add(I18n.translate("quickinfo.light.server",
+                            provider.get(LightType.SKY_LIGHT).getLightLevel(pos), provider.get(LightType.BLOCK_LIGHT).getLightLevel(pos)));
+                    this.lightingArray = provider.get(LightType.BLOCK_LIGHT).getChunkLightArray(pos.getX(), pos.getY(), pos.getZ());
+                }
+            }
+        }
 
         ClientPlayNetworkHandler net = this.client.getNetworkHandler();
         TagManager tagManager = null;
@@ -174,28 +175,28 @@ public class QuickInfoHud extends Drawable {
             infos.add("DisplayName: " + format + entity.getDisplayName().getFormattedText());
             if (null != entity.getCustomName())
                 infos.add("CustomName: " + format + entity.getCustomName().getFormattedText());
-        } else if (null != this.client.hitResult && this.client.hitResult.getType() == HitResult.Type.BLOCK) {
+        } else if (this.client.hitResult.getType() == HitResult.Type.BLOCK) {
             // Block
-            pos = ((BlockHitResult) this.client.hitResult).getBlockPos();
+//            pos = ((BlockHitResult) this.client.hitResult).getBlockPos();
             BlockState state = world.getBlockState(pos);
             if (!state.isAir()) {
                 Block block = state.getBlock();
                 infos.add(TextFormat.UNDERLINE + String.valueOf(Registry.BLOCK.getId(block)));
-                infos.add(block.getTextComponent().getFormattedText());
+                infos.add(block.getTextComponent().getFormattedText() + "/" + block.getRenderLayer().name());
 
-//                // properties
-//                ImmutableMap<Property<?>, Comparable<?>> entries = state.getEntries();
-//                for (Property<?> property : entries.keySet()) {
-//                    infos.add(String.format("%s=%s", property.getName(), entries.get(property)));
-//                    infos.add(property.getValues().toString());
-//                }
-//
-//                // tags
-//                if (null != tagManager) {
-//                    for (Identifier id : tagManager.blocks().getTagsFor(block)) {
-//                        infos.add(String.format("#%s", id));
-//                    }
-//                }
+                // properties
+                ImmutableMap<Property<?>, Comparable<?>> entries = state.getEntries();
+                for (Property<?> property : entries.keySet()) {
+                    infos.add(String.format("%s=%s", property.getName(), entries.get(property)));
+                    infos.add(property.getValues().toString());
+                }
+
+                // tags
+                if (null != tagManager) {
+                    for (Identifier id : tagManager.blocks().getTagsFor(block)) {
+                        infos.add(String.format("#%s", id));
+                    }
+                }
             }
         }
 
@@ -210,20 +211,19 @@ public class QuickInfoHud extends Drawable {
                 infos.add(((fluid instanceof LavaFluid) ? TextFormat.RED : TextFormat.RESET) +
                         state.getBlockState().getBlock().getTextComponent().getFormattedText());
 
-//                // properties
-//                ImmutableMap<Property<?>, Comparable<?>> entries = state.getEntries();
-//                for (Property<?> property : entries.keySet()) {
-//                    infos.add(String.format("%s=%s", property.getName(), entries.get(property)));
-//                    infos.add(property.getValues().toString());
-//                    infos.add(property.getValues().toArray().toString());
-//                }
-//
-//                // tags
-//                if (null != tagManager) {
-//                    for (Identifier id : tagManager.fluids().getTagsFor(fluid)) {
-//                        infos.add(String.format("#%s", id));
-//                    }
-//                }
+                // properties
+                ImmutableMap<Property<?>, Comparable<?>> entries = state.getEntries();
+                for (Property<?> property : entries.keySet()) {
+                    infos.add(String.format("%s=%s", property.getName(), entries.get(property)));
+                    infos.add(property.getValues().toString());
+                }
+
+                // tags
+                if (null != tagManager) {
+                    for (Identifier id : tagManager.fluids().getTagsFor(fluid)) {
+                        infos.add(String.format("#%s", id));
+                    }
+                }
             }
         }
 
@@ -238,6 +238,7 @@ public class QuickInfoHud extends Drawable {
         long minutes = ((timeOfDays % 1000) * 60) / 1000;
 
         return I18n.translate("quickinfo.days", realDays, hours, minutes);
+//        return String.format("第%d天，%02d:%02d", realDays, hours, minutes);
     }
 
     private World getWorld() {

@@ -1,4 +1,7 @@
 {
+  "language.name": "English",
+  "language.region": "United States",
+  "language.code": "en_us",
   "quickinfo.days": "Days %d, %02d:%02d",
   "quickinfo.up": "Up",
   "quickinfo.down": "Down",

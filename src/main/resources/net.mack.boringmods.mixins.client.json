@@ -3,7 +3,7 @@
   "package": "net.mack.boringmods.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MixinIngameHud",
+    "MixinInGameHud",
     "MixinPlayerEntity",
     "MixinServerPlayerInteractionManager"
   ],

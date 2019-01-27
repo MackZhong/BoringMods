@@ -59,9 +59,7 @@ public abstract class MixinServerPlayerInteractionManager {
     )
     private void onUpdate(CallbackInfo ci) {
         if (blockPosWaiting.size() > 0) {
-            BlockPos pos = blockPosWaiting.get(0);
-            this.tryBreakBlock(pos);
-            blockPosWaiting.remove(0);
+            this.tryBreakBlock(blockPosWaiting.remove(0));
         }
     }
 
@@ -74,8 +72,10 @@ public abstract class MixinServerPlayerInteractionManager {
         BlockState state = this.world.getBlockState(pos);
         Block block = state.getBlock();
         if (block instanceof OreBlock || block instanceof RedstoneOreBlock) {
+            blockPosWaiting.clear();
             getNeighborBlocks(pos, block, 26);
         } else if (block instanceof LogBlock) {
+            blockPosWaiting.clear();
             getNeighborBlocks(pos, block, 17);
         }
 
