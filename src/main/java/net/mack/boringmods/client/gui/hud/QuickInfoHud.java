@@ -28,9 +28,9 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Property;
 import net.minecraft.tag.TagManager;
 import net.minecraft.text.TextFormat;
-import net.minecraft.util.BlockHitResult;
-import net.minecraft.util.HitResult;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
@@ -132,27 +132,6 @@ public class QuickInfoHud extends Drawable {
         infos.add(getTimeDesc());
 
         World world = this.getWorld();
-        // Lighting
-        pos = ((BlockHitResult) this.client.hitResult).getBlockPos();
-        ChunkPos posChunk = new ChunkPos(pos);
-        if (!Objects.equals(this.chunkPos, posChunk)) {
-            this.chunkPos = posChunk;
-            this.resetChunk();
-        }
-        if (world.isBlockLoaded(pos)) {
-            WorldChunk chunk = this.getClientChunk();
-            if (!chunk.isEmpty()) {
-                infos.add(I18n.translate("quickinfo.light.client",
-                        chunk.getLightLevel(pos, 0), world.getLightLevel(LightType.SKY_LIGHT, pos), world.getLightLevel(LightType.BLOCK_LIGHT, pos)));
-                chunk = this.getChunk();
-                if (null != chunk) {
-                    LightingProvider provider = world.getChunkManager().getLightingProvider();
-                    infos.add(I18n.translate("quickinfo.light.server",
-                            provider.get(LightType.SKY_LIGHT).getLightLevel(pos), provider.get(LightType.BLOCK_LIGHT).getLightLevel(pos)));
-                    this.lightingArray = provider.get(LightType.BLOCK_LIGHT).getChunkLightArray(pos.getX(), pos.getY(), pos.getZ());
-                }
-            }
-        }
 
         ClientPlayNetworkHandler net = this.client.getNetworkHandler();
         TagManager tagManager = null;
@@ -177,7 +156,7 @@ public class QuickInfoHud extends Drawable {
                 infos.add("CustomName: " + format + entity.getCustomName().getFormattedText());
         } else if (this.client.hitResult.getType() == HitResult.Type.BLOCK) {
             // Block
-//            pos = ((BlockHitResult) this.client.hitResult).getBlockPos();
+            pos = ((BlockHitResult) this.client.hitResult).getBlockPos();
             BlockState state = world.getBlockState(pos);
             if (!state.isAir()) {
                 Block block = state.getBlock();
@@ -189,6 +168,27 @@ public class QuickInfoHud extends Drawable {
                 for (Property<?> property : entries.keySet()) {
                     infos.add(String.format("%s=%s", property.getName(), entries.get(property)));
                     infos.add(property.getValues().toString());
+                }
+
+                // Lighting
+                ChunkPos posChunk = new ChunkPos(pos);
+                if (!Objects.equals(this.chunkPos, posChunk)) {
+                    this.chunkPos = posChunk;
+                    this.resetChunk();
+                }
+                if (world.isBlockLoaded(pos)) {
+                    WorldChunk chunk = this.getClientChunk();
+                    if (!chunk.isEmpty()) {
+                        infos.add(I18n.translate("quickinfo.light.client",
+                                chunk.getLightLevel(pos, 0), world.getLightLevel(LightType.SKY_LIGHT, pos), world.getLightLevel(LightType.BLOCK_LIGHT, pos)));
+                        chunk = this.getChunk();
+                        if (null != chunk) {
+                            LightingProvider provider = world.getChunkManager().getLightingProvider();
+                            infos.add(I18n.translate("quickinfo.light.server",
+                                    provider.get(LightType.SKY_LIGHT).getLightLevel(pos), provider.get(LightType.BLOCK_LIGHT).getLightLevel(pos)));
+                            this.lightingArray = provider.get(LightType.BLOCK_LIGHT).getChunkLightArray(pos.getX(), pos.getY(), pos.getZ());
+                        }
+                    }
                 }
 
                 // tags
