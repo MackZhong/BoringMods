@@ -2,11 +2,6 @@ plugins {
     id 'fabric-loom' version '0.2.0-SNAPSHOT'
 }
 
-subprojects {
-    group = 'net.mack.boringmods'
-    version = '1.0-Snapshot'
-}
-
 archivesBaseName = project.name
 group = 'net.mack.boringmods'
 version = 'fabric-' + mc_version + '-' + mod_version + '-' + build_number

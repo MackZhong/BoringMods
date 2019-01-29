@@ -2,6 +2,7 @@ package net.mack.boringmods.mixin;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.mack.boringmods.client.gui.hud.DebugHud;
 import net.mack.boringmods.client.gui.hud.QuickInfoHud;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -18,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinInGameHud {
     private org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("BoringMods");
 
-    private QuickInfoHud hudInfo;
+    private DebugHud hudInfo;
 
     @Shadow
     @Final
@@ -30,7 +31,7 @@ public abstract class MixinInGameHud {
     ))
     private void onInit(MinecraftClient mcClient, CallbackInfo ci) {
         this.logger.info("InGameHud initialization, and Info HUD.");
-        this.hudInfo = new QuickInfoHud(mcClient);
+        this.hudInfo = new DebugHud(mcClient);
     }
 
     @Inject(method = "draw"
@@ -43,7 +44,7 @@ public abstract class MixinInGameHud {
     ))
     private void onDraw(float esp, CallbackInfo ci) {
         if (!this.client.options.debugEnabled) {
-            this.hudInfo.draw(esp);
+            this.hudInfo.draw();
         }
     }
 

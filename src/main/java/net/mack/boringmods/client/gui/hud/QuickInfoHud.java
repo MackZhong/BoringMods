@@ -1,14 +1,10 @@
 package net.mack.boringmods.client.gui.hud;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSetMultimap;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.datafixers.DataFixUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.impl.client.render.ColorProviderRegistryImpl;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -17,7 +13,6 @@ import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.boss.BossBar;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.fluid.Fluid;
@@ -42,14 +37,18 @@ import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.chunk.light.LightingProvider;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @Environment(EnvType.CLIENT)
 public class QuickInfoHud extends Drawable {
     private final MinecraftClient client;
     private final FontRenderer fontRenderer;
+    private HitResult hitFluid;
+    private Entity player;
     @Nullable
     private WorldChunk chunkClient;
     @Nullable
@@ -76,13 +75,19 @@ public class QuickInfoHud extends Drawable {
     public void draw(float esp) {
         this.client.getProfiler().push("quickinfo");
 
+        this.player = this.client.getCameraEntity();
+        if (null == this.player) {
+            this.player = this.client.player;
+        }
+
         GlStateManager.pushMatrix();
+        this.hitFluid = this.player.rayTrace(20.0D, 0.0F, true);
 
         this.drawInfos();
 
-        this.drawLighting();
-
+//        this.drawLighting();
         GlStateManager.popMatrix();
+
 
         this.client.getProfiler().pop();
     }
@@ -98,19 +103,20 @@ public class QuickInfoHud extends Drawable {
     private void drawInfos() {
         int maxLineWidth = 10;
         List<String> lines = getInfos();
+
         for (String line : lines) {
             maxLineWidth = Math.max(maxLineWidth, this.fontRenderer.getStringWidth(line));
         }
-        maxLineWidth = (int)(Math.ceil(maxLineWidth / 5.0D  + 0.5D) * 5);
+        maxLineWidth = (int) (Math.ceil(maxLineWidth / 5.0D + 0.5D) * 5);
 
         int top = 0;
         int scaleWidth = this.client.window.getScaledWidth();
         int lineHeight = this.fontRenderer.fontHeight + 2;
         int left = scaleWidth - maxLineWidth;
         drawRect(left, top, left + maxLineWidth, top + lines.size() * lineHeight + 2, 0x88B0B0B0);
-        top ++;
-        left ++;
-        maxLineWidth --;
+        top++;
+        left++;
+        maxLineWidth--;
         for (String line : lines) {
             drawRect(left, top, left + maxLineWidth, top + lineHeight, 0xAA0000AA);
             this.fontRenderer.draw(line, left + 1, top + 1, 0x00E0E0E0);
@@ -120,14 +126,16 @@ public class QuickInfoHud extends Drawable {
 
     private List<String> getInfos() {
         List<String> infos = new ArrayList<>();
-        Entity player = this.client.getCameraEntity();
-        if (null == player) {
-            player = this.client.player;
+        if (this.client.hasReducedDebugInfo()){
+            return infos;
         }
-        BlockPos pos = player.getPos();
-        pos = new BlockPos(pos.getX(), (int) player.getBoundingBox().minY, pos.getZ());
-        Direction facing = player.getHorizontalFacing();
-        infos.add(String.format("%d, %d, %d %s", pos.getX(), pos.getY(), pos.getZ(), I18n.translate("quickinfo." + facing.asString())));
+
+        BlockPos pos = this.player.getPos();
+        pos = new BlockPos(pos.getX(), (int) this.player.getBoundingBox().minY, pos.getZ());
+        Direction facing = this.player.getHorizontalFacing();
+        infos.add(String.format("%d, %d, %d %s",
+                pos.getX(), pos.getY(), pos.getZ(),
+                I18n.translate("quickinfo." + facing.asString())));
 
         infos.add(getTimeDesc());
 
@@ -163,13 +171,6 @@ public class QuickInfoHud extends Drawable {
                 infos.add(TextFormat.UNDERLINE + String.valueOf(Registry.BLOCK.getId(block)));
                 infos.add(block.getTextComponent().getFormattedText() + "/" + block.getRenderLayer().name());
 
-                // properties
-                ImmutableMap<Property<?>, Comparable<?>> entries = state.getEntries();
-                for (Property<?> property : entries.keySet()) {
-                    infos.add(String.format("%s=%s", property.getName(), entries.get(property)));
-                    infos.add(property.getValues().toString());
-                }
-
                 // Lighting
                 ChunkPos posChunk = new ChunkPos(pos);
                 if (!Objects.equals(this.chunkPos, posChunk)) {
@@ -191,6 +192,13 @@ public class QuickInfoHud extends Drawable {
                     }
                 }
 
+                // properties
+                ImmutableMap<Property<?>, Comparable<?>> entries = state.getEntries();
+                for (Property<?> property : entries.keySet()) {
+                    infos.add(String.format("%s=%s", property.getName(), entries.get(property)));
+                    infos.add(property.getValues().toString());
+                }
+
                 // tags
                 if (null != tagManager) {
                     for (Identifier id : tagManager.blocks().getTagsFor(block)) {
@@ -201,9 +209,8 @@ public class QuickInfoHud extends Drawable {
         }
 
         // Fluid
-        HitResult hitFluid = player.rayTrace(20.0D, 0.0F, true);
-        if (null != hitFluid && hitFluid.getType() == HitResult.Type.BLOCK) {
-            pos = ((BlockHitResult) hitFluid).getBlockPos();
+        if (null != this.hitFluid && this.hitFluid.getType() == HitResult.Type.BLOCK) {
+            pos = ((BlockHitResult) this.hitFluid).getBlockPos();
             FluidState state = world.getFluidState(pos);
             if (!state.isEmpty()) {
                 Fluid fluid = state.getFluid();
@@ -242,7 +249,9 @@ public class QuickInfoHud extends Drawable {
     }
 
     private World getWorld() {
-        return DataFixUtils.orElse(Optional.ofNullable(this.client.getServer()).map((integratedServer) -> integratedServer.getWorld(this.client.world.dimension.getType())), this.client.world);
+        return DataFixUtils.orElse(Optional.ofNullable(this.client.getServer()).map((integratedServer) ->{
+            return integratedServer.getWorld(this.client.world.dimension.getType());
+        }), this.client.world);
     }
 
     @Nullable
