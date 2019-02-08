@@ -10,5 +10,6 @@
   "quickinfo.west": "西",
   "quickinfo.east": "东",
   "quickinfo.light.client":"客户端: 总共 %d，天空 %d，方块 %d",
-  "quickinfo.light.server": "服务器: 天空 %d，方块 %d"
+  "quickinfo.light.server": "服务器: 天空 %d，方块 %d",
+  "quickinfo.config": "设置"
 }

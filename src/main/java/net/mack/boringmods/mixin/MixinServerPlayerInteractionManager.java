@@ -17,7 +17,7 @@ import java.util.List;
 
 @Mixin(value = ServerPlayerInteractionManager.class)
 public abstract class MixinServerPlayerInteractionManager {
-    private org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("BoringMods");
+    private org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("boringmods");
     private static List<BlockPos> blockPosWaiting = new ArrayList<BlockPos>();
     private static Vec3i[] neighborPos = {
             new Vec3i(0, 0, -1),

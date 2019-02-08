@@ -3,14 +3,14 @@ plugins {
 }
 
 archivesBaseName = project.name
-group = 'net.mack.boringmods'
+group = 'net.mack'
 version = 'fabric-' + mc_version + '-' + mod_version + '-' + build_number
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 minecraft {
-    refmapName = name + '-refmap.json'
+    refmapName = project.name + '-refmap.json'
 }
 
 repositories {
@@ -24,14 +24,14 @@ dependencies {
 
     // Fabric API. This is technically optional, but you probably want it anyway.
     modCompile "net.fabricmc:fabric:${fabric_api}"
-
-    // for @Nullable, import javax.annotation.Nullable
+//
+//    // for @Nullable, import javax.annotation.Nullable
     compile "com.google.code.findbugs:jsr305:3.0.2"
 }
 
 task showAllRepos {
     println "All repositories for " + project.name
     repositories.collect {
-        println "\t" + it.url
+        println "\t$it.url"
     }
 }

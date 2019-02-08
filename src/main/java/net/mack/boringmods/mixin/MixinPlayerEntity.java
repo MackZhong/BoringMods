@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 //@Environment(EnvType.CLIENT)
 @Mixin(value = PlayerEntity.class)
 public abstract class MixinPlayerEntity {
-    private org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("BoringMods");
+    private org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("boringmods");
 
     @Redirect(method = "updateMovement",
             at = @At(
