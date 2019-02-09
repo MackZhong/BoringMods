@@ -1,15 +1,1 @@
-{
-  "language.name": "简体中文",
-  "language.region": "中国",
-  "language.code": "zh_cn",
-  "quickinfo.days": "第%d天，%002d:%002d",
-  "quickinfo.up": "上",
-  "quickinfo.down": "下",
-  "quickinfo.north": "北",
-  "quickinfo.south": "南",
-  "quickinfo.west": "西",
-  "quickinfo.east": "东",
-  "quickinfo.light.client":"客户端: 总共 %d，天空 %d，方块 %d",
-  "quickinfo.light.server": "服务器: 天空 %d，方块 %d",
-  "quickinfo.config": "设置"
-}
+{\n  "language.name": "\u7b80\u4f53\u4e2d\u6587",\n  "language.region": "\u4e2d\u56fd",\n  "language.code": "zh_cn",\n  "quickinfo.days": "\u7b2c%d\u5929\uff0c%02d:%02d",\n  "quickinfo.up": "\u4e0a",\n  "quickinfo.down": "\u4e0b",\n  "quickinfo.north": "\u5317",\n  "quickinfo.south": "\u5357",\n  "quickinfo.west": "\u897f",\n  "quickinfo.east": "\u4e1c",\n  "quickinfo.light.client":"\u5ba2\u6237\u7aef: \u603b\u5171 %d\uff0c\u5929\u7a7a %d\uff0c\u65b9\u5757 %d",\n  "quickinfo.light.server": "\u670d\u52a1\u5668: \u5929\u7a7a %d\uff0c\u65b9\u5757 %d",\n  "quickinfo.config": "\u8bbe\u7f6e"\n}
