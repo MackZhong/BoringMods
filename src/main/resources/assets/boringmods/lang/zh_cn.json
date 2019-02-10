@@ -1,1 +1,15 @@
-{\n  "language.name": "\u7b80\u4f53\u4e2d\u6587",\n  "language.region": "\u4e2d\u56fd",\n  "language.code": "zh_cn",\n  "quickinfo.days": "\u7b2c%d\u5929\uff0c%02d:%02d",\n  "quickinfo.up": "\u4e0a",\n  "quickinfo.down": "\u4e0b",\n  "quickinfo.north": "\u5317",\n  "quickinfo.south": "\u5357",\n  "quickinfo.west": "\u897f",\n  "quickinfo.east": "\u4e1c",\n  "quickinfo.light.client":"\u5ba2\u6237\u7aef: \u603b\u5171 %d\uff0c\u5929\u7a7a %d\uff0c\u65b9\u5757 %d",\n  "quickinfo.light.server": "\u670d\u52a1\u5668: \u5929\u7a7a %d\uff0c\u65b9\u5757 %d",\n  "quickinfo.config": "\u8bbe\u7f6e"\n}
+{
+  "language.name": "\u7b80\u4f53\u4e2d\u6587",
+  "language.region": "\u4e2d\u56fd",
+  "language.code": "zh_cn",
+  "quickinfo.days": "\u7b2c%,d\u5929\u3001%,02d:%,02d\u3002",
+  "quickinfo.up": "\u4e0a",
+  "quickinfo.down": "\u4e0b",
+  "quickinfo.north": "\u5317",
+  "quickinfo.south": "\u5357",
+  "quickinfo.west": "\u897f",
+  "quickinfo.east": "\u4e1c",
+  "quickinfo.light.client":"\u5ba2\u6237\u7aef：\u603b\u5171 %,d\u3001\u5929\u7a7a %,d\u3001\u65b9\u5757 %,d",
+  "quickinfo.light.server": "\u670d\u52a1\u5668：\u5929\u7a7a %,d\u3001\u65b9\u5757 %,d",
+  "quickinfo.config": "\u8bbe\u7f6e"
+}

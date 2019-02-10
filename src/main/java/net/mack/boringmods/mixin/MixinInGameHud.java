@@ -2,7 +2,6 @@ package net.mack.boringmods.mixin;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.mack.boringmods.client.gui.hud.DebugHud;
 import net.mack.boringmods.client.gui.hud.QuickInfoHud;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.InGameHud;

@@ -69,7 +69,7 @@ public class QuickInfoHud extends Drawable {
     private void resetChunk() {
         this.chunkFuture = null;
         this.chunkClient = null;
-        this.logger.info("Reset Chunk.");
+//        this.logger.info("Reset Chunk.");
     }
 
     public void draw() {
@@ -112,7 +112,7 @@ public class QuickInfoHud extends Drawable {
         int top = 0;
         int scaleWidth = this.client.window.getScaledWidth();
         int lineHeight = this.fontRenderer.fontHeight + 2;
-        int left = scaleWidth - maxLineWidth;
+        int left = scaleWidth - maxLineWidth - 2;
         drawRect(left, top, left + maxLineWidth, top + lines.size() * lineHeight + 2, 0x88B0B0B0);
         top++;
         left++;

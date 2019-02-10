@@ -15,16 +15,17 @@ def main(argv):
         if not os.path.exists(bakfile):
             shutil.copyfile(argv[1], bakfile)
         jfile = open(bakfile, encoding='utf-8')
-        #alllines = jfile.readlines();
-        #for line in alllines:
-        #    print(line)
-        all = jfile.read()
-        jfile.close        
-        res = all.encode('unicode_escape')
-        print(len(res))
-        print(res)        
+        alllines = jfile.readlines();
+        #all = jfile.read()
+        jfile.close
         ofile = open(argv[1], 'wb')
-        ofile.write(res)
+        for line in alllines:
+            line = line.replace('\n', '')
+            print(line)
+            res = line.encode('unicode_escape')
+            print(res)
+            ofile.write(res)
+            ofile.write(b'\n')
         ofile.close()
 
 if __name__ == '__main__':

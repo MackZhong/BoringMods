@@ -2,6 +2,7 @@ package net.mack.boringmods.mixin;
 
 import net.minecraft.block.*;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
@@ -18,7 +19,7 @@ import java.util.List;
 @Mixin(value = ServerPlayerInteractionManager.class)
 public abstract class MixinServerPlayerInteractionManager {
     private org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("boringmods");
-    private static List<BlockPos> blockPosWaiting = new ArrayList<BlockPos>();
+    private static List<BlockPos> blockPosWaiting = new ArrayList<>();
     private static Vec3i[] neighborPos = {
             new Vec3i(0, 0, -1),
             new Vec3i(-1, 0, -1),
@@ -52,7 +53,7 @@ public abstract class MixinServerPlayerInteractionManager {
     public abstract boolean tryBreakBlock(BlockPos blockPos_1);
 
     @Shadow
-    public World world;
+    public ServerWorld world;
 
     @Inject(method = "update"
             , at = @At(value = "HEAD")
