@@ -72,7 +72,7 @@ public abstract class MixinServerPlayerInteractionManager {
     private boolean onBreakBlock(ServerPlayerInteractionManager manager, BlockPos pos) {
         BlockState state = this.world.getBlockState(pos);
         Block block = state.getBlock();
-        if (block instanceof OreBlock || block instanceof RedstoneOreBlock) {
+        if (block instanceof OreBlock || block instanceof RedstoneOreBlock || block == Blocks.OBSIDIAN) {
             blockPosWaiting.clear();
             getNeighborBlocks(pos, block, 26);
         } else if (block instanceof LogBlock) {

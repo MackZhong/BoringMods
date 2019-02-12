@@ -35,7 +35,7 @@ public abstract class MixinPlayerInventoryScreen extends AbstractPlayerInventory
 
     @Inject(method = "onInitialized"
             , at = @At(value = "INVOKE",
-            args = "log=true",
+//            args = "log=true",
             target = "Lnet/minecraft/client/gui/ingame/PlayerInventoryScreen;addButton(Lnet/minecraft/client/gui/widget/ButtonWidget;)Lnet/minecraft/client/gui/widget/ButtonWidget;"))
     private void onCreateButton(CallbackInfo callbackInfo) {
         this.addButton(new SortButtonWidget(11,

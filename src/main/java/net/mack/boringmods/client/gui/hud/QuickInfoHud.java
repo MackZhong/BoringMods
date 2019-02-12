@@ -13,6 +13,7 @@ import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.fluid.BaseFluid;
@@ -112,8 +113,8 @@ public class QuickInfoHud extends Drawable {
         int top = 0;
         int scaleWidth = this.client.window.getScaledWidth();
         int lineHeight = this.fontRenderer.fontHeight + 2;
-        int left = scaleWidth - maxLineWidth - 2;
-        drawRect(left, top, left + maxLineWidth, top + lines.size() * lineHeight + 2, 0x88B0B0B0);
+        int left = (scaleWidth - maxLineWidth) / 2 - 2;
+        drawRect(left, top, left + maxLineWidth + 1, top + lines.size() * lineHeight + 2, 0x88B0B0B0);
         top++;
         left++;
         maxLineWidth--;
@@ -157,7 +158,14 @@ public class QuickInfoHud extends Drawable {
             }
 
             infos.add("Name: " + format + target.getName().getFormattedText());
-            infos.add("DisplayName: " + format + target.getDisplayName().getFormattedText());
+            String displayName = "DisplayName: " + format + target.getDisplayName().getFormattedText();
+            if (target instanceof LivingEntity){
+                LivingEntity living = (LivingEntity) target;
+                displayName += String.format("%s(%2.1f/%2.1f)",
+                        TextFormat.RESET,
+                        living.getHealth(),living.getHealthMaximum(),living.canBreatheInWater());
+            }
+            infos.add(displayName);
             if (null != target.getCustomName())
                 infos.add("CustomName: " + format + target.getCustomName().getFormattedText());
         } else if (this.client.hitResult.getType() == HitResult.Type.BLOCK) {
@@ -177,7 +185,6 @@ public class QuickInfoHud extends Drawable {
                         this.chunkPos = posChunk;
                         this.resetChunk();
                     }
-                    World world = this.getWorld();
                     if (this.client.world.isBlockLoaded(pos)) {
                         WorldChunk chunk = this.getClientChunk();
                         if (!chunk.isEmpty()) {
@@ -185,6 +192,7 @@ public class QuickInfoHud extends Drawable {
                                     chunk.getLightLevel(pos, 0), this.client.world.getLightLevel(LightType.SKY_LIGHT, pos), this.client.world.getLightLevel(LightType.BLOCK_LIGHT, pos)));
                             chunk = this.getChunk();
                             if (null != chunk) {
+                                World world = this.getWorld();
                                 LightingProvider provider = world.getChunkManager().getLightingProvider();
                                 infos.add(I18n.translate("quickinfo.light.server",
                                         provider.get(LightType.SKY_LIGHT).getLightLevel(pos), provider.get(LightType.BLOCK_LIGHT).getLightLevel(pos)));
