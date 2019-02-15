@@ -38,7 +38,7 @@ public abstract class MixinPlayerEntity extends LivingEntity {
 
     @Override
     public boolean canBreatheInWater() {
-        return true;
+       return true;
     }
 
 }

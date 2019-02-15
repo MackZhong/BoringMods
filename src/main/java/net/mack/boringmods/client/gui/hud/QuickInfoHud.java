@@ -293,7 +293,7 @@ public class QuickInfoHud extends Drawable {
             if (null != integratedServer) {
                 ServerWorld serverWorld = integratedServer.getWorld(this.client.world.dimension.getType());
                 if (null != serverWorld && null != this.chunkPos) {
-                    this.chunkFuture = serverWorld.method_16177(this.chunkPos.x, this.chunkPos.z, false);
+                    this.chunkFuture = serverWorld.getChunkSyncIfServerThread(this.chunkPos.x, this.chunkPos.z, false);
                 }
             }
         }
