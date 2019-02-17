@@ -82,7 +82,7 @@ public class SortButtonWidget extends ButtonWidget {
             fontColor = 16777120;
         }
 
-        this.drawStringCentered(fontRenderer, this.method_18329(), this.x + leftWidth, this.y + topHeight - fontRenderer.fontHeight / 2, fontColor | MathHelper.ceil(this.field_17766 * 255.0F) << 24);
+        this.drawStringCentered(fontRenderer, this.getText(), this.x + leftWidth, this.y + topHeight - fontRenderer.fontHeight / 2, fontColor | MathHelper.ceil(this.field_17766 * 255.0F) << 24);
 
         int top = this.y - 62;
 //        left *= client.window.getScaleFactor();
