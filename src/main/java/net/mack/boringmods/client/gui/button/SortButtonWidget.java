@@ -6,7 +6,7 @@ import javafx.collections.transformation.SortedList;
 import net.mack.boringmods.impl.ModInitializer;
 import net.mack.boringmods.mixin.MixinPlayerInventoryScreen;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.FontRenderer;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.ContainerScreen;
 import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.ingame.PlayerInventoryScreen;
@@ -50,9 +50,9 @@ public class SortButtonWidget extends ButtonWidget {
 
     public void draw(int cursorX, int cursorY, float float_1) {
         MinecraftClient client = MinecraftClient.getInstance();
-        FontRenderer fontRenderer = client.fontRenderer;
+        TextRenderer fontRenderer = client.textRenderer;
         client.getTextureManager().bindTexture(WIDGET_TEX);
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, this.field_17766);
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, this.alpha);
         GlStateManager.enableBlend();
         GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
@@ -66,14 +66,14 @@ public class SortButtonWidget extends ButtonWidget {
         int leftWidth = this.width / 2;
         int rightWidth = this.width - leftWidth;
         int topHeight = this.height / 2;
-        int buttomHeight = this.height - topHeight;
+        int bottomHeight = this.height - topHeight;
         int textureId = this.getTextureId(this.isHovered());
         int texX = 0;
         int texY = 46 + textureId * 20;
         this.drawTexturedRect(this.x, this.y, texX, texY, leftWidth, topHeight);
         this.drawTexturedRect(this.x + leftWidth, this.y, 200 - rightWidth, texY, rightWidth, topHeight);
-        this.drawTexturedRect(this.x, this.y + topHeight, texX, texY + 20 - buttomHeight, leftWidth, buttomHeight);
-        this.drawTexturedRect(this.x + leftWidth, this.y + topHeight, 200 - rightWidth, texY + 20 - buttomHeight, rightWidth, buttomHeight);
+        this.drawTexturedRect(this.x, this.y + topHeight, texX, texY + 20 - bottomHeight, leftWidth, bottomHeight);
+        this.drawTexturedRect(this.x + leftWidth, this.y + topHeight, 200 - rightWidth, texY + 20 - bottomHeight, rightWidth, bottomHeight);
         this.drawBackground(client, cursorX, cursorY);
         int fontColor = 14737632;
         if (!this.enabled) {
@@ -82,7 +82,7 @@ public class SortButtonWidget extends ButtonWidget {
             fontColor = 16777120;
         }
 
-        this.drawStringCentered(fontRenderer, this.getText(), this.x + leftWidth, this.y + topHeight - fontRenderer.fontHeight / 2, fontColor | MathHelper.ceil(this.field_17766 * 255.0F) << 24);
+        this.drawStringCentered(fontRenderer, this.getText(), this.x + leftWidth, this.y + topHeight - fontRenderer.fontHeight / 2, fontColor | MathHelper.ceil(this.alpha * 255.0F) << 24);
 
         int top = this.y - 62;
 //        left *= client.window.getScaleFactor();
@@ -91,7 +91,7 @@ public class SortButtonWidget extends ButtonWidget {
             for (int i = 0; i < this.container.slotList.size(); i++) {
                 Slot slot = this.container.slotList.get(i);
                 String text = String.format("%d", i);
-                client.fontRenderer.drawWithShadow(text, slot.xPosition + left, slot.yPosition + top, 0xffaabbcc);
+                client.textRenderer.drawWithShadow(text, slot.xPosition + left, slot.yPosition + top, 0xffaabbcc);
             }
             GlStateManager.enableDepthTest();
         }

@@ -1,6 +1,5 @@
 package net.mack.boringmods.client.gui.hud;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.datafixers.DataFixUtils;
 import net.fabricmc.api.EnvType;
@@ -8,7 +7,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.FontRenderer;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.resource.language.I18n;
@@ -35,7 +34,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.ChunkNibbleArray;
 import net.minecraft.world.chunk.ChunkPos;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.chunk.light.LightingProvider;
@@ -47,7 +45,7 @@ import java.util.concurrent.CompletableFuture;
 @Environment(EnvType.CLIENT)
 public class QuickInfoHud extends Drawable {
     private final MinecraftClient client;
-    private final FontRenderer fontRenderer;
+    private final TextRenderer fontRenderer;
     private HitResult hitFluid;
     private Entity player;
     @Nullable
@@ -63,7 +61,7 @@ public class QuickInfoHud extends Drawable {
 
     public QuickInfoHud(MinecraftClient mcClient) {
         this.client = mcClient;
-        this.fontRenderer = mcClient.fontRenderer;
+        this.fontRenderer = mcClient.textRenderer;
         this.logger.info("QuickInfo Hud initialized.");
     }
 
