@@ -10,5 +10,6 @@
   "quickinfo.west": "West",
   "quickinfo.east": "East",
   "quickinfo.light.client":"Client: %d total, %d sky, %d block",
-  "quickinfo.light.server": "Server: %d sky, %d block"
+  "quickinfo.light.server": "Server: %d sky, %d block",
+  "quickinfo.config": "Configuration"
 }
