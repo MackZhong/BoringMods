@@ -31,7 +31,7 @@ public class SortButtonWidget extends ButtonWidget {
 
     public SortButtonWidget(int sId, int left, int top, int width, int height,
                             Container cont, RecipeBookGui recipe) {
-        super(sId, left, top, width, height, "Sort");
+        super(left, top, width, height, "Sort");
 
         this.container = cont;
         this.recipeBookGui = recipe;
@@ -52,7 +52,7 @@ public class SortButtonWidget extends ButtonWidget {
         MinecraftClient client = MinecraftClient.getInstance();
         TextRenderer fontRenderer = client.textRenderer;
         client.getTextureManager().bindTexture(WIDGET_TEX);
-        GlStateManager.color4f(1.0F, 1.0F, 1.0F, this.alpha);
+        GlStateManager.color4f(1.0F, 1.0F, 1.0F, this.opacity);
         GlStateManager.enableBlend();
         GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
@@ -82,7 +82,7 @@ public class SortButtonWidget extends ButtonWidget {
             fontColor = 16777120;
         }
 
-        this.drawStringCentered(fontRenderer, this.getText(), this.x + leftWidth, this.y + topHeight - fontRenderer.fontHeight / 2, fontColor | MathHelper.ceil(this.alpha * 255.0F) << 24);
+        this.drawStringCentered(fontRenderer, this.getText(), this.x + leftWidth, this.y + topHeight - fontRenderer.fontHeight / 2, fontColor | MathHelper.ceil(this.opacity * 255.0F) << 24);
 
         int top = this.y - 62;
 //        left *= client.window.getScaleFactor();

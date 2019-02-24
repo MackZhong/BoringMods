@@ -9,6 +9,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Drawable;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.entity.Entity;
@@ -43,7 +44,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Environment(EnvType.CLIENT)
-public class QuickInfoHud extends Drawable {
+public class QuickInfoHud extends DrawableHelper {
     private final MinecraftClient client;
     private final TextRenderer fontRenderer;
     private HitResult hitFluid;
@@ -304,7 +305,7 @@ public class QuickInfoHud extends Drawable {
 
     private WorldChunk getClientChunk() {
         if (null == this.chunkClient && null != this.chunkPos) {
-            this.chunkClient = this.client.world.getWorldChunk(this.chunkPos.x, this.chunkPos.z);
+            this.chunkClient = this.client.world.method_8497(this.chunkPos.x, this.chunkPos.z);
         }
 
         return this.chunkClient;

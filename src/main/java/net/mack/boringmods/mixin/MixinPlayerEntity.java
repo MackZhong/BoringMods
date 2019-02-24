@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public abstract class MixinPlayerEntity extends LivingEntity {
     private org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("boringmods");
 
-    protected MixinPlayerEntity(EntityType<?> entityType_1, World world_1) {
+    protected MixinPlayerEntity(EntityType<? extends LivingEntity> entityType_1, World world_1) {
         super(entityType_1, world_1);
     }
 
