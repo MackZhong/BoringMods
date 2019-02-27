@@ -43,12 +43,12 @@ public abstract class MixinPlayerInventoryScreen extends AbstractPlayerInventory
 //            args = "log=true",
             target = "Lnet/minecraft/client/gui/ingame/PlayerInventoryScreen;addButton(Lnet/minecraft/client/gui/widget/ButtonWidget;)Lnet/minecraft/client/gui/widget/ButtonWidget;"))
     private void onCreateButton(CallbackInfo callbackInfo) {
-        logger.info(String.format("width: %d, height: %d, containerWidth: %d, containerHeight: %d", this.width, this.height, this.containerWidth, this.containerHeight));
+        logger.info(String.format("width: %d, height: %d, containerWidth: %d, containerHeight: %d", this.width, this.height, this.getContainer().getCraftingWidth(), this.getContainer().getCraftingHeight()));
         logger.info(String.format("ScaledWidth: %d, ScaledHeight: %d", this.client.window.getScaledWidth(), this.client.window.getScaledHeight()));
         logger.info(String.format("FramebufferWidth: %d, FramebufferHeight: %d", this.client.window.getFramebufferWidth(), this.client.window.getFramebufferHeight()));
         this.addButton(new SortButtonWidget(11,
                 this.left + 144,
-                this.height / 2 - 22,
+                this.top + this.height / 2 - 22,
                 10,
                 8,
                 this.container,
