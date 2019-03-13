@@ -12,6 +12,5 @@
   "quickinfo.light.client":"Client: %d total, %d sky, %d block",
   "quickinfo.light.server": "Server: %d sky, %d block",
   "quickinfo.config": "Configuration",
-  "boringmods.category": "BoringMods",
-  "key.boringmods.excavate": "Excavate"
+  "boringmods.category": "BoringMods"
 }

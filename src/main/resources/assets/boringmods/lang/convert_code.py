@@ -15,18 +15,18 @@ def main(argv):
         if not os.path.exists(bakfile):
             shutil.copyfile(argv[1], bakfile)
         jfile = open(bakfile, encoding='utf-8')
-        alllines = jfile.readlines();
+        alllines = jfile.readlines()
         #all = jfile.read()
         jfile.close
-        ofile = open(argv[1], 'wb')
-        for line in alllines:
-            line = line.replace('\n', '')
-            print(line)
-            res = line.encode('unicode_escape')
-            print(res)
-            ofile.write(res)
-            ofile.write(b'\n')
-        ofile.close()
+        with open(filename + '.json', 'wb') as ofile:
+            for line in alllines:
+                line = line.replace('\n', '')
+                print(line)
+                res = line.encode('unicode_escape')
+                print(res)
+                ofile.write(res)
+                ofile.write(b'\n')
+            ofile.close()
 
 if __name__ == '__main__':
     main(sys.argv)
