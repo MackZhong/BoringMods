@@ -5,7 +5,7 @@
   "mixins": [
     "MixinInGameHud",
     "MixinPlayerEntity",
-    "MixinServerPlayerInteractionManager",
+    "BlockBreakMixin",
     "MixinPlayerInventoryScreen"
   ],
   "injectors": {

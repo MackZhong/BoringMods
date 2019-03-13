@@ -8,18 +8,18 @@ import net.minecraft.util.Identifier;
 
 public class ClientInitializer implements net.fabricmc.api.ClientModInitializer {
     private org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("boringmods");
-    public static FabricKeyBinding keybind;
+    public static FabricKeyBinding keyExcavate;
 
     @Override
     public void onInitializeClient() {
         KeyBindingRegistry.INSTANCE.addCategory("boringmods.category");
-        keybind = FabricKeyBinding.Builder.create(
+        keyExcavate = FabricKeyBinding.Builder.create(
                 new Identifier("boringmods:excavate"),
                 InputUtil.Type.KEY_KEYBOARD,
                 96,
                 "boringmods.category"
         ).build();
-        KeyBindingRegistry.INSTANCE.register(keybind);
+        KeyBindingRegistry.INSTANCE.register(keyExcavate);
 
         logger.info("Boring Mods Client Initialization.");
     }
