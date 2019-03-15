@@ -18,6 +18,8 @@ import java.util.ArrayList;
 
 @Mixin(Block.class)
 public abstract class BlockBreakMixin {
+    private org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("boringmods");
+
     private static final int excavateMaxBlocks = 64;
     private static final int excavateRange = 8;
 
@@ -28,10 +30,15 @@ public abstract class BlockBreakMixin {
         boolean isLogBlock = false;
 
         if (block instanceof LogBlock) {
+            logger.info("LogBlock breack.");
             isLogBlock = true;
-        } else if (!(block instanceof OreBlock || block instanceof RedstoneOreBlock || block == Blocks.OBSIDIAN)) {
-            return;
         }
+//        else if (block instanceof OreBlock || block instanceof RedstoneOreBlock || block == Blocks.OBSIDIAN) {
+//            isLogBlock = false;
+//        }
+//        else{
+//            return;
+//        }
 
         if (world.isClient() && ClientInitializer.keyExcavate.isPressed() &&
                 player.isUsingEffectiveTool(state) &&
@@ -83,9 +90,10 @@ public abstract class BlockBreakMixin {
 
     private ArrayList<BlockPos> getNeighbours(World world, BlockPos pos, Block block, boolean isLogBlock) {
         ArrayList<BlockPos> neighbours = new ArrayList<>();
+        int startY = isLogBlock ? 0 : -1;
         for (int x = -1; x <= 1; ++x) {
-            for (int y = -1; y <= 1; ++y) {
-                for (int z = (isLogBlock ? 0 : -1); z <= 1; ++z) {
+                for (int z = -1; z <= 1; ++z) {
+                    for (int y = startY; y <= 1; ++y) {
                     BlockPos currentPos = pos.add(x, y, z);
                     if (!(0 == x && 0 == y && 0 == z)
                             && world.getBlockState(currentPos).getBlock() == block) {

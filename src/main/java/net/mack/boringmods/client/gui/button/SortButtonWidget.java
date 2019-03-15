@@ -127,4 +127,8 @@ public class SortButtonWidget extends ButtonWidget {
         logger.info("Released.");
         SortButtonWidget.pressed = false;
     }
+
+    public void onPressed() {
+        logger.info("SortButtonWidget onPressed.");
+    }
 }
