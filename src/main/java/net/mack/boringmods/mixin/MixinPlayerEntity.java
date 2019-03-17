@@ -35,10 +35,10 @@ public abstract class MixinPlayerEntity extends LivingEntity {
 
         return this$Box.expand(x + 7, y + 7, z + 7);
     }
-
-    @Override
-    public boolean canBreatheInWater() {
-       return true;
-    }
+//
+//    @Override
+//    public boolean canBreatheInWater() {
+//       return true;
+//    }
 
 }
