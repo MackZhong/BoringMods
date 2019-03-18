@@ -5,8 +5,10 @@
   "mixins": [
     "MixinInGameHud",
     "MixinPlayerEntity",
-    "BlockBreakMixin",
-    "MixinPlayerInventoryScreen"
+    "MixinBlockBreak",
+    "MixinPlayerInventoryScreen",
+    "MixinMinecraftClient",
+    "MixinGameRenderer"
   ],
   "injectors": {
     "defaultRequire": 1

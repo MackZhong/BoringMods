@@ -1,15 +1,19 @@
 package net.mack.boringmods.mixin;
 
 import net.mack.boringmods.impl.ClientInitializer;
+import net.mack.boringmods.impl.Excavater;
 import net.mack.boringmods.impl.ModInitializer;
 import net.minecraft.block.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -17,10 +21,38 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 
 @Mixin(Block.class)
-public abstract class BlockBreakMixin {
+public abstract class MixinBlockBreak {
     private org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("boringmods");
 
-    private static final int excavateMaxBlocks = 64;
+    private static Vec3i[] neighborPos = {
+            new Vec3i(0, 0, -1),
+            new Vec3i(-1, 0, -1),
+            new Vec3i(-1, 0, 0),
+            new Vec3i(-1, 0, 1),
+            new Vec3i(0, 0, 1),
+            new Vec3i(1, 0, 1),
+            new Vec3i(1, 1, 1),
+            new Vec3i(0, 1, 1),
+            new Vec3i(-1, 1, 1),
+            new Vec3i(-1, 1, 0),
+            new Vec3i(-1, 1, -1),
+            new Vec3i(0, 1, -1),
+            new Vec3i(0, 1, 0),
+            new Vec3i(1, 1, 0),
+            new Vec3i(1, 1, -1),
+            new Vec3i(1, 0, -1),
+            new Vec3i(1, 0, 0),
+            new Vec3i(0, -1, 0),
+            new Vec3i(0, -1, -1),
+            new Vec3i(0, -1, 1),
+            new Vec3i(-1, -1, 0),
+            new Vec3i(1, -1, 0),
+            new Vec3i(-1, -1, -1),
+            new Vec3i(1, -1, -1),
+            new Vec3i(-1, -1, 1),
+            new Vec3i(1, -1, 1)
+    };
+    private static final int excavateMaxBlocks = 128;
     private static final int excavateRange = 8;
 
     @Inject(method = "onBreak",
@@ -40,7 +72,7 @@ public abstract class BlockBreakMixin {
 //            return;
 //        }
 
-        if (world.isClient() && ClientInitializer.keyExcavate.isPressed() &&
+        if (world.isClient() && Excavater.keyExcavate.isPressed() &&
                 player.isUsingEffectiveTool(state) &&
                 player.getHungerManager().getFoodLevel() > 0) {
             int brokenBlocks = 1;
@@ -56,7 +88,7 @@ public abstract class BlockBreakMixin {
             ClientConnection connection = networkHandler.getClientConnection();
             while (brokenBlocks < excavateMaxBlocks && player.isUsingEffectiveTool(state)
                     && player.getHungerManager().getFoodLevel() > 0) {
-                ArrayList<BlockPos> blocksNeighbour = getNeighbours(world, currentPos, block, isLogBlock);
+                ArrayList<BlockPos> blocksNeighbour = getNeighborBlocks(world, currentPos, block, isLogBlock ? 17 : 26);
                 blocksNeighbour.removeAll(blocksToBreak);
                 for (BlockPos p : blocksNeighbour) {
                     if (brokenBlocks >= excavateMaxBlocks ||
@@ -88,20 +120,35 @@ public abstract class BlockBreakMixin {
         }
     }
 
-    private ArrayList<BlockPos> getNeighbours(World world, BlockPos pos, Block block, boolean isLogBlock) {
-        ArrayList<BlockPos> neighbours = new ArrayList<>();
-        int startY = isLogBlock ? 0 : -1;
-        for (int x = -1; x <= 1; ++x) {
-                for (int z = -1; z <= 1; ++z) {
-                    for (int y = startY; y <= 1; ++y) {
-                    BlockPos currentPos = pos.add(x, y, z);
-                    if (!(0 == x && 0 == y && 0 == z)
-                            && world.getBlockState(currentPos).getBlock() == block) {
-                        neighbours.add(currentPos);
-                    }
-                }
+    private ArrayList<BlockPos> getNeighborBlocks(World world, BlockPos pos, Block block, int neighbors) {
+        ArrayList<BlockPos> neighbourBlocks = new ArrayList<>();
+        if (neighbors > neighborPos.length) {
+            neighbors = neighborPos.length;
+        }
+        for (int i = 0; i < neighbors; ++i) {
+            BlockPos nextPos = pos.add(neighborPos[i]);
+            BlockState state = world.getBlockState(nextPos);
+            if (!state.isAir() && state.getBlock() == block && !neighbourBlocks.contains(nextPos)) {
+                neighbourBlocks.add(pos);
             }
         }
-        return neighbours;
+        return neighbourBlocks;
     }
+//
+//    private ArrayList<BlockPos> getNeighbours(World world, BlockPos pos, Block block, boolean isLogBlock) {
+//        ArrayList<BlockPos> neighbours = new ArrayList<>();
+//        int startY = isLogBlock ? 0 : -1;
+//        for (int x = -1; x <= 1; ++x) {
+//                for (int z = -1; z <= 1; ++z) {
+//                    for (int y = startY; y <= 1; ++y) {
+//                    BlockPos currentPos = pos.add(x, y, z);
+//                    if (!(0 == x && 0 == y && 0 == z)
+//                            && world.getBlockState(currentPos).getBlock() == block) {
+//                        neighbours.add(currentPos);
+//                    }
+//                }
+//            }
+//        }
+//        return neighbours;
+//    }
 }
