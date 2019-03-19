@@ -34,7 +34,7 @@ public abstract class MixinPlayerInventoryScreen extends AbstractPlayerInventory
     @Shadow @Final private RecipeBookGui recipeBook;
 
     private MixinPlayerInventoryScreen(PlayerEntity playerEntity) {
-        super(playerEntity.containerPlayer, playerEntity.inventory, new TranslatableTextComponent("container.crafting"));
+        super(playerEntity.playerContainer, playerEntity.inventory, new TranslatableTextComponent("container.crafting"));
 
     }
 
