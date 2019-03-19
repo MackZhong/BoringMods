@@ -64,14 +64,14 @@ public class Excavator {
     private final int excavateMaxBlocks = 128;
     private final int excavateRange = 8;
 
-    public void keyBinding(String category) {
+    public FabricKeyBinding getKeyBinding(String category) {
         keyExcavate = FabricKeyBinding.Builder.create(
                 new Identifier("boringmods:excavate"),
                 InputUtil.Type.KEY_KEYBOARD,
                 96,
                 category
         ).build();
-        KeyBindingRegistry.INSTANCE.register(keyExcavate);
+        return this.keyExcavate;
     }
 
     public boolean isEnable() {
