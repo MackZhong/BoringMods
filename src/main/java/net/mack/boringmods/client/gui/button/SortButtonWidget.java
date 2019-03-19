@@ -1,26 +1,13 @@
 package net.mack.boringmods.client.gui.button;
 
-import com.google.common.collect.SortedSetMultimap;
 import com.mojang.blaze3d.platform.GlStateManager;
-import javafx.collections.transformation.SortedList;
-import net.mack.boringmods.impl.ModInitializer;
-import net.mack.boringmods.mixin.MixinPlayerInventoryScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.ContainerScreen;
-import net.minecraft.client.gui.Screen;
-import net.minecraft.client.gui.ingame.PlayerInventoryScreen;
 import net.minecraft.client.gui.recipebook.RecipeBookGui;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.container.Container;
-import net.minecraft.container.PlayerContainer;
 import net.minecraft.container.Slot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-
-import java.util.*;
 
 public class SortButtonWidget extends ButtonWidget {
     private org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("boringmods");

@@ -13,15 +13,19 @@ import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-//@Environment(EnvType.CLIENT)
+@Environment(EnvType.CLIENT)
 @Mixin(value = PlayerEntity.class)
 public abstract class MixinPlayerEntity extends LivingEntity {
     private org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("boringmods");
+    private double pickupDistance = 7.0F;
 
     protected MixinPlayerEntity(EntityType<? extends LivingEntity> entityType_1, World world_1) {
         super(entityType_1, world_1);
     }
 
+    //
+    // pickup distance
+    //
     @Redirect(method = "updateMovement",
             at = @At(
                     value = "INVOKE"
@@ -30,11 +34,15 @@ public abstract class MixinPlayerEntity extends LivingEntity {
                     , target = "Lnet/minecraft/util/math/BoundingBox;expand(DDD)Lnet/minecraft/util/math/BoundingBox;"
                     // net.minecraft.entity.Entity.getBoundingBox
             ))
-    private BoundingBox onExpand(BoundingBox this$Box, double x, double y, double z) {
+    private BoundingBox onUpdateMovement(BoundingBox this$Box, double x, double y, double z) {
 //        this.logger.info(String.format("expand(%f, %f, %f).", x, y, z));
 
-        return this$Box.expand(x + 7, y + 7, z + 7);
+        return this$Box.expand(pickupDistance);
     }
+
+    //
+    // breath in water
+    //
 //
 //    @Override
 //    public boolean canBreatheInWater() {

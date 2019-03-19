@@ -33,7 +33,7 @@ public class LightOverlay {
 
     public static void keyBinding(String category) {
         keyToggleLightOverlay = FabricKeyBinding.Builder.create(
-                new Identifier("boringmods:enable_overlay"),
+                new Identifier("boringmods:toggle_light_overlay"),
                 InputUtil.Type.KEY_KEYBOARD,
                 296,
                 category
@@ -63,7 +63,7 @@ public class LightOverlay {
     }
 
     public static void handleInput() {
-        while (LightOverlay.keyToggleLightOverlay.isPressed()) {
+        while (LightOverlay.keyToggleLightOverlay.wasPressed()) {
             LightOverlay.toogle();
         }
     }

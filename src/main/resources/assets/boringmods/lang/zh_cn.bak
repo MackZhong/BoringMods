@@ -13,5 +13,6 @@
   "quickinfo.light.server": "服务器：天空 %d、方块 %d",
   "quickinfo.config": "设置",
   "boringmods.category": "无聊模组",
-  "key.boringmods.excavate": "挖掘"
+  "key.boringmods.excavate": "挖掘",
+  "key.boringmods.toggle_light_overlay": "切换亮度标志"
 }

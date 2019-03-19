@@ -6,8 +6,8 @@
   "description": "Minecraft Mods boring.",
   "license": "Apache-2.0",
   "initializers": [
-    "net.mack.boringmods.impl.ModInitializer",
-    "net.mack.boringmods.impl.ClientInitializer"
+    "net.mack.boringmods.init.ModInitializer",
+    "net.mack.boringmods.init.ClientInitializer"
   ],
   "mixins": {
     "client": "net.mack.boringmods.mixins.client.json",

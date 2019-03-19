@@ -17,8 +17,8 @@ public abstract class MixinLivingEntity {
     @Inject(method = "method_16080", at = @At("HEAD"), cancellable = true)
     private void method_16080(DamageSource damageSource_1, CallbackInfo ci) {
         BlockPos pos = MinecraftClient.getInstance().player.getPos();
-        logger.info("%s killed by %s at %d, %d, %d.",
+        logger.info(String.format("%s killed by %s at %d, %d, %d.",
                 MinecraftClient.getInstance().player.getDisplayName().getFormattedText(),
-                damageSource_1.getName(), pos.getX(), pos.getY(), pos.getZ());
+                damageSource_1.getName(), pos.getX(), pos.getY(), pos.getZ()));
     }
 }
