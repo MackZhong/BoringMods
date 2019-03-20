@@ -8,7 +8,8 @@
     "MixinBlockBreak",
     "MixinPlayerInventoryScreen",
     "MixinMinecraftClient",
-    "MixinGameRenderer"
+    "MixinGameRenderer",
+    "MixinContainerScreen"
   ],
   "injectors": {
     "defaultRequire": 1

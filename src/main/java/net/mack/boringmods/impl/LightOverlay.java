@@ -79,7 +79,7 @@ public class LightOverlay {
         BlockState blockBelowState = world.getBlockState(pos.down());
         if (blockBelowState.getBlock() == Blocks.BEDROCK || blockBelowState.getBlock() == Blocks.BARRIER)
             return OverlayType.NONE;
-        if ((!blockBelowState.getMaterial().method_15804() && blockBelowState.isTranslucent(world, pos.down())) || !SpawnHelper.isClearForSpawn(world, pos, world.getBlockState(pos), world.getFluidState(pos)))
+        if ((!blockBelowState.getMaterial().blocksLight() && blockBelowState.isTranslucent(world, pos.down())) || !SpawnHelper.isClearForSpawn(world, pos, world.getBlockState(pos), world.getFluidState(pos)))
             return OverlayType.NONE;
         if (!world.method_8628(world.getBlockState(pos), pos, VerticalEntityPosition.fromEntity(playerEntity)))
             return OverlayType.NONE;

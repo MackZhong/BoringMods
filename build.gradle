@@ -29,6 +29,19 @@ dependencies {
     compile "com.google.code.findbugs:jsr305:3.0.2"
 }
 
+processResources {
+    inputs.property "version", project.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include "fabric.mod.json"
+        expand "version": project.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "fabric.mod.json"
+    }
+}
+
 task showAllRepos {
     println "All repositories for " + project.name
     repositories.collect {

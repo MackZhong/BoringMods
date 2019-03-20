@@ -1,7 +1,7 @@
 {
   "id": "boringmods",
   "name": "Boring Mods",
-  "version": "1.0-Snapshot",
+  "version": "${version}",
   "side": "universal",
   "description": "Minecraft Mods boring.",
   "license": "Apache-2.0",
