@@ -43,8 +43,11 @@ public abstract class MixinPlayerInventoryScreen extends AbstractPlayerInventory
     @Inject(method = "onInitialized"
             , at = @At(value = "INVOKE",
             args = "log=true",
-            target = "Lnet/minecraft/client/gui/ingame/PlayerInventoryScreen;addButton(Lnet/minecraft/client/gui/widget/AbstractButtonWidget;)Lnet/minecraft/client/gui/widget/AbstractButtonWidget;"))
-    private void onCreateButton(CallbackInfo callbackInfo) {
+            target = "Lnet/minecraft/client/gui/ingame/PlayerInventoryScreen;focusOn(Lnet/minecraft/client/gui/InputListener;)V"
+                   //"Lnet/minecraft/client/gui/Screen;addButton(Lnet/minecraft/client/gui/widget/AbstractButtonWidget;)Lnet/minecraft/client/gui/widget/AbstractButtonWidget;"
+                   //"Lnet/minecraft/client/gui/ingame/PlayerInventoryScreen;addButton(Lnet/minecraft/client/gui/widget/AbstractButtonWidget;)Lnet/minecraft/client/gui/widget/AbstractButtonWidget;"
+    ))
+    private void addButton(CallbackInfo callbackInfo) {
         PlayerContainer playerContainer = (PlayerContainer) this.container;
         logger.info(String.format("width: %d, height: %d, containerWidth: %d, containerHeight: %d", this.width, this.height, playerContainer.getCraftingWidth(), playerContainer.getCraftingHeight()));
         logger.info(String.format("ScaledWidth: %d, ScaledHeight: %d", this.client.window.getScaledWidth(), this.client.window.getScaledHeight()));

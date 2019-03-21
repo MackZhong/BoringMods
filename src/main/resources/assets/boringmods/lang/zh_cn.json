@@ -2,7 +2,7 @@
   "language.name": "\u7b80\u4f53\u4e2d\u6587",
   "language.region": "\u4e2d\u56fd",
   "language.code": "zh_cn",
-  "quickinfo.days": "\u7b2c%d\u5929\u3001%02d:%02d\u3002",
+  "quickinfo.days": "\u7b2c%d\u5929\u3001%,02d:%,02d\u3002",
   "quickinfo.up": "\u4e0a",
   "quickinfo.down": "\u4e0b",
   "quickinfo.north": "\u5317",

@@ -183,7 +183,7 @@ public class Excavator {
                 }
                 if (!brokenBlocks.contains(p) &&
                         player.isUsingEffectiveTool(world.getBlockState(p))) {
-                    if (p.distanceTo(pos) <= excavateRange) {
+                    if (p.method_19455(pos) <= excavateRange) {
                         nextToBreak.add(p);
                     }
                     logger.debug("Excavator: breakBlock {}", p);
