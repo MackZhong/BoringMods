@@ -130,7 +130,7 @@ public class QuickInfoHud extends DrawableHelper {
             return infos;
         }
 
-        BlockPos pos = this.player.getPos();
+        BlockPos pos = this.player.getBlockPos();
         pos = new BlockPos(pos.getX(), (int) this.player.getBoundingBox().minY, pos.getZ());
         Direction facing = this.player.getHorizontalFacing();
         infos.add(String.format("%d, %d, %d %s",

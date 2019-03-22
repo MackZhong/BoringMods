@@ -15,6 +15,10 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(ContainerScreen.class)
 public abstract class MixinContainerScreen extends Screen {
 
+    protected MixinContainerScreen(TextComponent textComponent_1) {
+        super(textComponent_1);
+    }
+
     @Shadow
     protected abstract Slot getSlotAt(double double_1, double double_2);
 
@@ -24,10 +28,6 @@ public abstract class MixinContainerScreen extends Screen {
 
     @Shadow
     protected abstract void onMouseClick(Slot slot_1, int int_1, int int_2, SlotActionType slotActionType_1);
-
-    @Shadow
-    @Final
-    protected TextComponent name;
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollAmount) {

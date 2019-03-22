@@ -17,8 +17,9 @@ public class SortButtonWidget extends ButtonWidget {
     private RecipeBookGui recipeBookGui;
 
     public SortButtonWidget(int sId, int left, int top, int width, int height,
-                            Container cont, RecipeBookGui recipe) {
-        super(left, top, width, height, "Sort");
+                            Container cont, RecipeBookGui recipe,
+                            class_4241 buttonWidget$class_4241_1) {
+        super(left, top, width, height, "Sort", buttonWidget$class_4241_1);
 
         this.container = cont;
         this.recipeBookGui = recipe;
@@ -82,40 +83,5 @@ public class SortButtonWidget extends ButtonWidget {
             }
             GlStateManager.enableDepthTest();
         }
-    }
-
-    public void onPressed(double x, double y) {
-        SortButtonWidget.pressed = !SortButtonWidget.pressed;
-        logger.info(SortButtonWidget.pressed ? "Pressed." : "UnPressed.");
-//        List<ItemStack> stacks =  new ArrayList<>();//this.container.getStacks();
-////        logger.info(String.format("Pressed, %d stacks", stacks.size()));
-////        List<Slot> slots = new ArrayList<>();
-//        for (int i = 9; i < Math.min(this.container.slotList.size(), 36); ++i) {
-//            Slot slot = this.container.getSlot(i);
-//            if(slot.hasStack())
-//                stacks.add(slot.getStack());
-//        }
-//        stacks.sort(new Comparator<ItemStack>() {
-//            @Override
-//            public int compare(ItemStack o1, ItemStack o2) {
-//                return o1.getDisplayName().getFormattedText().compareToIgnoreCase(o2.getDisplayName().getFormattedText());
-//            }
-//        });
-//        for (int i = 9; i < Math.min(stacks.size(), 36); ++i) {
-//            this.container.setStackInSlot(i, stacks.get(i - 9));
-//        }
-//
-////
-////        this.container.updateSlotStacks(stacks);
-//        this.container.sendContentUpdates();
-    }
-
-    public void onReleased(double x, double y) {
-        logger.info("Released.");
-        SortButtonWidget.pressed = false;
-    }
-
-    public void onPressed() {
-        logger.info("SortButtonWidget onPressed.");
     }
 }

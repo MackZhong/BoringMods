@@ -83,7 +83,7 @@ public class LightOverlay {
             return OverlayType.NONE;
         if (!world.method_8628(world.getBlockState(pos), pos, VerticalEntityPosition.fromEntity(playerEntity)))
             return OverlayType.NONE;
-        if (blockBelowState.isAir() || !world.getBlockState(pos).isAir() || !blockBelowState.hasSolidTopSurface(world, pos) || !world.getFluidState(pos.down()).isEmpty())
+        if (blockBelowState.isAir() || !world.getBlockState(pos).isAir() || !blockBelowState.hasSolidTopSurface(world, pos, playerEntity) || !world.getFluidState(pos.down()).isEmpty())
             return OverlayType.NONE;
         if (world.method_8312(LightType.BLOCK, pos) >= 8)
             return OverlayType.NONE;
@@ -96,7 +96,7 @@ public class LightOverlay {
         if (this.enabled) {
             GlStateManager.disableTexture();
             GlStateManager.disableBlend();
-            BlockPos playerPos = playerEntity.getPos();//new BlockPos(playerEntity.x, playerEntity.y, playerEntity.z);
+            BlockPos playerPos = playerEntity.getBlockPos();//new BlockPos(playerEntity.x, playerEntity.y, playerEntity.z);
             BlockPos.iterateBoxPositions(playerPos.add(-range, -range, -range), playerPos.add(range, range, range)).forEach(pos -> {
                 if (world.getBiome(pos).getMaxSpawnLimit() > 0) {
                     OverlayType type = getOverlayType(pos, world, playerEntity);
@@ -113,7 +113,7 @@ public class LightOverlay {
     }
 
     private void renderOverlay(BlockPos pos, Color color) {
-        Camera camera = MinecraftClient.getInstance().gameRenderer.method_19418();
+        Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
         GlStateManager.lineWidth(1.0F);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBufferBuilder();

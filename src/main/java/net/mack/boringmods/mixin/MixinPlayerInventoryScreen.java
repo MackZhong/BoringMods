@@ -34,7 +34,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinPlayerInventoryScreen extends AbstractPlayerInventoryScreen {
     private org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("boringmods");
 
-    @Shadow @Final private RecipeBookGui recipeBook;
+    @Shadow
+    @Final
+    private RecipeBookGui recipeBook;
 
     public MixinPlayerInventoryScreen(Container container_1, PlayerInventory playerInventory_1, TextComponent textComponent_1) {
         super(container_1, playerInventory_1, textComponent_1);
@@ -44,8 +46,8 @@ public abstract class MixinPlayerInventoryScreen extends AbstractPlayerInventory
             , at = @At(value = "INVOKE",
             args = "log=true",
             target = "Lnet/minecraft/client/gui/ingame/PlayerInventoryScreen;focusOn(Lnet/minecraft/client/gui/InputListener;)V"
-                   //"Lnet/minecraft/client/gui/Screen;addButton(Lnet/minecraft/client/gui/widget/AbstractButtonWidget;)Lnet/minecraft/client/gui/widget/AbstractButtonWidget;"
-                   //"Lnet/minecraft/client/gui/ingame/PlayerInventoryScreen;addButton(Lnet/minecraft/client/gui/widget/AbstractButtonWidget;)Lnet/minecraft/client/gui/widget/AbstractButtonWidget;"
+            //"Lnet/minecraft/client/gui/Screen;addButton(Lnet/minecraft/client/gui/widget/AbstractButtonWidget;)Lnet/minecraft/client/gui/widget/AbstractButtonWidget;"
+            //"Lnet/minecraft/client/gui/ingame/PlayerInventoryScreen;addButton(Lnet/minecraft/client/gui/widget/AbstractButtonWidget;)Lnet/minecraft/client/gui/widget/AbstractButtonWidget;"
     ))
     private void addButton(CallbackInfo callbackInfo) {
         PlayerContainer playerContainer = (PlayerContainer) this.container;
@@ -58,12 +60,15 @@ public abstract class MixinPlayerInventoryScreen extends AbstractPlayerInventory
                 10,
                 8,
                 this.container,
-                this.recipeBook));
+                this.recipeBook,
+                (buttonWidget_1) -> {
+                    logger.info("Sort button press.");
+                }));
     }
 
     @Override
     public boolean mouseScrolled(double double_1, double double_2, double double_3) {
-        if(super.mouseScrolled(double_1, double_2, double_3))
+        if (super.mouseScrolled(double_1, double_2, double_3))
             return true;
         return ((IRecipeBookGui) recipeBook).mouseWheelie_scroll(double_1, double_2, double_3);
     }
