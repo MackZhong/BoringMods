@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.List;
 
+@Deprecated
 @Mixin(RecipeBookGui.class)
 public abstract class MixinRecipeBookGui extends DrawableHelper implements IRecipeBookGui {
     @Shadow

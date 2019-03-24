@@ -14,5 +14,6 @@
   "quickinfo.config": "设置",
   "boringmods.category": "无聊模组",
   "key.boringmods.excavate": "挖掘",
-  "key.boringmods.toggle_light_overlay": "切换亮度标志"
+   "key.boringmods.tunnel": "隧道",
+ "key.boringmods.toggle_light_overlay": "切换亮度标志"
 }

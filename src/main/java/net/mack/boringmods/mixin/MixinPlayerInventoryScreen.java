@@ -70,6 +70,6 @@ public abstract class MixinPlayerInventoryScreen extends AbstractPlayerInventory
     public boolean mouseScrolled(double double_1, double double_2, double double_3) {
         if (super.mouseScrolled(double_1, double_2, double_3))
             return true;
-        return ((IRecipeBookGui) recipeBook).mouseWheelie_scroll(double_1, double_2, double_3);
+        return  false;//((IRecipeBookGui) recipeBook).mouseWheelie_scroll(double_1, double_2, double_3);
     }
 }

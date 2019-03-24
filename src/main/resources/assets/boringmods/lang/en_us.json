@@ -14,5 +14,6 @@
   "quickinfo.config": "Configuration",
   "boringmods.category": "BoringMods",
   "key.boringmods.excavate": "Excavate",
-  "key.boringmods.toggle_light_overlay": "Toogle Light Overlay"
+  "key.boringmods.tunnel": "Tunnel",
+  "key.boringmods.toggle_light_overlay": "Toggle Light Overlay"
 }

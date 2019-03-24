@@ -17,11 +17,6 @@ public abstract class MixinBlockBreak {
     @Inject(method = "onBreak",
             at = @At(value = "HEAD"))
     private void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player, CallbackInfo ci) {
-        if (Excavator.getInstance().isEnable() &&
-                world.isClient() &&
-                player.isUsingEffectiveTool(state) &&
-                player.getHungerManager().getFoodLevel() > 0) {
-            Excavator.getInstance().excavate(world, pos, state, player);
-        }
+        Excavator.getInstance().handle(world,pos, state, player);
     }
 }

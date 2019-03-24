@@ -14,7 +14,7 @@ public class ClientInitializer implements net.fabricmc.api.ClientModInitializer 
     public void onInitializeClient() {
         KeyBindingRegistry.INSTANCE.addCategory(keyBindingCategory);
 
-        KeyBindingRegistryImpl.INSTANCE.register(Excavator.getInstance().getKeyBinding(keyBindingCategory));
+        Excavator.getInstance().keyBinding(keyBindingCategory);
         KeyBindingRegistryImpl.INSTANCE.register(LightOverlay.getInstance().getKeyBinding(keyBindingCategory));
 
         logger.info("Boring Mods Client Initialization.");

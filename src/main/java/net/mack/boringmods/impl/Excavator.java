@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.fabricmc.fabric.api.network.PacketConsumer;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 import net.minecraft.block.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -16,6 +17,7 @@ import net.minecraft.server.network.packet.CustomPayloadC2SPacket;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 
@@ -29,9 +31,6 @@ public class Excavator {
     }
 
     private org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("boringmods");
-    private FabricKeyBinding keyExcavate;
-    private final Identifier EXCAVATE_END = new Identifier("boringmods", "excavate_end");
-    private final Identifier BREAK_BLOCK = new Identifier("boringmods", "break_block");
 
     private Vec3i[] neighborPos = {
             new Vec3i(0, 0, -1),
@@ -61,21 +60,41 @@ public class Excavator {
             new Vec3i(-1, -1, 1),
             new Vec3i(1, -1, 1)
     };
-    private final int excavateMaxBlocks = 128;
-    private final int excavateRange = 8;
+    private FabricKeyBinding keyExcavate;
+    private final Identifier EXCAVATE_END = new Identifier("boringmods", "excavate_end");
+    private final Identifier BREAK_BLOCK = new Identifier("boringmods", "break_block");
+    private int excavateMaxBlocks = 64;
+    private int excavateRange = 8;
+    private FabricKeyBinding keyTunnel;
+    private int tunnelLong = 16;
+    private int tunnelWidth = 2;
+    private int tunnelHeight = 3;
 
-    public FabricKeyBinding getKeyBinding(String category) {
-        keyExcavate = FabricKeyBinding.Builder.create(
+    public boolean keyBinding(String category) {
+        this.keyExcavate = FabricKeyBinding.Builder.create(
                 new Identifier("boringmods:excavate"),
                 InputUtil.Type.KEY_KEYBOARD,
                 96,
                 category
         ).build();
-        return this.keyExcavate;
+        KeyBindingRegistryImpl.INSTANCE.register(this.keyExcavate);
+        this.keyTunnel = FabricKeyBinding.Builder.create(
+                new Identifier("boringmods:tunnel"),
+                InputUtil.Type.KEY_KEYBOARD,
+                220,
+                category
+        ).build();
+        KeyBindingRegistryImpl.INSTANCE.register(this.keyTunnel);
+
+        return true;
     }
 
-    public boolean isEnable() {
-        return keyExcavate.isPressed();
+    private boolean enableExcavate() {
+        return this.keyExcavate.isPressed();
+    }
+
+    private boolean enableTunnel() {
+        return this.keyTunnel.isPressed();
     }
 
     class PacketBreakBlock implements PacketConsumer {
@@ -141,7 +160,19 @@ public class Excavator {
         return neighbourBlocks;
     }
 
-    public void excavate(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+    public void handle(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+        if (world.isClient() &&
+                player.isUsingEffectiveTool(state) &&
+                player.getHungerManager().getFoodLevel() > 0) {
+            if (enableExcavate()) {
+                this.excavate(world, pos, state, player);
+            } else if (enableTunnel()) {
+                this.tunnel(world, pos, player);
+            }
+        }
+    }
+
+    private void excavate(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         Block block = state.getBlock();
         boolean isLogBlock = false;
 
@@ -150,11 +181,11 @@ public class Excavator {
             isLogBlock = true;
         } else if (block instanceof OreBlock || block instanceof RedstoneOreBlock || block == Blocks.OBSIDIAN) {
             logger.debug("Ore breack.");
-            isLogBlock = false;
+//            isLogBlock = false;
+        } else {
+            return;
         }
-//        else{
-//            return;
-//        }
+
         ArrayList<BlockPos> brokenBlocks = new ArrayList<>();
         brokenBlocks.add(pos);
         BlockPos currentPos = pos;
@@ -200,6 +231,71 @@ public class Excavator {
             currentPos = nextToBreak.get(0);
             nextToBreak.remove(currentPos);
         }
+        if (!player.isCreative()) {
+            connection.sendPacket(createEndPacket(brokenCount - 1, exhaust));
+        }
+    }
+
+    private void tunnel(World world, BlockPos pos, PlayerEntity player) {
+        ClientPlayNetworkHandler networkHandler = MinecraftClient.getInstance().getNetworkHandler();
+        if (null == networkHandler) {
+            logger.debug("Network handler not found.");
+            return;
+        }
+        ClientConnection connection = networkHandler.getClientConnection();
+
+        int left = this.tunnelWidth / 2;
+        int bottom = this.tunnelHeight / 2;
+        Direction facing = player.getHorizontalFacing();
+        Vec3i dir = facing.getVector();
+        BlockPos posLB, posRB;
+        if (Direction.EAST == facing) {
+            posLB = pos.north(left).down(bottom);
+            posRB = posLB.south(this.tunnelWidth - 1);
+        } else if (Direction.WEST == facing) {
+            posLB = pos.south(left).down(bottom);
+            posRB = posLB.north(this.tunnelWidth - 1);
+        } else if (Direction.SOUTH == facing) {
+            posLB = pos.east(left).down(bottom);
+            posRB = posLB.west(this.tunnelWidth - 1);
+        } else if (Direction.NORTH == facing) {
+            posLB = pos.west(left).down(bottom);
+            posRB = posLB.east(this.tunnelWidth - 1);
+        } else {
+            return;
+        }
+
+        float exhaust = 0;
+        int brokenCount = 1;
+        int maxBlocks = this.tunnelHeight * this.tunnelWidth * this.tunnelLong;
+        for (BlockPos posB : BlockPos.iterateBoxPositions(posLB, posRB)) {
+            BlockPos posT = posB.up(this.tunnelHeight - 1);
+            for (BlockPos posN : BlockPos.iterateBoxPositions(posB, posT)) {
+                BlockPos p = posN;
+                for (int d = 0; d < this.tunnelLong; ++d) {
+                    if (brokenCount >= maxBlocks ||
+                            player.getHungerManager().getFoodLevel() <= exhaust / 2 ||
+                            brokenCount >= (player.getMainHandStack().getDurability() - player.getMainHandStack().getDamage())) {
+                        break;
+                    }
+                    if (pos == p) continue;
+
+                    BlockState blockState = world.getBlockState(p);
+                    Block block = blockState.getBlock();
+                    if (null != block &&
+                            !blockState.isAir() &&
+                            world.getFluidState(p).isEmpty() &&
+                            player.isUsingEffectiveTool(blockState)) {
+                        world.breakBlock(p, !player.isCreative());
+                        connection.sendPacket(createBreackPacket(p));
+                        brokenCount++;
+                        exhaust = (0.005F * brokenCount) * (brokenCount / 8.0F + 1);
+                    }
+                    p = p.add(dir);
+                }
+            }
+        }
+
         if (!player.isCreative()) {
             connection.sendPacket(createEndPacket(brokenCount - 1, exhaust));
         }
