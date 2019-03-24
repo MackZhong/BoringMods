@@ -22,6 +22,7 @@ import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 
 import java.awt.*;
+import java.util.Random;
 
 public class LightOverlay {
     private boolean enabled = false;
@@ -92,18 +93,38 @@ public class LightOverlay {
         return OverlayType.DANGEROUS;
     }
 
+    private boolean slimeSpawn(World world,  BlockPos pos, PlayerEntity playerEntity) {
+        BlockState blockBelowState = world.getBlockState(pos.down());
+        if (blockBelowState.isAir() || !world.getBlockState(pos).isAir() || !blockBelowState.hasSolidTopSurface(world, pos, playerEntity))
+            return false;
+
+        long xPosition = pos.getX() >> 4;
+        long zPosition = pos.getZ() >> 4;
+        Random rnd = new Random(world.getSeed() +
+                (long) (xPosition * xPosition * 0x4c1906) +
+                (long) (xPosition * 0x5ac0db) +
+                (long) (zPosition * zPosition) * 0x4307a7L +
+                (long) (zPosition * 0x5f24f) ^ 0x3ad8025f);
+        return rnd.nextInt(10) == 0;
+    }
+
     public void render(World world, PlayerEntity playerEntity) {
         if (this.enabled) {
             GlStateManager.disableTexture();
             GlStateManager.disableBlend();
             BlockPos playerPos = playerEntity.getBlockPos();//new BlockPos(playerEntity.x, playerEntity.y, playerEntity.z);
+            Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
+            Vec3d vecCamera = camera.getPos();
             BlockPos.iterateBoxPositions(playerPos.add(-range, -range, -range), playerPos.add(range, range, range)).forEach(pos -> {
                 if (world.getBiome(pos).getMaxSpawnLimit() > 0) {
-                    OverlayType type = getOverlayType(pos, world, playerEntity);
+                    OverlayType type = this.getOverlayType(pos, world, playerEntity);
                     if (type != OverlayType.NONE) {
 //                        VoxelShape shape = world.getBlockState(pos).getCollisionShape(world, pos);
                         Color color = type == OverlayType.DANGEROUS ? Color.RED : Color.YELLOW;
-                        this.renderOverlay(pos, color);
+                        this.renderOverlay(vecCamera, pos, color);
+                    }
+                    if (this.slimeSpawn(world, pos, playerEntity)) {
+                        this.renderSlime(vecCamera, pos);
                     }
                 }
             });
@@ -112,15 +133,30 @@ public class LightOverlay {
         }
     }
 
-    private void renderOverlay(BlockPos pos, Color color) {
-        Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
+    private void renderOverlay(Vec3d vecCamera, BlockPos pos, Color color) {
         GlStateManager.lineWidth(1.0F);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBufferBuilder();
-        Vec3d vecCamera = camera.getPos();
         double d0 = vecCamera.x;
         double d1 = vecCamera.y - .005D;
         double d2 = vecCamera.z;
+
+        buffer.begin(1, VertexFormats.POSITION_COLOR);
+        buffer.vertex(pos.getX() + 0.2 - d0, pos.getY() - d1, pos.getZ() + 0.2 - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
+        buffer.vertex(pos.getX() + 0.8 - d0, pos.getY() - d1, pos.getZ() + 0.8 - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
+        buffer.vertex(pos.getX() + 0.8 - d0, pos.getY() - d1, pos.getZ() + 0.2 - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
+        buffer.vertex(pos.getX() + 0.2 - d0, pos.getY() - d1, pos.getZ() + 0.8 - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
+        tessellator.draw();
+    }
+
+    private void renderSlime(Vec3d vecCamera, BlockPos pos) {
+        GlStateManager.lineWidth(2.0F);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBufferBuilder();
+        double d0 = vecCamera.x;
+        double d1 = vecCamera.y - 0.01D;
+        double d2 = vecCamera.z;
+        Color color = Color.GREEN;
 
         buffer.begin(1, VertexFormats.POSITION_COLOR);
         buffer.vertex(pos.getX() - d0, pos.getY() - d1, pos.getZ() - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
@@ -129,4 +165,5 @@ public class LightOverlay {
         buffer.vertex(pos.getX() - d0, pos.getY() - d1, pos.getZ() + 1 - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
         tessellator.draw();
     }
+
 }
