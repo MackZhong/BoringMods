@@ -63,12 +63,7 @@ public class Excavator {
     private FabricKeyBinding keyExcavate;
     private final Identifier EXCAVATE_END = new Identifier("boringmods", "excavate_end");
     private final Identifier BREAK_BLOCK = new Identifier("boringmods", "break_block");
-    private int excavateMaxBlocks = 64;
-    private int excavateRange = 8;
     private FabricKeyBinding keyTunnel;
-    private int tunnelLong = 16;
-    private int tunnelWidth = 2;
-    private int tunnelHeight = 3;
 
     public boolean keyBinding(String category) {
         this.keyExcavate = FabricKeyBinding.Builder.create(

@@ -2,7 +2,6 @@ package net.mack.boringmods.impl;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
-import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.render.Camera;
@@ -17,7 +16,6 @@ import net.minecraft.sortme.SpawnHelper;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 
@@ -25,9 +23,7 @@ import java.awt.*;
 import java.util.Random;
 
 public class LightOverlay {
-    private boolean enabled = false;
     private FabricKeyBinding keyToggleLightOverlay;
-    private int range = 12;
 
     enum OverlayType {
         NONE, WARNING, DANGEROUS
@@ -50,20 +46,20 @@ public class LightOverlay {
     }
 //
 //    public static int getRange() {
-//        return LightOverlay.range;
+//        return LightOverlay.lightOverlayRange;
 //    }
 //
 //    private static boolean isEnabled() {
-//        return enabled;
+//        return lightOverlayEnabled;
 //    }
 //
-//    public static void setEnabled(boolean enabled) {
-//        LightOverlay.enabled = enabled;
+//    public static void setEnabled(boolean lightOverlayEnabled) {
+//        LightOverlay.lightOverlayEnabled = lightOverlayEnabled;
 //    }
 
     private void toggle() {
-        this.enabled = !this.enabled;
-//        return LightOverlay.enabled;
+        this.lightOverlayEnabled = !this.lightOverlayEnabled;
+//        return LightOverlay.lightOverlayEnabled;
     }
 //
 //    public static FabricKeyBinding getKeyToggleLightOverlay() {
@@ -109,13 +105,13 @@ public class LightOverlay {
     }
 
     public void render(World world, PlayerEntity playerEntity) {
-        if (this.enabled) {
+        if (this.lightOverlayEnabled) {
             GlStateManager.disableTexture();
             GlStateManager.disableBlend();
             BlockPos playerPos = playerEntity.getBlockPos();//new BlockPos(playerEntity.x, playerEntity.y, playerEntity.z);
             Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
             Vec3d vecCamera = camera.getPos();
-            BlockPos.iterateBoxPositions(playerPos.add(-range, -range, -range), playerPos.add(range, range, range)).forEach(pos -> {
+            BlockPos.iterateBoxPositions(playerPos.add(-lightOverlayRange, -lightOverlayRange, -lightOverlayRange), playerPos.add(lightOverlayRange, lightOverlayRange, lightOverlayRange)).forEach(pos -> {
                 if (world.getBiome(pos).getMaxSpawnLimit() > 0) {
                     OverlayType type = this.getOverlayType(pos, world, playerEntity);
                     if (type != OverlayType.NONE) {
