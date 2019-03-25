@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.mack.boringmods.client.options.BooleanModOption;
 import net.mack.boringmods.client.options.ModOption;
+import net.mack.boringmods.client.options.ModOptions;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.render.Camera;
@@ -60,9 +61,7 @@ public class LightOverlay {
 //    }
 
     private void toggle() {
-        ((BooleanModOption) ModOption.LIGHT_OVERLAY_ENABLE).setValue();
-        this.lightOverlayEnabled = !this.lightOverlayEnabled;
-//        return LightOverlay.lightOverlayEnabled;
+         ModOption.LIGHT_OVERLAY_ENABLE.toggle(ModOptions.INSTANCE);
     }
 //
 //    public static FabricKeyBinding getKeyToggleLightOverlay() {
@@ -108,12 +107,13 @@ public class LightOverlay {
     }
 
     public void render(World world, PlayerEntity playerEntity) {
-        if (this.lightOverlayEnabled) {
+        if (ModOption.LIGHT_OVERLAY_ENABLE.getValue(ModOptions.INSTANCE)) {
             GlStateManager.disableTexture();
             GlStateManager.disableBlend();
             BlockPos playerPos = playerEntity.getBlockPos();//new BlockPos(playerEntity.x, playerEntity.y, playerEntity.z);
             Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
             Vec3d vecCamera = camera.getPos();
+            int lightOverlayRange = ModOption.LIGHT_OVERLAY_RANGE.getValue(ModOptions.INSTANCE).intValue();
             BlockPos.iterateBoxPositions(playerPos.add(-lightOverlayRange, -lightOverlayRange, -lightOverlayRange), playerPos.add(lightOverlayRange, lightOverlayRange, lightOverlayRange)).forEach(pos -> {
                 if (world.getBiome(pos).getMaxSpawnLimit() > 0) {
                     OverlayType type = this.getOverlayType(pos, world, playerEntity);
@@ -153,7 +153,7 @@ public class LightOverlay {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBufferBuilder();
         double d0 = vecCamera.x;
-        double d1 = vecCamera.y - 0.01D;
+        double d1 = vecCamera.y - 0.02D;
         double d2 = vecCamera.z;
         Color color = Color.GREEN;
 

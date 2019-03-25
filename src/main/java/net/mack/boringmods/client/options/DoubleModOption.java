@@ -66,8 +66,8 @@ public class DoubleModOption extends ModOption {
         this.biConsumer.accept(gameOptions_1, double_1);
     }
 
-    public double getValue(ModOptions gameOptions_1) {
-        return this.func.apply(gameOptions_1).doubleValue();
+    public Double getValue(ModOptions gameOptions_1) {
+        return this.func.apply(gameOptions_1);
     }
 
     public String getValueString(ModOptions gameOptions_1) {

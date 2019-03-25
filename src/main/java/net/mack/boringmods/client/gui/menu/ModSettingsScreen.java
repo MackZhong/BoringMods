@@ -19,7 +19,7 @@ public class ModSettingsScreen extends Screen {
     private final Screen parent;
     private final ModOptions options;
 
-    protected ModSettingsScreen(Screen screen, ModOptions modOptions) {
+    public ModSettingsScreen(Screen screen, ModOptions modOptions) {
         super(new TranslatableTextComponent("boringmods.options.title", new Object[0]));
         this.parent = screen;
         this.options = modOptions;

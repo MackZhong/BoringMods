@@ -20,6 +20,7 @@ public class ClientInitializer implements net.fabricmc.api.ClientModInitializer 
         KeyBindingRegistryImpl.INSTANCE.register(LightOverlay.getInstance().getKeyBinding(keyBindingCategory));
 
         ModMenuApi.addConfigOverride(ModOptions.MOD_ID, new ModOptions());
+
         logger.info("Boring Mods Client Initialization.");
     }
 }

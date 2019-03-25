@@ -21,7 +21,7 @@ public class BooleanModOption extends ModOption {
         this.setValue(options, "true".equalsIgnoreCase(value));
     }
 
-    private void toggle(ModOptions options) {
+    public void toggle(ModOptions options) {
         this.setValue(options, !this.getValue(options));
         options.write();
     }
@@ -30,7 +30,7 @@ public class BooleanModOption extends ModOption {
         this.biConsumer.accept(options, value);
     }
 
-    private boolean getValue(ModOptions options) {
+    public boolean getValue(ModOptions options) {
         return this.predicate.test(options);
     }
 

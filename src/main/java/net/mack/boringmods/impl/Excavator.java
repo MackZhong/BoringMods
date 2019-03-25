@@ -7,6 +7,8 @@ import net.fabricmc.fabric.api.network.PacketConsumer;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
+import net.mack.boringmods.client.options.ModOption;
+import net.mack.boringmods.client.options.ModOptions;
 import net.minecraft.block.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -194,6 +196,8 @@ public class Excavator {
         }
         ClientConnection connection = networkHandler.getClientConnection();
         int brokenCount = 1;
+        int excavateMaxBlocks = ModOption.EXCAVATE_MAX_BLOCKS.getValue(ModOptions.INSTANCE).intValue();
+        int excavateRange = ModOption.EXCAVATE_RANGE.getValue(ModOptions.INSTANCE).intValue();
         while (brokenCount < excavateMaxBlocks &&
 //                player.isUsingEffectiveTool(state) &&
                 player.getHungerManager().getFoodLevel() > 0) {
@@ -239,35 +243,35 @@ public class Excavator {
         }
         ClientConnection connection = networkHandler.getClientConnection();
 
-        int left = this.tunnelWidth / 2;
-        int bottom = this.tunnelHeight / 2;
+        int left = ModOptions.INSTANCE.tunnelWidth / 2;
+        int bottom = ModOptions.INSTANCE.tunnelHeight / 2;
         Direction facing = player.getHorizontalFacing();
         Vec3i dir = facing.getVector();
         BlockPos posLB, posRB;
         if (Direction.EAST == facing) {
             posLB = pos.north(left).down(bottom);
-            posRB = posLB.south(this.tunnelWidth - 1);
+            posRB = posLB.south(ModOptions.INSTANCE.tunnelWidth - 1);
         } else if (Direction.WEST == facing) {
             posLB = pos.south(left).down(bottom);
-            posRB = posLB.north(this.tunnelWidth - 1);
+            posRB = posLB.north(ModOptions.INSTANCE.tunnelWidth - 1);
         } else if (Direction.SOUTH == facing) {
             posLB = pos.east(left).down(bottom);
-            posRB = posLB.west(this.tunnelWidth - 1);
+            posRB = posLB.west(ModOptions.INSTANCE.tunnelWidth - 1);
         } else if (Direction.NORTH == facing) {
             posLB = pos.west(left).down(bottom);
-            posRB = posLB.east(this.tunnelWidth - 1);
+            posRB = posLB.east(ModOptions.INSTANCE.tunnelWidth - 1);
         } else {
             return;
         }
 
         float exhaust = 0;
         int brokenCount = 1;
-        int maxBlocks = this.tunnelHeight * this.tunnelWidth * this.tunnelLong;
+        int maxBlocks = ModOptions.INSTANCE.tunnelHeight * ModOptions.INSTANCE.tunnelWidth * ModOptions.INSTANCE.tunnelLong;
         for (BlockPos posB : BlockPos.iterateBoxPositions(posLB, posRB)) {
-            BlockPos posT = posB.up(this.tunnelHeight - 1);
+            BlockPos posT = posB.up(ModOptions.INSTANCE.tunnelHeight - 1);
             for (BlockPos posN : BlockPos.iterateBoxPositions(posB, posT)) {
                 BlockPos p = posN;
-                for (int d = 0; d < this.tunnelLong; ++d) {
+                for (int d = 0; d < ModOptions.INSTANCE.tunnelLong; ++d) {
                     if (brokenCount >= maxBlocks ||
                             player.getHungerManager().getFoodLevel() <= exhaust / 2 ||
                             brokenCount >= (player.getMainHandStack().getDurability() - player.getMainHandStack().getDamage())) {

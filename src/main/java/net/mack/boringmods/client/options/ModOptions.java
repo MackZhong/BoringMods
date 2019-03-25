@@ -2,6 +2,8 @@ package net.mack.boringmods.client.options;
 
 import com.google.gson.Gson;
 import net.fabricmc.loader.api.FabricLoader;
+import net.mack.boringmods.client.gui.menu.ModSettingsScreen;
+import net.minecraft.client.MinecraftClient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -9,9 +11,10 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class ModOptions implements Runnable {
-    public static final String MOD_ID = "BoringMods";
+    public static final String MOD_ID = "boringmods";
     public static final Logger LOGGER = LogManager.getLogger();
     public static final Gson GSON = new Gson();
+    public static final ModOptions INSTANCE = new ModOptions();
 
     private File configFile;
 
@@ -21,7 +24,7 @@ public class ModOptions implements Runnable {
     public int tunnelWidth = 2;
     public int tunnelHeight = 3;
     public boolean lightOverlayEnabled = false;
-    public int lightOverlayRange = 12;
+    public int lightOverlayRange = 16;
 
     public ModOptions() {
         this.configFile = new File(FabricLoader.getInstance().getConfigDirectory(), "options.txt");
@@ -60,6 +63,9 @@ public class ModOptions implements Runnable {
      */
     @Override
     public void run() {
-
+        ModSettingsScreen screen = new ModSettingsScreen(
+                MinecraftClient.getInstance().currentScreen,
+                ModOptions.INSTANCE);
+        MinecraftClient.getInstance().openScreen(screen);
     }
 }
