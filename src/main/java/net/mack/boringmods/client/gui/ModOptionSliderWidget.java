@@ -1,12 +1,13 @@
-package net.mack.boringmods.client.options;
+package net.mack.boringmods.client.gui;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.mack.boringmods.client.options.DoubleModOption;
+import net.mack.boringmods.client.options.ModOptions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.util.math.MathHelper;
 
@@ -18,9 +19,10 @@ public class ModOptionSliderWidget extends AbstractButtonWidget {
 
     public ModOptionSliderWidget(ModOptions options, int x, int y, int width, int height, DoubleModOption modOption) {
         super(x, y, width, height, "");
+        this.progress = modOption.toPercent(modOption.getValue(options));
         this.options = options;
         this.option = modOption;
-        this.progress = value;
+        this.updateText();
     }
 
     protected int getYImage(boolean boolean_1) {
@@ -99,8 +101,13 @@ public class ModOptionSliderWidget extends AbstractButtonWidget {
         super.playDownSound(MinecraftClient.getInstance().getSoundManager());
     }
 
-    protected abstract void updateText();
+    protected void onProgressChanged() {
+        this.option.setValue(this.options, this.option.fromPercent(this.progress));
+        this.options.write();
+    }
 
-    protected abstract void onProgressChanged();
+    protected void updateText()    {
+        this.setMessage(this.option.getValueString(this.options));
+    }
 
 }

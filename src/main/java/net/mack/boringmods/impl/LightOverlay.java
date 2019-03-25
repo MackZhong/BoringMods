@@ -2,6 +2,8 @@ package net.mack.boringmods.impl;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
+import net.mack.boringmods.client.options.BooleanModOption;
+import net.mack.boringmods.client.options.ModOption;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.render.Camera;
@@ -58,6 +60,7 @@ public class LightOverlay {
 //    }
 
     private void toggle() {
+        ((BooleanModOption) ModOption.LIGHT_OVERLAY_ENABLE).setValue();
         this.lightOverlayEnabled = !this.lightOverlayEnabled;
 //        return LightOverlay.lightOverlayEnabled;
     }
