@@ -27,7 +27,7 @@ public class ModSettingsScreen extends Screen {
 
     protected void onInitialized() {
         int index = 0;
-        for (ModOption option : SETTING){
+        for (ModOption option : SETTING) {
             int x = this.screenWidth / 2 - 155 + index * 2 * 160;
             int y = this.screenHeight / 6 + 24 * (index >> 1);
             AbstractButtonWidget button = this.addButton(
@@ -35,10 +35,16 @@ public class ModSettingsScreen extends Screen {
             );
             ++index;
         }
+
         this.addButton(new ButtonWidget(this.screenWidth / 2 - 100, this.screenHeight - 27, 200, 20, I18n.translate("gui.done", new Object[0]), (buttonWidget_1) -> {
             this.client.options.write();
 //            this.client.window.method_4475();
             this.client.openScreen(this.parent);
         }));
+    }
+
+    public void render(int int_1, int int_2, float float_1) {
+        this.drawBackground();
+        super.render(int_1, int_2, float_1);
     }
 }

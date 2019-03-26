@@ -2,14 +2,13 @@ package net.mack.boringmods.impl;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
-import net.mack.boringmods.client.options.BooleanModOption;
 import net.mack.boringmods.client.options.ModOption;
 import net.mack.boringmods.client.options.ModOptions;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.render.Camera;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.InputUtil;
@@ -137,7 +136,7 @@ public class LightOverlay {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBufferBuilder();
         double d0 = vecCamera.x;
-        double d1 = vecCamera.y - .005D;
+        double d1 = vecCamera.y - .02D;
         double d2 = vecCamera.z;
 
         buffer.begin(1, VertexFormats.POSITION_COLOR);
@@ -153,15 +152,17 @@ public class LightOverlay {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBufferBuilder();
         double d0 = vecCamera.x;
-        double d1 = vecCamera.y - 0.02D;
+        double d1 = vecCamera.y - 0.005D;
         double d2 = vecCamera.z;
         Color color = Color.GREEN;
 
-        buffer.begin(1, VertexFormats.POSITION_COLOR);
+        buffer.begin(3, VertexFormats.POSITION_COLOR);
         buffer.vertex(pos.getX() - d0, pos.getY() - d1, pos.getZ() - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
-        buffer.vertex(pos.getX() + 1 - d0, pos.getY() - d1, pos.getZ() + 1 - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
-        buffer.vertex(pos.getX() + 1 - d0, pos.getY() - d1, pos.getZ() - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
-        buffer.vertex(pos.getX() - d0, pos.getY() - d1, pos.getZ() + 1 - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
+        buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
+        buffer.vertex(pos.getX() - d0, pos.getY() - d1, pos.getZ() - d2 + 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
+        buffer.vertex(pos.getX() - d0, pos.getY() - d1, pos.getZ() - d2 + 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
+        buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
+        buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2 + 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
         tessellator.draw();
     }
 

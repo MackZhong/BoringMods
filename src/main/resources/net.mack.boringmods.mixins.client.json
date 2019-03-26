@@ -9,7 +9,9 @@
     "MixinPlayerInventoryScreen",
     "MixinMinecraftClient",
     "MixinGameRenderer",
-    "MixinContainerScreen"
+    "MixinContainerScreen",
+    "MixinPauseMenuScreen",
+    "MixinMainMenuScreen"
   ],
   "injectors": {
     "defaultRequire": 1

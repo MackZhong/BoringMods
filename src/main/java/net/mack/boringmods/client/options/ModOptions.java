@@ -15,6 +15,7 @@ public class ModOptions implements Runnable {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final Gson GSON = new Gson();
     public static final ModOptions INSTANCE = new ModOptions();
+    public boolean menuAdded = false;
 
     private File configFile;
 
@@ -26,7 +27,7 @@ public class ModOptions implements Runnable {
     public boolean lightOverlayEnabled = false;
     public int lightOverlayRange = 16;
 
-    public ModOptions() {
+    private ModOptions() {
         this.configFile = new File(FabricLoader.getInstance().getConfigDirectory(), "options.txt");
 
     }
