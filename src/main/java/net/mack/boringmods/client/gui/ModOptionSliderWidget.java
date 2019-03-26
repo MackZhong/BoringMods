@@ -36,8 +36,8 @@ public class ModOptionSliderWidget extends AbstractButtonWidget {
     protected void renderBg(MinecraftClient minecraftClient_1, int int_1, int int_2) {
         minecraftClient_1.getTextureManager().bindTexture(WIDGETS_LOCATION);
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.drawTexturedRect(this.x + (int)(this.progress * (double)(this.width - 8)), this.y, 0, 66, 4, 20);
-        this.drawTexturedRect(this.x + (int)(this.progress * (double)(this.width - 8)) + 4, this.y, 196, 66, 4, 20);
+        this.blit(this.x + (int)(this.progress * (double)(this.width - 8)), this.y, 0, 66, 4, 20);
+        this.blit(this.x + (int)(this.progress * (double)(this.width - 8)) + 4, this.y, 196, 66, 4, 20);
     }
 
     public boolean mouseClicked(double double_1, double double_2, int int_1) {

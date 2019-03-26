@@ -23,8 +23,8 @@ public abstract class MixinMainMenuScreen extends Screen {
     public void addConfigMenuButton(CallbackInfo info) {
         if (!ModOptions.INSTANCE.menuAdded) {
             this.addButton(new ButtonWidget(
-                    this.screenWidth / 2 - 100,
-                    this.screenHeight / 4 + 24,
+                    this.width / 2 - 100,
+                    this.height / 4 + 24,
                     200,
                     20,
                     I18n.translate("boringmods.configs.title"),

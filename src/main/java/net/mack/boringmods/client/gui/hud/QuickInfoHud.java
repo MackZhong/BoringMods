@@ -113,12 +113,12 @@ public class QuickInfoHud extends DrawableHelper {
         int scaleWidth = this.client.window.getScaledWidth();
         int lineHeight = this.fontRenderer.fontHeight + 2;
         int left = (scaleWidth - maxLineWidth) / 2 - 2;
-        drawRect(left, top, left + maxLineWidth + 1, top + lines.size() * lineHeight + 2, 0x88B0B0B0);
+        fill(left, top, left + maxLineWidth + 1, top + lines.size() * lineHeight + 2, 0x88B0B0B0);
         top++;
         left++;
         maxLineWidth--;
         for (String line : lines) {
-            drawRect(left, top, left + maxLineWidth, top + lineHeight, 0xAA0000AA);
+            fill(left, top, left + maxLineWidth, top + lineHeight, 0xAA0000AA);
             this.fontRenderer.draw(line, left + 1, top + 1, 0x00E0E0E0);
             top += lineHeight;
         }

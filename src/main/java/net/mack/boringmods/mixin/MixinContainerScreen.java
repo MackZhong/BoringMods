@@ -1,5 +1,7 @@
 package net.mack.boringmods.mixin;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.ContainerScreen;
 import net.minecraft.client.gui.Screen;
 import net.minecraft.container.Container;
@@ -12,6 +14,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+@Environment(EnvType.CLIENT)
 @Mixin(ContainerScreen.class)
 public abstract class MixinContainerScreen extends Screen {
 
@@ -44,25 +47,25 @@ public abstract class MixinContainerScreen extends Screen {
         boolean directUp = scrollAmount > 0;
         boolean sendOut = (players && directUp) || (!players && !directUp);
         if (sendOut) {
-            if (this.isControlPressed()) {
+            if (Screen.hasControlDown()) {
                 for (Slot slot : this.container.slotList) {
                     if ((slot.inventory == focusSlot.inventory) &&
                             slot.getStack().isEqualIgnoreTags(focusStack)) {
                         this.onMouseClick(slot, slot.id, 0, SlotActionType.QUICK_MOVE);
                     }
                 }
-            } else if (this.isShiftPressed()) {
+            } else if (Screen.hasShiftDown()) {
                 this.onMouseClick(focusSlot, focusSlot.id, 0, SlotActionType.QUICK_MOVE);
             } else
                 this.sendItem(focusSlot);
         } else {
-            if (this.isControlPressed() || this.isShiftPressed()) {
+            if (Screen.hasControlDown() || Screen.hasShiftDown()) {
                 for (Slot slot : this.container.slotList) {
                     if (slot.inventory == focusSlot.inventory)
                         continue;
                     if (slot.getStack().isEqualIgnoreTags(focusStack)) {
                         this.onMouseClick(slot, slot.id, 0, SlotActionType.QUICK_MOVE);
-                        if (!this.isControlPressed())
+                        if (!Screen.hasControlDown())
                             break;
                     }
                 }

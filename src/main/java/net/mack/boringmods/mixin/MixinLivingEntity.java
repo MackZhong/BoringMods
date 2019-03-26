@@ -20,6 +20,6 @@ public abstract class MixinLivingEntity {
         Vec3d pos = MinecraftClient.getInstance().player.getPos();
         logger.info(String.format("%s killed by %s at %d, %d, %d.",
                 MinecraftClient.getInstance().player.getDisplayName().getFormattedText(),
-                damageSource_1.getName(), pos.getX(), pos.getY(), pos.getZ()));
+                damageSource_1.getName(), (int)pos.getX(), (int)pos.getY(), (int)pos.getZ()));
     }
 }

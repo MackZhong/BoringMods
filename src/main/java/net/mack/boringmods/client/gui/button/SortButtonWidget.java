@@ -58,10 +58,10 @@ public class SortButtonWidget extends ButtonWidget {
         int textureId = this.getYImage(this.isHovered());
         int texX = 0;
         int texY = 46 + textureId * 20;
-        this.drawTexturedRect(this.x, this.y, texX, texY, leftWidth, topHeight);
-        this.drawTexturedRect(this.x + leftWidth, this.y, 200 - rightWidth, texY, rightWidth, topHeight);
-        this.drawTexturedRect(this.x, this.y + topHeight, texX, texY + 20 - bottomHeight, leftWidth, bottomHeight);
-        this.drawTexturedRect(this.x + leftWidth, this.y + topHeight, 200 - rightWidth, texY + 20 - bottomHeight, rightWidth, bottomHeight);
+        this.blit(this.x, this.y, texX, texY, leftWidth, topHeight);
+        this.blit(this.x + leftWidth, this.y, 200 - rightWidth, texY, rightWidth, topHeight);
+        this.blit(this.x, this.y + topHeight, texX, texY + 20 - bottomHeight, leftWidth, bottomHeight);
+        this.blit(this.x + leftWidth, this.y + topHeight, 200 - rightWidth, texY + 20 - bottomHeight, rightWidth, bottomHeight);
         this.renderBg(client, cursorX, cursorY);
         int fontColor = 14737632;
         if (!this.active) {
@@ -70,7 +70,7 @@ public class SortButtonWidget extends ButtonWidget {
             fontColor = 16777120;
         }
 
-        this.drawStringCentered(fontRenderer, this.getMessage(), this.x + leftWidth, this.y + topHeight - fontRenderer.fontHeight / 2, fontColor | MathHelper.ceil(this.alpha * 255.0F) << 24);
+        this.drawCenteredString(fontRenderer, this.getMessage(), this.x + leftWidth, this.y + topHeight - fontRenderer.fontHeight / 2, fontColor | MathHelper.ceil(this.alpha * 255.0F) << 24);
 
         int top = this.y - 62;
 //        left *= client.window.getScaleFactor();

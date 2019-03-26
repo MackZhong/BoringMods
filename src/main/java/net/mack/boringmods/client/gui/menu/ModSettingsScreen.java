@@ -28,23 +28,23 @@ public class ModSettingsScreen extends Screen {
     protected void onInitialized() {
         int index = 0;
         for (ModOption option : SETTING) {
-            int x = this.screenWidth / 2 - 155 + index * 2 * 160;
-            int y = this.screenHeight / 6 + 24 * (index >> 1);
+            int x = this.width / 2 - 155 + index * 2 * 160;
+            int y = this.height / 6 + 24 * (index >> 1);
             AbstractButtonWidget button = this.addButton(
                     option.createOptionButton(options, x, y, 150)
             );
             ++index;
         }
 
-        this.addButton(new ButtonWidget(this.screenWidth / 2 - 100, this.screenHeight - 27, 200, 20, I18n.translate("gui.done", new Object[0]), (buttonWidget_1) -> {
-            this.client.options.write();
+        this.addButton(new ButtonWidget(this.width / 2 - 100, this.height - 27, 200, 20, I18n.translate("gui.done", new Object[0]), (buttonWidget_1) -> {
+            this.minecraft.options.write();
 //            this.client.window.method_4475();
-            this.client.openScreen(this.parent);
+            this.minecraft.openScreen(this.parent);
         }));
     }
 
     public void render(int int_1, int int_2, float float_1) {
-        this.drawBackground();
+        this.renderBackground();
         super.render(int_1, int_2, float_1);
     }
 }
