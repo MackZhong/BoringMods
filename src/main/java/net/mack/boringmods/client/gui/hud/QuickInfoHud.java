@@ -1,6 +1,5 @@
 package net.mack.boringmods.client.gui.hud;
 
-import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.datafixers.DataFixUtils;
 import net.fabricmc.api.EnvType;
@@ -8,8 +7,9 @@ import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.FontRenderer;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Drawable;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.entity.Entity;
@@ -35,7 +35,6 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.ChunkNibbleArray;
 import net.minecraft.world.chunk.ChunkPos;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.chunk.light.LightingProvider;
@@ -45,9 +44,9 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Environment(EnvType.CLIENT)
-public class QuickInfoHud extends Drawable {
+public class QuickInfoHud extends DrawableHelper {
     private final MinecraftClient client;
-    private final FontRenderer fontRenderer;
+    private final TextRenderer fontRenderer;
     private HitResult hitFluid;
     private Entity player;
     @Nullable
@@ -63,7 +62,7 @@ public class QuickInfoHud extends Drawable {
 
     public QuickInfoHud(MinecraftClient mcClient) {
         this.client = mcClient;
-        this.fontRenderer = mcClient.fontRenderer;
+        this.fontRenderer = mcClient.textRenderer;
         this.logger.info("QuickInfo Hud initialized.");
     }
 
@@ -114,12 +113,12 @@ public class QuickInfoHud extends Drawable {
         int scaleWidth = this.client.window.getScaledWidth();
         int lineHeight = this.fontRenderer.fontHeight + 2;
         int left = (scaleWidth - maxLineWidth) / 2 - 2;
-        drawRect(left, top, left + maxLineWidth + 1, top + lines.size() * lineHeight + 2, 0x88B0B0B0);
+        fill(left, top, left + maxLineWidth + 1, top + lines.size() * lineHeight + 2, 0x88B0B0B0);
         top++;
         left++;
         maxLineWidth--;
         for (String line : lines) {
-            drawRect(left, top, left + maxLineWidth, top + lineHeight, 0xAA0000AA);
+            fill(left, top, left + maxLineWidth, top + lineHeight, 0xAA0000AA);
             this.fontRenderer.draw(line, left + 1, top + 1, 0x00E0E0E0);
             top += lineHeight;
         }
@@ -131,7 +130,7 @@ public class QuickInfoHud extends Drawable {
             return infos;
         }
 
-        BlockPos pos = this.player.getPos();
+        BlockPos pos = this.player.getBlockPos();
         pos = new BlockPos(pos.getX(), (int) this.player.getBoundingBox().minY, pos.getZ());
         Direction facing = this.player.getHorizontalFacing();
         infos.add(String.format("%d, %d, %d %s",
@@ -189,13 +188,13 @@ public class QuickInfoHud extends Drawable {
                         WorldChunk chunk = this.getClientChunk();
                         if (!chunk.isEmpty()) {
                             infos.add(I18n.translate("quickinfo.light.client",
-                                    chunk.getLightLevel(pos, 0), this.client.world.getLightLevel(LightType.SKY_LIGHT, pos), this.client.world.getLightLevel(LightType.BLOCK_LIGHT, pos)));
+                                    chunk.getLightLevel(pos, 0), this.client.world.getLightLevel(LightType.SKY, pos), this.client.world.getLightLevel(LightType.BLOCK, pos)));
                             chunk = this.getChunk();
                             if (null != chunk) {
                                 World world = this.getWorld();
                                 LightingProvider provider = world.getChunkManager().getLightingProvider();
                                 infos.add(I18n.translate("quickinfo.light.server",
-                                        provider.get(LightType.SKY_LIGHT).getLightLevel(pos), provider.get(LightType.BLOCK_LIGHT).getLightLevel(pos)));
+                                        provider.get(LightType.SKY).getLightLevel(pos), provider.get(LightType.BLOCK).getLightLevel(pos)));
 //                            this.lightingArray = provider.get(LightType.BLOCK_LIGHT).getChunkLightArray(pos.getX(), pos.getY(), pos.getZ());
                             }
                         }
@@ -306,7 +305,7 @@ public class QuickInfoHud extends Drawable {
 
     private WorldChunk getClientChunk() {
         if (null == this.chunkClient && null != this.chunkPos) {
-            this.chunkClient = this.client.world.getWorldChunk(this.chunkPos.x, this.chunkPos.z);
+            this.chunkClient = this.client.world.method_8497(this.chunkPos.x, this.chunkPos.z);
         }
 
         return this.chunkClient;

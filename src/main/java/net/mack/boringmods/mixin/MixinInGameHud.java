@@ -47,7 +47,7 @@ public abstract class MixinInGameHud {
         }
     }
 
-    @Inject(method = "method_1745"
+    @Inject(method = "resetDebugHudChunk"
             , at = @At(
             value = "RETURN"
     ))

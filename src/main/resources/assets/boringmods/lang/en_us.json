@@ -11,5 +11,9 @@
   "quickinfo.east": "East",
   "quickinfo.light.client":"Client: %d total, %d sky, %d block",
   "quickinfo.light.server": "Server: %d sky, %d block",
-  "quickinfo.config": "Configuration"
+  "quickinfo.config": "Configuration",
+  "boringmods.category": "BoringMods",
+  "key.boringmods.excavate": "Excavate",
+  "key.boringmods.tunnel": "Tunnel",
+  "key.boringmods.toggle_light_overlay": "Toggle Light Overlay"
 }

@@ -5,8 +5,13 @@
   "mixins": [
     "MixinInGameHud",
     "MixinPlayerEntity",
-    "MixinServerPlayerInteractionManager",
-    "MixinPlayerInventoryScreen"
+    "MixinBlockBreak",
+    "MixinPlayerInventoryScreen",
+    "MixinMinecraftClient",
+    "MixinGameRenderer",
+    "MixinContainerScreen",
+    "MixinPauseMenuScreen",
+    "MixinMainMenuScreen"
   ],
   "injectors": {
     "defaultRequire": 1
