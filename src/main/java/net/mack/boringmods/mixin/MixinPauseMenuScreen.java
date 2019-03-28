@@ -22,7 +22,7 @@ public abstract class MixinPauseMenuScreen extends Screen {
         super(textComponent_1);
     }
 
-    @Inject(at = @At("HEAD"), method = "init()V")
+    @Inject(at = @At("HEAD"), method = "init")
     public void drawMenuButton(CallbackInfo info) {
         if (!ModOptions.INSTANCE.menuAdded) {
             this.addButton(new ButtonWidget(

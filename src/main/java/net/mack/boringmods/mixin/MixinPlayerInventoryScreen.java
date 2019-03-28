@@ -42,10 +42,10 @@ public abstract class MixinPlayerInventoryScreen extends AbstractPlayerInventory
         super(container_1, playerInventory_1, textComponent_1);
     }
 
-    @Inject(method = "init()V"
+    @Inject(method = "init"
             , at = @At(value = "INVOKE",
 //            args = "log=true",
-            target = "Lnet/minecraft/client/gui/ingame/PlayerInventoryScreen;focusOn(Lnet/minecraft/client/gui/InputListener;)V"
+            target = "Lnet/minecraft/client/gui/ingame/PlayerInventoryScreen;method_20085(Lnet/minecraft/client/gui/InputListener;)V"
             //"Lnet/minecraft/client/gui/Screen;addButton(Lnet/minecraft/client/gui/widget/AbstractButtonWidget;)Lnet/minecraft/client/gui/widget/AbstractButtonWidget;"
             //"Lnet/minecraft/client/gui/ingame/PlayerInventoryScreen;addButton(Lnet/minecraft/client/gui/widget/AbstractButtonWidget;)Lnet/minecraft/client/gui/widget/AbstractButtonWidget;"
     ))
