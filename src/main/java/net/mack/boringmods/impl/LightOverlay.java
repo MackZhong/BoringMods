@@ -79,7 +79,7 @@ public class LightOverlay {
             return OverlayType.NONE;
         if ((!blockBelowState.getMaterial().blocksLight() && blockBelowState.isTranslucent(world, pos.down())) || !SpawnHelper.isClearForSpawn(world, pos, world.getBlockState(pos), world.getFluidState(pos)))
             return OverlayType.NONE;
-        if (!world.method_8628(world.getBlockState(pos), pos, VerticalEntityPosition.fromEntity(playerEntity)))
+        if (!world.canPlace(world.getBlockState(pos), pos, VerticalEntityPosition.fromEntity(playerEntity)))
             return OverlayType.NONE;
         if (blockBelowState.isAir() || !world.getBlockState(pos).isAir() || !blockBelowState.hasSolidTopSurface(world, pos, playerEntity) || !world.getFluidState(pos.down()).isEmpty())
             return OverlayType.NONE;
@@ -154,15 +154,17 @@ public class LightOverlay {
         double d0 = vecCamera.x;
         double d1 = vecCamera.y - 0.005D;
         double d2 = vecCamera.z;
-        Color color = Color.GREEN;
+//        Color green = Color.GREEN;
+        Color blue = Color.BLUE;
 
-        buffer.begin(4, VertexFormats.POSITION_COLOR);
-        buffer.vertex(pos.getX() - d0, pos.getY() - d1, pos.getZ() - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
-        buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
-        buffer.vertex(pos.getX() - d0, pos.getY() - d1, pos.getZ() - d2 + 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
-        buffer.vertex(pos.getX() - d0, pos.getY() - d1, pos.getZ() - d2 + 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
-        buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
-        buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2 + 1).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
+        buffer.begin(3, VertexFormats.POSITION_COLOR);
+//        buffer.vertex(pos.getX() - d0, pos.getY() - d1, pos.getZ() - d2).color(green.getRed(), green.getGreen(), green.getBlue(), 20).next();
+//        buffer.vertex(pos.getX() - d0, pos.getY() - d1, pos.getZ() - d2 + 1).color(green.getRed(), green.getGreen(), green.getBlue(), 50).next();
+//        buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2).color(green.getRed(), green.getGreen(), green.getBlue(), 100).next();
+        buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2).color(blue.getRed(), blue.getGreen(), blue.getBlue(), 50).next();
+        buffer.vertex(pos.getX() - d0, pos.getY() - d1, pos.getZ() - d2 + 1).color(blue.getRed(), blue.getGreen(), blue.getBlue(), 50).next();
+        buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2 + 1).color(blue.getRed(), blue.getGreen(), blue.getBlue(), 50).next();
+        buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2).color(blue.getRed(), blue.getGreen(), blue.getBlue(), 50).next();
         tessellator.draw();
     }
 

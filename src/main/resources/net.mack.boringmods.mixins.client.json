@@ -11,7 +11,8 @@
     "MixinGameRenderer",
     "MixinContainerScreen",
     "MixinPauseMenuScreen",
-    "MixinMainMenuScreen"
+    "MixinMainMenuScreen",
+    "MixinCrossbowItem"
   ],
   "injectors": {
     "defaultRequire": 1
