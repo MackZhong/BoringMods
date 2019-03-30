@@ -2,7 +2,6 @@ package net.mack.boringmods.impl;
 
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
-import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
 import net.fabricmc.fabric.api.network.PacketConsumer;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
@@ -213,7 +212,7 @@ public class Excavator {
                 }
                 if (!brokenBlocks.contains(p) &&
                         player.isUsingEffectiveTool(world.getBlockState(p))) {
-                    if (p.method_19455(pos) <= excavateRange) {
+                    if (p.isWithinDistance(pos, excavateRange)) {
                         nextToBreak.add(p);
                     }
                     logger.debug("Excavator: breakBlock {}", p);

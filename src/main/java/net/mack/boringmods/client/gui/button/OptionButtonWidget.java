@@ -9,8 +9,8 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 public class OptionButtonWidget extends ButtonWidget {
     private ModOption modOption;
 
-    public OptionButtonWidget(int x, int y, int width, int height, ModOption option, String title, class_4241 onPress) {
-        super(x, y, width, height, title, onPress);
+    public OptionButtonWidget(int x, int y, int width, int height, ModOption option, String title, ButtonWidget.PressAction pressAction) {
+        super(x, y, width, height, title, pressAction);
         this.modOption = option;
     }
 }

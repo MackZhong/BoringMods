@@ -18,8 +18,8 @@ public class SortButtonWidget extends ButtonWidget {
 
     public SortButtonWidget(int sId, int left, int top, int width, int height,
                             Container cont, RecipeBookGui recipe,
-                            class_4241 buttonWidget$class_4241_1) {
-        super(left, top, width, height, "Sort", buttonWidget$class_4241_1);
+                            ButtonWidget.PressAction pressAction) {
+        super(left, top, width, height, "Sort", pressAction);
 
         this.container = cont;
         this.recipeBookGui = recipe;

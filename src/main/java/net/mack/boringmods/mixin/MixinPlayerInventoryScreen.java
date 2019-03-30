@@ -3,32 +3,21 @@ package net.mack.boringmods.mixin;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.mack.boringmods.client.gui.button.SortButtonWidget;
-import net.mack.boringmods.util.IRecipeBookGui;
-import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.ingame.AbstractPlayerInventoryScreen;
 import net.minecraft.client.gui.ingame.PlayerInventoryScreen;
 import net.minecraft.client.gui.recipebook.RecipeBookGui;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.RecipeBookButtonWidget;
 import net.minecraft.container.Container;
-import net.minecraft.container.ContainerType;
-import net.minecraft.container.GenericContainer;
 import net.minecraft.container.PlayerContainer;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.text.TextComponent;
-import net.minecraft.text.TranslatableTextComponent;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+@Deprecated
 @Environment(EnvType.CLIENT)
 @Mixin(value = PlayerInventoryScreen.class)
 public abstract class MixinPlayerInventoryScreen extends AbstractPlayerInventoryScreen {

@@ -21,11 +21,11 @@ public class ModOptions implements Runnable {
 
     public int excavateMaxBlocks = 64;
     public int excavateRange = 8;
-    public int tunnelLong = 16;
-    public int tunnelWidth = 2;
+    public int tunnelLong = 19;
+    public int tunnelWidth = 3;
     public int tunnelHeight = 3;
-    public boolean lightOverlayEnabled = false;
-    public int lightOverlayRange = 16;
+    public boolean lightOverlayEnabled = true;
+    public int lightOverlayRange = 32;
 
     private ModOptions() {
         this.configFile = new File(FabricLoader.getInstance().getConfigDirectory(), "options.txt");
