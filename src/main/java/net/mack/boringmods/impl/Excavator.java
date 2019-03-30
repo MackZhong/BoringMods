@@ -196,7 +196,7 @@ public class Excavator {
         ClientConnection connection = networkHandler.getClientConnection();
         int brokenCount = 1;
         int excavateMaxBlocks = ModOption.EXCAVATE_MAX_BLOCKS.getValue(ModOptions.INSTANCE).intValue();
-        double excavateRange = ModOption.EXCAVATE_RANGE.getValue(ModOptions.INSTANCE).doubleValue();
+        double excavateRange = ModOption.EXCAVATE_RANGE.getValue(ModOptions.INSTANCE);
         ModOptions.LOGGER.info("Excavate max blocks is {}", excavateMaxBlocks);
         ModOptions.LOGGER.info("Excavate range is {}", excavateRange);
         while (brokenCount < excavateMaxBlocks &&
@@ -214,9 +214,9 @@ public class Excavator {
                 }
                 if (!brokenBlocks.contains(p) &&
                         player.isUsingEffectiveTool(world.getBlockState(p))) {
-                    if (p.isWithinDistance(pos, excavateRange)) {
-                        nextToBreak.add(p);
-                    }
+                    nextToBreak.add(p);
+//                    if (p.isWithinDistance(pos, excavateRange)) {
+//                    }
                     logger.info("Excavator: breakBlock {}", p);
                     world.breakBlock(p, !player.isCreative());
                     connection.sendPacket(createBreackPacket(p));

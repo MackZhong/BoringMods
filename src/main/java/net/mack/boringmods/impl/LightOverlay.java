@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.mack.boringmods.client.options.ModOption;
 import net.mack.boringmods.client.options.ModOptions;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
@@ -22,6 +23,7 @@ import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class LightOverlay {
@@ -60,7 +62,7 @@ public class LightOverlay {
 //    }
 
     private void toggle() {
-         ModOption.LIGHT_OVERLAY_ENABLE.toggle(ModOptions.INSTANCE);
+        ModOption.LIGHT_OVERLAY_ENABLE.toggle(ModOptions.INSTANCE);
     }
 //
 //    public static FabricKeyBinding getKeyToggleLightOverlay() {
@@ -90,9 +92,17 @@ public class LightOverlay {
         return OverlayType.DANGEROUS;
     }
 
-    private boolean slimeSpawn(World world,  BlockPos pos, PlayerEntity playerEntity) {
+    private boolean canSlimeSpawn(World world, BlockPos pos, PlayerEntity playerEntity) {
         BlockState blockBelowState = world.getBlockState(pos.down());
-        if (blockBelowState.isAir() || !world.getBlockState(pos).isAir() || !blockBelowState.hasSolidTopSurface(world, pos, playerEntity))
+        Block block = blockBelowState.getBlock();
+        if (Blocks.BEDROCK == block || Blocks.BARRIER == block)
+            return false;
+        if (!world.canPlace(blockBelowState, pos, VerticalEntityPosition.fromEntity(playerEntity)) ||
+                !SpawnHelper.isClearForSpawn(world, pos, world.getBlockState(pos), world.getFluidState(pos)))
+            return false;
+        if (blockBelowState.isAir() ||
+//                !world.getBlockState(pos).isAir() ||
+                !blockBelowState.hasSolidTopSurface(world, pos, playerEntity))
             return false;
 
         long xPosition = pos.getX() >> 4;
@@ -113,26 +123,78 @@ public class LightOverlay {
             Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
             Vec3d vecCamera = camera.getPos();
             int lightOverlayRange = ModOption.LIGHT_OVERLAY_RANGE.getValue(ModOptions.INSTANCE).intValue();
-            BlockPos.iterateBoxPositions(playerPos.add(-lightOverlayRange, -lightOverlayRange, -lightOverlayRange), playerPos.add(lightOverlayRange, lightOverlayRange, lightOverlayRange)).forEach(pos -> {
+            ArrayList<BlockPos> slimeBlocks = new ArrayList<>();
+            ArrayList<BlockPos> dangerousBlocks = new ArrayList<>();
+            BlockPos.iterateBoxPositions(playerPos.add(-lightOverlayRange, -lightOverlayRange, -lightOverlayRange),
+                    playerPos.add(lightOverlayRange, 3, lightOverlayRange)).forEach(pos -> {
                 if (world.getBiome(pos).getMaxSpawnLimit() > 0) {
                     OverlayType type = this.getOverlayType(pos, world, playerEntity);
                     if (type != OverlayType.NONE) {
 //                        VoxelShape shape = world.getBlockState(pos).getCollisionShape(world, pos);
                         Color color = type == OverlayType.DANGEROUS ? Color.RED : Color.YELLOW;
-                        this.renderOverlay(vecCamera, pos, color);
+//                        this.renderOverlay(vecCamera, pos, color);
+                        dangerousBlocks.add(new BlockPos(pos));
                     }
-                    if (this.slimeSpawn(world, pos, playerEntity)) {
-                        this.renderSlime(vecCamera, pos);
+                    if (this.canSlimeSpawn(world, pos, playerEntity)) {
+                        slimeBlocks.add(new BlockPos(pos));
+//                        slimeBlocks.add(pos);
+//                        this.renderSlime(vecCamera, pos);
                     }
                 }
             });
+            this.renderSlimeBlocks(vecCamera, slimeBlocks);
+            this.renderDangerousBlocks(vecCamera, dangerousBlocks);
+
             GlStateManager.enableBlend();
             GlStateManager.enableTexture();
         }
     }
 
+    private void renderDangerousBlocks(Vec3d vecCamera, ArrayList<BlockPos> dangerousBlocks) {
+        double d0 = vecCamera.x;
+        double d1 = vecCamera.y - 0.02D;
+        double d2 = vecCamera.z;
+        Color color = Color.RED;
+
+        GlStateManager.lineWidth(1.0F);
+        GlStateManager.depthMask(false);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBufferBuilder();
+        buffer.begin(1, VertexFormats.POSITION_COLOR);
+        for (BlockPos pos : dangerousBlocks) {
+            buffer.vertex(pos.getX() + 0.1 - d0, pos.getY() - d1, pos.getZ() + 0.1 - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
+            buffer.vertex(pos.getX() + 0.9 - d0, pos.getY() - d1, pos.getZ() + 0.9 - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
+            buffer.vertex(pos.getX() + 0.9 - d0, pos.getY() - d1, pos.getZ() + 0.1 - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
+            buffer.vertex(pos.getX() + 0.1 - d0, pos.getY() - d1, pos.getZ() + 0.9 - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
+        }
+        tessellator.draw();
+        GlStateManager.depthMask(true);
+    }
+
+    private void renderSlimeBlocks(Vec3d vecCamera, ArrayList<BlockPos> slimeBlocks) {
+        double d0 = vecCamera.x;
+        double d1 = vecCamera.y - 0.005D;
+        double d2 = vecCamera.z;
+        Color color = Color.BLUE;
+
+        GlStateManager.lineWidth(2.0F);
+        GlStateManager.depthMask(false);
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBufferBuilder();
+        buffer.begin(4, VertexFormats.POSITION_COLOR);
+        for (BlockPos pos : slimeBlocks) {
+//            buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2).color(color.getRed(), color.getGreen(), color.getBlue(), 50).next();
+            buffer.vertex(pos.getX() - d0, pos.getY() - d1, pos.getZ() - d2 + 1).color(color.getRed(), color.getGreen(), color.getBlue(), 50).next();
+            buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2 + 1).color(color.getRed(), color.getGreen(), color.getBlue(), 50).next();
+            buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2).color(color.getRed(), color.getGreen(), color.getBlue(), 50).next();
+        }
+        tessellator.draw();
+        GlStateManager.depthMask(true);
+    }
+
     private void renderOverlay(Vec3d vecCamera, BlockPos pos, Color color) {
         GlStateManager.lineWidth(1.0F);
+        GlStateManager.depthMask(false);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBufferBuilder();
         double d0 = vecCamera.x;
@@ -145,6 +207,7 @@ public class LightOverlay {
         buffer.vertex(pos.getX() + 0.8 - d0, pos.getY() - d1, pos.getZ() + 0.2 - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
         buffer.vertex(pos.getX() + 0.2 - d0, pos.getY() - d1, pos.getZ() + 0.8 - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
         tessellator.draw();
+        GlStateManager.depthMask(true);
     }
 
     private void renderSlime(Vec3d vecCamera, BlockPos pos) {

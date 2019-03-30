@@ -15,11 +15,4 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class MixinLivingEntity {
     private org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("boringmods");
 
-    @Inject(method = "method_16080", at = @At("HEAD"), cancellable = true)
-    private void method_16080(DamageSource damageSource_1, CallbackInfo ci) {
-        Vec3d pos = MinecraftClient.getInstance().player.getPos();
-        logger.info(String.format("%s killed by %s at %d, %d, %d.",
-                MinecraftClient.getInstance().player.getDisplayName().getFormattedText(),
-                damageSource_1.getName(), (int)pos.getX(), (int)pos.getY(), (int)pos.getZ()));
-    }
 }

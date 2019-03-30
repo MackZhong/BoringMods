@@ -25,7 +25,7 @@ public class ModOptions implements Runnable {
     public int tunnelWidth = 3;
     public int tunnelHeight = 3;
     public boolean lightOverlayEnabled = true;
-    public int lightOverlayRange = 32;
+    public int lightOverlayRange = 16;
 
     private ModOptions() {
         this.configFile = new File(FabricLoader.getInstance().getConfigDirectory(), "options.txt");
