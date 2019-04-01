@@ -1,5 +1,7 @@
 package net.mack.boringmods.impl;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.mack.boringmods.client.options.ModOption;
@@ -15,6 +17,8 @@ import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.VerticalEntityPosition;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sortme.SpawnHelper;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -23,6 +27,7 @@ import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -30,6 +35,7 @@ import java.util.Random;
 
 public class LightOverlay {
     private FabricKeyBinding keyToggleLightOverlay;
+    private Table<Integer, Integer , Boolean> slimeTable = HashBasedTable.create();
 
     enum OverlayType {
         NONE, WARNING, DANGEROUS
@@ -94,16 +100,19 @@ public class LightOverlay {
         return OverlayType.DANGEROUS;
     }
 
-    private boolean canSlimeSpawn(World world, BlockPos pos, PlayerEntity playerEntity) {
+    private boolean canSlimeSpawn(long seed, World world, BlockPos pos, PlayerEntity playerEntity) {
         Biome biome = world.getBiome(pos);
         if (Biomes.SWAMP == biome || Biomes.SWAMP_HILLS == biome) {
             return true;
         }
+        if (Biomes.MUSHROOM_FIELD_SHORE == biome || Biomes.MUSHROOM_FIELDS == biome){
+            return false;
+        }
+        long xPosition = pos.getX() >> 4;
+        long zPosition = pos.getZ() >> 4;
         BlockState blockBelowState = world.getBlockState(pos.down());
         Block block = blockBelowState.getBlock();
         if (pos.getY() > 39 ||
-                Biomes.MUSHROOM_FIELD_SHORE == biome ||
-                Biomes.MUSHROOM_FIELDS == biome ||
                 Blocks.BEDROCK == block ||
                 Blocks.BARRIER == block ||
                 !world.canPlace(blockBelowState, pos, VerticalEntityPosition.fromEntity(playerEntity)) ||
@@ -113,27 +122,53 @@ public class LightOverlay {
                 !blockBelowState.hasSolidTopSurface(world, pos, playerEntity))
             return false;
 
-        long xPosition = pos.getX() >> 4;
-        long zPosition = pos.getZ() >> 4;
-        long seed = world.getSeed();
-        ModOptions.LOGGER.info("World seed is {}", seed);
+        Integer xArea = (int) xPosition;
+        Integer zArea= (int)zPosition;
+        if (this.slimeTable.contains(xArea, zArea))
+            return true;
+
         Random rnd = new Random(seed +
                 (long) (xPosition * xPosition * 0x4c1906) +
                 (long) (xPosition * 0x5ac0db) +
                 (long) (zPosition * zPosition) * 0x4307a7L +
                 (long) (zPosition * 0x5f24f) ^ 0x3ad8025f);
-        return rnd.nextInt(10) == 0;
+        boolean slimeSpawn = rnd.nextInt(10) == 0;
+        if (slimeSpawn){
+            this.slimeTable.put(xArea, zArea, true);
+        }
+        return slimeSpawn;
     }
 
     public void render(World world, PlayerEntity playerEntity) {
         if (ModOption.LIGHT_OVERLAY_ENABLE.getValue(ModOptions.INSTANCE)) {
             GlStateManager.disableTexture();
             GlStateManager.disableBlend();
-            BlockPos playerPos = playerEntity.getBlockPos();//new BlockPos(playerEntity.x, playerEntity.y, playerEntity.z);
+            GlStateManager.depthMask(false);
+
+            int lightOverlayRange = ModOption.LIGHT_OVERLAY_RANGE.getValue(ModOptions.INSTANCE).intValue();
+            BlockPos playerPos = playerEntity.getBlockPos();
             Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
             Vec3d vecCamera = camera.getPos();
-            int lightOverlayRange = ModOption.LIGHT_OVERLAY_RANGE.getValue(ModOptions.INSTANCE).intValue();
-            ArrayList<BlockPos> slimeBlocks = new ArrayList<>();
+
+            boolean overWorld = world.getDimension().getType() == DimensionType.OVERWORLD;
+            MinecraftServer server = MinecraftClient.getInstance().getServer();
+            if (overWorld && null != server) {
+                ServerWorld serverWorld = server.getWorld(DimensionType.OVERWORLD);
+                long seed = serverWorld.getSeed();
+                ArrayList<BlockPos> slimeBlocks = new ArrayList<>();
+                BlockPos.iterateBoxPositions(playerPos.add(-lightOverlayRange, -lightOverlayRange, -lightOverlayRange),
+                        playerPos.add(lightOverlayRange, 3, lightOverlayRange)).forEach(pos -> {
+                    if (world.getBiome(pos).getMaxSpawnLimit() > 0 &&
+                            this.canSlimeSpawn(seed, world, pos, playerEntity)) {
+                        slimeBlocks.add(new BlockPos(pos));
+//                        this.renderSlime(vecCamera, pos);
+                    }
+                });
+
+                GlStateManager.lineWidth(2.0F);
+                this.renderSlimeBlocks(vecCamera, slimeBlocks);
+            }
+
             ArrayList<BlockPos> dangerousBlocks = new ArrayList<>();
             BlockPos.iterateBoxPositions(playerPos.add(-lightOverlayRange, -lightOverlayRange, -lightOverlayRange),
                     playerPos.add(lightOverlayRange, 3, lightOverlayRange)).forEach(pos -> {
@@ -145,16 +180,13 @@ public class LightOverlay {
 //                        this.renderOverlay(vecCamera, pos, color);
                         dangerousBlocks.add(new BlockPos(pos));
                     }
-                    if (this.canSlimeSpawn(world, pos, playerEntity)) {
-                        slimeBlocks.add(new BlockPos(pos));
-//                        slimeBlocks.add(pos);
-//                        this.renderSlime(vecCamera, pos);
-                    }
                 }
             });
-            this.renderSlimeBlocks(vecCamera, slimeBlocks);
+
+            GlStateManager.lineWidth(1.0F);
             this.renderDangerousBlocks(vecCamera, dangerousBlocks);
 
+            GlStateManager.depthMask(true);
             GlStateManager.enableBlend();
             GlStateManager.enableTexture();
         }
@@ -166,8 +198,6 @@ public class LightOverlay {
         double d2 = vecCamera.z;
         Color color = Color.RED;
 
-        GlStateManager.lineWidth(1.0F);
-        GlStateManager.depthMask(false);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBufferBuilder();
         buffer.begin(1, VertexFormats.POSITION_COLOR);
@@ -178,7 +208,6 @@ public class LightOverlay {
             buffer.vertex(pos.getX() + 0.1 - d0, pos.getY() - d1, pos.getZ() + 0.9 - d2).color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha()).next();
         }
         tessellator.draw();
-        GlStateManager.depthMask(true);
     }
 
     private void renderSlimeBlocks(Vec3d vecCamera, ArrayList<BlockPos> slimeBlocks) {
@@ -187,8 +216,6 @@ public class LightOverlay {
         double d2 = vecCamera.z;
         Color color = Color.BLUE;
 
-        GlStateManager.lineWidth(2.0F);
-        GlStateManager.depthMask(false);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBufferBuilder();
         buffer.begin(4, VertexFormats.POSITION_COLOR);
@@ -199,7 +226,6 @@ public class LightOverlay {
             buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2).color(color.getRed(), color.getGreen(), color.getBlue(), 50).next();
         }
         tessellator.draw();
-        GlStateManager.depthMask(true);
     }
 
     private void renderOverlay(Vec3d vecCamera, BlockPos pos, Color color) {

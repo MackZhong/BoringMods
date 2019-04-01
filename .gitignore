@@ -9,12 +9,12 @@
 !/.gitattributes
 !/.gitignore
 !/.editorconfig
-!/build.gradle
+!/settings.gradle
 !/gradle.properties
+!/build.gradle
 !/gradlew
 !/gradlew.bat
 !/HEADER
 !/Jenkinsfile
 !/LICENSE
 !/README.md
-!/settings.gradle

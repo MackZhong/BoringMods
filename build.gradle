@@ -4,7 +4,7 @@ plugins {
 
 archivesBaseName = project.name
 group = 'net.mack'
-version = 'fabric-' + mc_version + '-' + mod_version + '-' + build_number
+version = 'fabric-' + mc_version + '-' + mod_version + '.' + mapping + '-' + build_number
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
