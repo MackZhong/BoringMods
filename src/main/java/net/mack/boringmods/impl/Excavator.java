@@ -217,7 +217,7 @@ public class Excavator {
                     nextToBreak.add(p);
 //                    if (p.isWithinDistance(pos, excavateRange)) {
 //                    }
-                    logger.info("Excavator: breakBlock {}", p);
+//                    logger.info("Excavator: breakBlock {}", p);
                     world.breakBlock(p, !player.isCreative());
                     connection.sendPacket(createBreackPacket(p));
                     brokenBlocks.add(p);

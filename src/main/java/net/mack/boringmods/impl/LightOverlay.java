@@ -21,6 +21,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.Biomes;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -93,21 +95,29 @@ public class LightOverlay {
     }
 
     private boolean canSlimeSpawn(World world, BlockPos pos, PlayerEntity playerEntity) {
+        Biome biome = world.getBiome(pos);
+        if (Biomes.SWAMP == biome || Biomes.SWAMP_HILLS == biome) {
+            return true;
+        }
         BlockState blockBelowState = world.getBlockState(pos.down());
         Block block = blockBelowState.getBlock();
-        if (Blocks.BEDROCK == block || Blocks.BARRIER == block)
-            return false;
-        if (!world.canPlace(blockBelowState, pos, VerticalEntityPosition.fromEntity(playerEntity)) ||
-                !SpawnHelper.isClearForSpawn(world, pos, world.getBlockState(pos), world.getFluidState(pos)))
-            return false;
-        if (blockBelowState.isAir() ||
+        if (pos.getY() > 39 ||
+                Biomes.MUSHROOM_FIELD_SHORE == biome ||
+                Biomes.MUSHROOM_FIELDS == biome ||
+                Blocks.BEDROCK == block ||
+                Blocks.BARRIER == block ||
+                !world.canPlace(blockBelowState, pos, VerticalEntityPosition.fromEntity(playerEntity)) ||
+                !SpawnHelper.isClearForSpawn(world, pos, world.getBlockState(pos), world.getFluidState(pos)) ||
+//                blockBelowState.isAir() ||
 //                !world.getBlockState(pos).isAir() ||
                 !blockBelowState.hasSolidTopSurface(world, pos, playerEntity))
             return false;
 
         long xPosition = pos.getX() >> 4;
         long zPosition = pos.getZ() >> 4;
-        Random rnd = new Random(world.getSeed() +
+        long seed = world.getSeed();
+        ModOptions.LOGGER.info("World seed is {}", seed);
+        Random rnd = new Random(seed +
                 (long) (xPosition * xPosition * 0x4c1906) +
                 (long) (xPosition * 0x5ac0db) +
                 (long) (zPosition * zPosition) * 0x4307a7L +
