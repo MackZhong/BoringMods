@@ -35,7 +35,7 @@ import java.util.Random;
 
 public class LightOverlay {
     private FabricKeyBinding keyToggleLightOverlay;
-    private Table<Integer, Integer , Boolean> slimeTable = HashBasedTable.create();
+    private Table<Integer, Integer, Boolean> slimeTable = HashBasedTable.create();
 
     enum OverlayType {
         NONE, WARNING, DANGEROUS
@@ -105,25 +105,25 @@ public class LightOverlay {
         if (Biomes.SWAMP == biome || Biomes.SWAMP_HILLS == biome) {
             return true;
         }
-        if (Biomes.MUSHROOM_FIELD_SHORE == biome || Biomes.MUSHROOM_FIELDS == biome){
+        if (Biomes.MUSHROOM_FIELD_SHORE == biome || Biomes.MUSHROOM_FIELDS == biome) {
             return false;
         }
         long xPosition = pos.getX() >> 4;
         long zPosition = pos.getZ() >> 4;
         BlockState blockBelowState = world.getBlockState(pos.down());
         Block block = blockBelowState.getBlock();
-        if (pos.getY() > 39 ||
-                Blocks.BEDROCK == block ||
+        if (Blocks.BEDROCK == block ||
                 Blocks.BARRIER == block ||
                 !world.canPlace(blockBelowState, pos, VerticalEntityPosition.fromEntity(playerEntity)) ||
                 !SpawnHelper.isClearForSpawn(world, pos, world.getBlockState(pos), world.getFluidState(pos)) ||
 //                blockBelowState.isAir() ||
 //                !world.getBlockState(pos).isAir() ||
+//                pos.getY() > 39 ||
                 !blockBelowState.hasSolidTopSurface(world, pos, playerEntity))
             return false;
 
         Integer xArea = (int) xPosition;
-        Integer zArea= (int)zPosition;
+        Integer zArea = (int) zPosition;
         if (this.slimeTable.contains(xArea, zArea))
             return true;
 
@@ -133,7 +133,7 @@ public class LightOverlay {
                 (long) (zPosition * zPosition) * 0x4307a7L +
                 (long) (zPosition * 0x5f24f) ^ 0x3ad8025f);
         boolean slimeSpawn = rnd.nextInt(10) == 0;
-        if (slimeSpawn){
+        if (slimeSpawn) {
             this.slimeTable.put(xArea, zArea, true);
         }
         return slimeSpawn;

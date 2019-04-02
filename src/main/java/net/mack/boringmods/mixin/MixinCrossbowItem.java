@@ -43,6 +43,7 @@ public abstract class MixinCrossbowItem {
             listTag_1.addTag(0, projectile);
             compoundTag_1.put("ChargedProjectiles", listTag_1);
             itemStack_1.setTag(compoundTag_1);
+
             ModOptions.LOGGER.warn("[BoringMods]\"ChargedProjectiles\" key added.");
             list_1.add(ItemStack.fromTag(projectile));
             return list_1;
