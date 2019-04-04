@@ -14,6 +14,7 @@ import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.packet.CustomPayloadC2SPacket;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.PacketByteBuf;
@@ -113,7 +114,9 @@ public class Excavator {
             int damage = packetByteBuf.readInt();
             float exhaust = packetByteBuf.readFloat();
             PlayerEntity player = packetContext.getPlayer();
-            player.getMainHandStack().applyDamage(damage, player);
+            player.getMainHandStack().applyDamage(damage,
+                    player.getRand(),
+                    player instanceof ServerPlayerEntity ? (ServerPlayerEntity) player : null);
 //            player.addExhaustion(exhaust);
         }
     }

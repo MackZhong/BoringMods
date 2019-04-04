@@ -93,9 +93,9 @@ public class LightOverlay {
             return OverlayType.NONE;
         if (blockBelowState.isAir() || !world.getBlockState(pos).isAir() || !blockBelowState.hasSolidTopSurface(world, pos, playerEntity) || !world.getFluidState(pos.down()).isEmpty())
             return OverlayType.NONE;
-        if (world.method_8312(LightType.BLOCK, pos) >= 8)
+        if (world.getLightLevel(LightType.BLOCK, pos) >= 8)
             return OverlayType.NONE;
-        if (world.method_8312(LightType.SKY, pos) >= 8)
+        if (world.getLightLevel(LightType.SKY, pos) >= 8)
             return OverlayType.WARNING;
         return OverlayType.DANGEROUS;
     }
