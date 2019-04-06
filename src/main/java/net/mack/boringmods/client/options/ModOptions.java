@@ -21,7 +21,7 @@ public class ModOptions implements Runnable {
 
     public int excavateMaxBlocks = 64;
     public int excavateRange = 8;
-    public int tunnelLong = 19;
+    public int tunnelLong = 15;
     public int tunnelWidth = 3;
     public int tunnelHeight = 3;
     public boolean lightOverlayEnabled = true;

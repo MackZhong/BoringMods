@@ -15,19 +15,28 @@ import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnType;
 import net.minecraft.entity.VerticalEntityPosition;
+import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sortme.SpawnHelper;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.chunk.ChunkPos;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.gen.ChunkRandom;
+import net.minecraft.world.level.LevelGeneratorType;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -71,6 +80,13 @@ public class LightOverlay {
 
     private void toggle() {
         ModOption.LIGHT_OVERLAY_ENABLE.toggle(ModOptions.INSTANCE);
+        MinecraftServer server = MinecraftClient.getInstance().getServer();
+        boolean overWorld = MinecraftClient.getInstance().world.getDimension().getType() == DimensionType.OVERWORLD;
+        if (overWorld && null != server) {
+            ServerWorld serverWorld = server.getWorld(DimensionType.OVERWORLD);
+            long seed = serverWorld.getSeed();
+            ModOptions.LOGGER.info("World's seed is {}", seed);
+        }
     }
 //
 //    public static FabricKeyBinding getKeyToggleLightOverlay() {
@@ -98,6 +114,33 @@ public class LightOverlay {
         if (world.getLightLevel(LightType.SKY, pos) >= 8)
             return OverlayType.WARNING;
         return OverlayType.DANGEROUS;
+    }
+
+    private boolean isSlimeChunk(long seed, BlockPos pos) {
+        ChunkPos chunkPos = new ChunkPos(pos);
+        return ChunkRandom.create(chunkPos.x, chunkPos.z, seed, 987234911L).nextInt(10) == 0;
+    }
+
+    private boolean canSpawn(IWorld world, SlimeEntity slime, BlockPos pos) {
+        if (world.getDifficulty() != Difficulty.PEACEFUL) return false;
+        boolean can = true;
+
+        if (world.getLevelProperties().getGeneratorType() == LevelGeneratorType.FLAT && slime.getRand().nextInt(4) != 1) {
+            can = false;
+        } else {
+            Biome biome = world.getBiome(pos);
+            ChunkPos chunkPos = new ChunkPos(pos);
+            boolean boolean_1 = ChunkRandom.create(chunkPos.x, chunkPos.z, world.getSeed(), 987234911L).nextInt(10) == 0;
+            if ((biome == Biomes.SWAMP && pos.getY() > 50.0D && pos.getY() < 70.0D && slime.getRand().nextFloat() < 0.5F && slime.getRand().nextFloat() < world.getMoonSize() && world.getLightLevel(pos) <= slime.getRand().nextInt(8)) ||
+                    (slime.getRand().nextInt(10) == 0 && boolean_1 && pos.getY() < 40.0D)) {
+                BlockPos downPos = pos.down();
+                can = world.getBlockState(downPos).allowsSpawning(world, downPos, EntityType.SLIME);
+            }
+        }
+
+        ModOptions.LOGGER.info("Calculated slime spawn:  {} at {}", can, pos);
+
+        return can;
     }
 
     private boolean canSlimeSpawn(long seed, World world, BlockPos pos, PlayerEntity playerEntity) {
@@ -133,6 +176,7 @@ public class LightOverlay {
                 (long) (zPosition * zPosition) * 0x4307a7L +
                 (long) (zPosition * 0x5f24f) ^ 0x3ad8025f);
         boolean slimeSpawn = rnd.nextInt(10) == 0;
+
         if (slimeSpawn) {
             this.slimeTable.put(xArea, zArea, true);
         }
@@ -156,10 +200,14 @@ public class LightOverlay {
                 ServerWorld serverWorld = server.getWorld(DimensionType.OVERWORLD);
                 long seed = serverWorld.getSeed();
                 ArrayList<BlockPos> slimeBlocks = new ArrayList<>();
+                SlimeEntity slime = new SlimeEntity(EntityType.SLIME, serverWorld);
                 BlockPos.iterateBoxPositions(playerPos.add(-lightOverlayRange, -lightOverlayRange, -lightOverlayRange),
                         playerPos.add(lightOverlayRange, 3, lightOverlayRange)).forEach(pos -> {
-                    if (world.getBiome(pos).getMaxSpawnLimit() > 0 &&
-                            this.canSlimeSpawn(seed, world, pos, playerEntity)) {
+                    BlockPos downPos = pos.down();
+                    if (world.getBlockState(downPos).allowsSpawning(world, downPos, EntityType.SLIME) &&
+//                            world.getBiome(pos).getMaxSpawnLimit() > 0 &&
+//                            this.canSlimeSpawn(seed, world, pos, playerEntity)
+                            this.isSlimeChunk(seed, pos)) {
                         slimeBlocks.add(new BlockPos(pos));
 //                        this.renderSlime(vecCamera, pos);
                     }
