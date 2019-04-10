@@ -11,9 +11,18 @@
   "quickinfo.east": "East",
   "quickinfo.light.client":"Client: %d total, %d sky, %d block",
   "quickinfo.light.server": "Server: %d sky, %d block",
-  "quickinfo.config": "Configuration",
   "boringmods.category": "BoringMods",
   "key.boringmods.excavate": "Excavate",
   "key.boringmods.tunnel": "Tunnel",
-  "key.boringmods.toggle_light_overlay": "Toggle Light Overlay"
+  "key.boringmods.toggle_light_overlay": "Toggle light overlay",
+  "boringmods.configs.title": "Config Boring Mods",
+  "configs.boringmods.blocks": "%s block(s)",
+  "configs.boringmods.tunnel_width": "Tunnel's width",
+  "configs.boringmods.tunnel_height": "Tunnel's height",
+  "configs.boringmods.tunnel_long": "Tunnel's long",
+  "configs.boringmods.light_overlay": "Light overlay",
+  "configs.boringmods.light_overlay_range": "Light overlay range",
+  "configs.boringmods.excavate_range": "Excavate range",
+  "configs.boringmods.max_blocks": "Max excavate blocks",
+  "configs.boringmods.pickup_distance": "Pickup distance"
 }

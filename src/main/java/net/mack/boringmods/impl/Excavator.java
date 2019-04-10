@@ -6,8 +6,9 @@ import net.fabricmc.fabric.api.network.PacketConsumer;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
-import net.mack.boringmods.client.options.ModOption;
-import net.mack.boringmods.client.options.ModOptions;
+import net.mack.boringmods.client.options.ModConfigs;
+import net.mack.boringmods.client.options.Config;
+import net.mack.boringmods.util.IKeyBinding;
 import net.minecraft.block.*;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -25,7 +26,7 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 
-public class Excavator {
+public class Excavator  implements IKeyBinding {
     private final static Excavator instance = new Excavator();
 
     public static Excavator getInstance() {
@@ -126,7 +127,7 @@ public class Excavator {
         ServerSidePacketRegistry.INSTANCE.register(EXCAVATE_END, new PacketExcavateEnd());
     }
 
-    private CustomPayloadC2SPacket createBreackPacket(BlockPos pos) {
+    private CustomPayloadC2SPacket createBreakPacket(BlockPos pos) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         boolean validPos = null != pos;
         buf.writeBoolean(validPos);
@@ -198,10 +199,10 @@ public class Excavator {
         }
         ClientConnection connection = networkHandler.getClientConnection();
         int brokenCount = 1;
-        int excavateMaxBlocks = ModOption.EXCAVATE_MAX_BLOCKS.getValue(ModOptions.INSTANCE).intValue();
-        double excavateRange = ModOption.EXCAVATE_RANGE.getValue(ModOptions.INSTANCE);
-        ModOptions.LOGGER.info("Excavate max blocks is {}", excavateMaxBlocks);
-        ModOptions.LOGGER.info("Excavate range is {}", excavateRange);
+        int excavateMaxBlocks = Config.EXCAVATE_MAX_BLOCKS.getValue(ModConfigs.INSTANCE).intValue();
+        double excavateRange = Config.EXCAVATE_RANGE.getValue(ModConfigs.INSTANCE);
+//        ModConfigs.LOGGER.info("Excavate max blocks is {}", excavateMaxBlocks);
+//        ModConfigs.LOGGER.info("Excavate range is {}", excavateRange);
         while (brokenCount < excavateMaxBlocks &&
 //                player.isUsingEffectiveTool(state) &&
                 player.getHungerManager().getFoodLevel() > 0) {
@@ -221,8 +222,10 @@ public class Excavator {
 //                    if (p.isWithinDistance(pos, excavateRange)) {
 //                    }
 //                    logger.info("Excavator: breakBlock {}", p);
-                    world.breakBlock(p, !player.isCreative());
-                    connection.sendPacket(createBreackPacket(p));
+                    if (!(world.getBlockState(p).getBlock() instanceof SpawnerBlock)) {
+                        world.breakBlock(p, !player.isCreative());
+                    }
+                    connection.sendPacket(createBreakPacket(p));
                     brokenBlocks.add(p);
                     brokenCount = brokenBlocks.size();
                     exhaust = (0.005F * brokenCount) * (brokenCount / 8.0F + 1);
@@ -247,35 +250,35 @@ public class Excavator {
         }
         ClientConnection connection = networkHandler.getClientConnection();
 
-        int left = ModOptions.INSTANCE.tunnelWidth / 2;
-        int bottom = ModOptions.INSTANCE.tunnelHeight / 2;
+        int left = ModConfigs.INSTANCE.tunnelWidth / 2;
+        int bottom = ModConfigs.INSTANCE.tunnelHeight / 2;
         Direction facing = player.getHorizontalFacing();
         Vec3i dir = facing.getVector();
         BlockPos posLB, posRB;
         if (Direction.EAST == facing) {
             posLB = pos.north(left).down(bottom);
-            posRB = posLB.south(ModOptions.INSTANCE.tunnelWidth - 1);
+            posRB = posLB.south(ModConfigs.INSTANCE.tunnelWidth - 1);
         } else if (Direction.WEST == facing) {
             posLB = pos.south(left).down(bottom);
-            posRB = posLB.north(ModOptions.INSTANCE.tunnelWidth - 1);
+            posRB = posLB.north(ModConfigs.INSTANCE.tunnelWidth - 1);
         } else if (Direction.SOUTH == facing) {
             posLB = pos.east(left).down(bottom);
-            posRB = posLB.west(ModOptions.INSTANCE.tunnelWidth - 1);
+            posRB = posLB.west(ModConfigs.INSTANCE.tunnelWidth - 1);
         } else if (Direction.NORTH == facing) {
             posLB = pos.west(left).down(bottom);
-            posRB = posLB.east(ModOptions.INSTANCE.tunnelWidth - 1);
+            posRB = posLB.east(ModConfigs.INSTANCE.tunnelWidth - 1);
         } else {
             return;
         }
 
         float exhaust = 0;
         int brokenCount = 1;
-        int maxBlocks = ModOptions.INSTANCE.tunnelHeight * ModOptions.INSTANCE.tunnelWidth * ModOptions.INSTANCE.tunnelLong;
+        int maxBlocks = ModConfigs.INSTANCE.tunnelHeight * ModConfigs.INSTANCE.tunnelWidth * ModConfigs.INSTANCE.tunnelLong;
         for (BlockPos posB : BlockPos.iterateBoxPositions(posLB, posRB)) {
-            BlockPos posT = posB.up(ModOptions.INSTANCE.tunnelHeight - 1);
+            BlockPos posT = posB.up(ModConfigs.INSTANCE.tunnelHeight - 1);
             for (BlockPos posN : BlockPos.iterateBoxPositions(posB, posT)) {
                 BlockPos p = posN;
-                for (int d = 0; d < ModOptions.INSTANCE.tunnelLong; ++d) {
+                for (int d = 0; d < ModConfigs.INSTANCE.tunnelLong; ++d) {
                     if (brokenCount >= maxBlocks ||
                             player.getHungerManager().getFoodLevel() <= exhaust / 2 ||
                             brokenCount >= (player.getMainHandStack().getDurability() - player.getMainHandStack().getDamage())) {
@@ -290,7 +293,7 @@ public class Excavator {
                             world.getFluidState(p).isEmpty() &&
                             player.isUsingEffectiveTool(blockState)) {
                         world.breakBlock(p, !player.isCreative());
-                        connection.sendPacket(createBreackPacket(p));
+                        connection.sendPacket(createBreakPacket(p));
                         brokenCount++;
                         exhaust = (0.005F * brokenCount) * (brokenCount / 8.0F + 1);
                     }

@@ -14,6 +14,16 @@
   "quickinfo.config": "设置",
   "boringmods.category": "无聊模组",
   "key.boringmods.excavate": "挖掘",
-   "key.boringmods.tunnel": "隧道",
- "key.boringmods.toggle_light_overlay": "切换亮度标志"
+  "key.boringmods.tunnel": "隧道",
+  "key.boringmods.toggle_light_overlay": "切换亮度标志",
+  "boringmods.configs.title": "无聊模组设置",
+  "configs.boringmods.blocks": "%s方块",
+  "configs.boringmods.tunnel_width": "隧道宽度",
+  "configs.boringmods.tunnel_height": "隧道高度",
+  "configs.boringmods.tunnel_long": "隧道长度",
+  "configs.boringmods.light_overlay": "亮度标志",
+  "configs.boringmods.light_overlay_range": "亮度标志范围",
+  "configs.boringmods.excavate_range": "挖掘范围",
+  "configs.boringmods.max_blocks": "最大挖掘数",
+  "configs.boringmods.pickup_distance": "拾取距离"
 }

@@ -2,15 +2,15 @@ package net.mack.boringmods.client.gui.button;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.mack.boringmods.client.options.ModOption;
+import net.mack.boringmods.client.options.Config;
 import net.minecraft.client.gui.widget.ButtonWidget;
 
 @Environment(EnvType.CLIENT)
 public class OptionButtonWidget extends ButtonWidget {
-    private ModOption modOption;
+    private Config config;
 
-    public OptionButtonWidget(int x, int y, int width, int height, ModOption option, String title, ButtonWidget.PressAction pressAction) {
+    public OptionButtonWidget(int x, int y, int width, int height, Config option, String title, ButtonWidget.PressAction pressAction) {
         super(x, y, width, height, title, pressAction);
-        this.modOption = option;
+        this.config = option;
     }
 }

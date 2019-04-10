@@ -2,8 +2,8 @@ package net.mack.boringmods.mixin;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.mack.boringmods.client.gui.menu.ModSettingsScreen;
-import net.mack.boringmods.client.options.ModOptions;
+import net.mack.boringmods.client.gui.menu.ModConfigsScreen;
+import net.mack.boringmods.client.options.ModConfigs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Screen;
 import net.minecraft.client.gui.menu.PauseMenuScreen;
@@ -24,14 +24,14 @@ public abstract class MixinPauseMenuScreen extends Screen {
 
     @Inject(at = @At("HEAD"), method = "init")
     public void drawMenuButton(CallbackInfo info) {
-        if (!ModOptions.INSTANCE.menuAdded) {
+        if (!ModConfigs.INSTANCE.menuAdded) {
             this.addButton(new ButtonWidget(
                     this.width / 2 - 102,
                     this.height / 4 - 16,
                     204,
                     20,
                     I18n.translate("boringmods.configs.title"),
-                    buttonWidget -> MinecraftClient.getInstance().openScreen(new ModSettingsScreen(this, ModOptions.INSTANCE))));
+                    buttonWidget -> MinecraftClient.getInstance().openScreen(new ModConfigsScreen(this, ModConfigs.INSTANCE))));
         }
     }
 }

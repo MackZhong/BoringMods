@@ -2,7 +2,7 @@ package net.mack.boringmods.client.options;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.mack.boringmods.client.gui.ModOptionSliderWidget;
+import net.mack.boringmods.client.gui.ModConfigSliderWidget;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.util.math.MathHelper;
 
@@ -11,27 +11,27 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @Environment(EnvType.CLIENT)
-public class DoubleModOption extends ModOption {
-    private final float value;
+public class DoubleConfig extends Config {
+    private final float stepValue;
     private final double lowLimit;
     private double highLimit;
-    private final Function<ModOptions, Double> func;
-    private final BiConsumer<ModOptions, Double> biConsumer;
-    private final BiFunction<ModOptions, DoubleModOption, String> biFunction;
+    private final Function<ModConfigs, Double> func;
+    private final BiConsumer<ModConfigs, Double> biConsumer;
+    private final BiFunction<ModConfigs, DoubleConfig, String> biFunction;
 
-    DoubleModOption(String optionKey, double low, double high, float v, Function<ModOptions, Double> func1, BiConsumer<ModOptions, Double> bi1, BiFunction<ModOptions, DoubleModOption, String> func2) {
+    DoubleConfig(String optionKey, double low, double high, float step, Function<ModConfigs, Double> func1, BiConsumer<ModConfigs, Double> bi1, BiFunction<ModConfigs, DoubleConfig, String> func2) {
         super(optionKey);
         this.lowLimit = low;
         this.highLimit = high;
-        this.value = v;
+        this.stepValue = step;
         this.func = func1;
         this.biConsumer = bi1;
         this.biFunction = func2;
     }
 
     @Override
-    public AbstractButtonWidget createOptionButton(ModOptions options, int x, int y, int width) {
-        return new ModOptionSliderWidget(options, x, y, width,20, this);
+    public AbstractButtonWidget createOptionButton(ModConfigs options, int x, int y, int width) {
+        return new ModConfigSliderWidget(options, x, y, width,20, this);
     }
 
     public double toPercent(double double_1) {
@@ -43,8 +43,8 @@ public class DoubleModOption extends ModOption {
     }
 
     private double roundValue(double double_1) {
-        if (this.value > 0.0F) {
-            double_1 = (double)(this.value * (float)Math.round(double_1 / (double)this.value));
+        if (this.stepValue > 0.0F) {
+            double_1 = (double)(this.stepValue * (float)Math.round(double_1 / (double)this.stepValue));
         }
 
         return MathHelper.clamp(double_1, this.lowLimit, this.highLimit);
@@ -62,15 +62,15 @@ public class DoubleModOption extends ModOption {
         this.highLimit = (double)float_1;
     }
 
-    public void setValue(ModOptions gameOptions_1, double double_1) {
+    public void setValue(ModConfigs gameOptions_1, double double_1) {
         this.biConsumer.accept(gameOptions_1, double_1);
     }
 
-    public Double getValue(ModOptions gameOptions_1) {
+    public Double getValue(ModConfigs gameOptions_1) {
         return this.func.apply(gameOptions_1);
     }
 
-    public String getValueString(ModOptions gameOptions_1) {
+    public String getValueString(ModConfigs gameOptions_1) {
         return this.biFunction.apply(gameOptions_1, this);
     }
 

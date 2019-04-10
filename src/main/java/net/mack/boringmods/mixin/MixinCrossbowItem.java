@@ -1,7 +1,7 @@
 package net.mack.boringmods.mixin;
 
 import com.google.common.collect.Lists;
-import net.mack.boringmods.client.options.ModOptions;
+import net.mack.boringmods.client.options.ModConfigs;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -28,13 +28,13 @@ public abstract class MixinCrossbowItem {
         ListTag listTag_1 = null;
         if (null == compoundTag_1) {
             compoundTag_1 = new CompoundTag();
-            ModOptions.LOGGER.error("[BoringMods]This CrossbowItem doesn't have compound tag.");
+            ModConfigs.LOGGER.error("[BoringMods]This CrossbowItem doesn't have compound tag.");
         }
         if (compoundTag_1.containsKey("ChargedProjectiles", 9)) {
             listTag_1 = compoundTag_1.getList("ChargedProjectiles", 10);
         } else {
             listTag_1 = new ListTag();
-            ModOptions.LOGGER.error("[BoringMods]This CrossbowItem's compound tag doesn't contain \"ChargedProjectiles\" key.");
+            ModConfigs.LOGGER.error("[BoringMods]This CrossbowItem's compound tag doesn't contain \"ChargedProjectiles\" key.");
         }
         if (0 == listTag_1.size()) {
             CompoundTag projectile = new CompoundTag();
@@ -44,7 +44,7 @@ public abstract class MixinCrossbowItem {
             compoundTag_1.put("ChargedProjectiles", listTag_1);
             itemStack_1.setTag(compoundTag_1);
 
-            ModOptions.LOGGER.warn("[BoringMods]\"ChargedProjectiles\" key added.");
+            ModConfigs.LOGGER.warn("[BoringMods]\"ChargedProjectiles\" key added.");
             list_1.add(ItemStack.fromTag(projectile));
             return list_1;
         }
@@ -55,7 +55,7 @@ public abstract class MixinCrossbowItem {
         }
 
         if (0 == list_1.size()) {
-            ModOptions.LOGGER.error("[BoringMods]ItemStack is empty.");
+            ModConfigs.LOGGER.error("[BoringMods]ItemStack is empty.");
         }
 
         return list_1;

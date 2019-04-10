@@ -1,7 +1,7 @@
 package net.mack.boringmods.mixin;
 
-import net.mack.boringmods.client.gui.menu.ModSettingsScreen;
-import net.mack.boringmods.client.options.ModOptions;
+import net.mack.boringmods.client.gui.menu.ModConfigsScreen;
+import net.mack.boringmods.client.options.ModConfigs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.MainMenuScreen;
 import net.minecraft.client.gui.Screen;
@@ -9,6 +9,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.TextComponent;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -21,14 +22,14 @@ public abstract class MixinMainMenuScreen extends Screen {
 
     @Inject(at = @At("RETURN"), method = "initWidgetsNormal(II)V")
     public void addConfigMenuButton(CallbackInfo info) {
-        if (!ModOptions.INSTANCE.menuAdded) {
+        if (!ModConfigs.INSTANCE.menuAdded) {
             this.addButton(new ButtonWidget(
                     this.width / 2 - 100,
                     this.height / 4 + 24,
                     200,
                     20,
                     I18n.translate("boringmods.configs.title"),
-                    buttonWidget -> MinecraftClient.getInstance().openScreen(new ModSettingsScreen(this, ModOptions.INSTANCE))));
+                    buttonWidget -> MinecraftClient.getInstance().openScreen(new ModConfigsScreen(this, ModConfigs.INSTANCE))));
         }
     }
 }

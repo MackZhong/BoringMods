@@ -2,6 +2,7 @@ package net.mack.boringmods.mixin;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.mack.boringmods.client.options.ModConfigs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.EntityType;
@@ -22,7 +23,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(value = PlayerEntity.class)
 public abstract class MixinPlayerEntity extends LivingEntity {
     private org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("boringmods");
-    private double pickupDistance = 7.0F;
 
     protected MixinPlayerEntity(EntityType<? extends LivingEntity> entityType_1, World world_1) {
         super(entityType_1, world_1);
@@ -42,7 +42,7 @@ public abstract class MixinPlayerEntity extends LivingEntity {
     private BoundingBox onUpdateMovement(BoundingBox this$Box, double x, double y, double z) {
 //        this.logger.info(String.format("expand(%f, %f, %f).", x, y, z));
 
-        return this$Box.expand(pickupDistance);
+        return this$Box.expand(ModConfigs.INSTANCE.pickupDistance - 1);
     }
 
     @Inject(method = "onDeath", at = @At("HEAD"), cancellable = true)

@@ -1,16 +1,35 @@
 {
+  "schemaVersion": 1,
   "id": "boringmods",
-  "name": "Boring Mods",
   "version": "${version}",
-  "side": "universal",
+
+  "name": "Boring Mods",
   "description": "Minecraft Mods boring.",
-  "license": "Apache-2.0",
-  "initializers": [
-    "net.mack.boringmods.init.ModInitializer",
-    "net.mack.boringmods.init.ClientInitializer"
+  "authors": [
+    "Mack Fire"
   ],
-  "mixins": {
-    "client": "net.mack.boringmods.mixins.client.json",
-    "common": "net.mack.boringmods.mixins.common.json"
+  "contact": {
+    "homepage": "https://fabricmc.net/",
+    "sources": "https://github.com/MackZxh/BoringMods"
+  },
+  "license": "Apache-2.0",
+  "icon": "assets/boringmods/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "net.mack.boringmods.init.ClientInitializer"
+    ],
+    "main": [
+      "net.mack.boringmods.init.ModInitializer"
+    ]
+  },
+  "mixins": [
+    "boringmods.mixins.json"
+  ],
+
+  "requires": {
+    "fabricloader": ">=0.4.0",
+    "fabric": "*"
   }
 }

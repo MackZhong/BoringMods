@@ -3,8 +3,8 @@ package net.mack.boringmods.client.gui;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.mack.boringmods.client.options.DoubleModOption;
-import net.mack.boringmods.client.options.ModOptions;
+import net.mack.boringmods.client.options.DoubleConfig;
+import net.mack.boringmods.client.options.ModConfigs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.gui.widget.AbstractButtonWidget;
@@ -12,12 +12,12 @@ import net.minecraft.client.resource.language.I18n;
 import net.minecraft.util.math.MathHelper;
 
 @Environment(EnvType.CLIENT)
-public class ModOptionSliderWidget extends AbstractButtonWidget {
-    private final ModOptions options;
-    private final DoubleModOption option;
-    protected double progress;
+public class ModConfigSliderWidget extends AbstractButtonWidget {
+    private final ModConfigs options;
+    private final DoubleConfig option;
+    private double progress;
 
-    public ModOptionSliderWidget(ModOptions options, int x, int y, int width, int height, DoubleModOption modOption) {
+    public ModConfigSliderWidget(ModConfigs options, int x, int y, int width, int height, DoubleConfig modOption) {
         super(x, y, width, height, "");
         this.progress = modOption.toPercent(modOption.getValue(options));
         this.options = options;
@@ -29,6 +29,7 @@ public class ModOptionSliderWidget extends AbstractButtonWidget {
         return 0;
     }
 
+    @Override
     protected String getNarrationMessage() {
         return I18n.translate("gui.narrate.slider", new Object[]{this.getMessage()});
     }
@@ -101,12 +102,12 @@ public class ModOptionSliderWidget extends AbstractButtonWidget {
         super.playDownSound(MinecraftClient.getInstance().getSoundManager());
     }
 
-    protected void onProgressChanged() {
+    private void onProgressChanged() {
         this.option.setValue(this.options, this.option.fromPercent(this.progress));
         this.options.write();
     }
 
-    protected void updateText()    {
+    private void updateText()    {
         this.setMessage(this.option.getValueString(this.options));
     }
 

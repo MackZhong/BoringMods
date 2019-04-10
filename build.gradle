@@ -1,33 +1,35 @@
+import net.fabricmc.loom.task.RemapJar
+
 plugins {
     id 'fabric-loom' version '0.2.0-SNAPSHOT'
 }
 
-archivesBaseName = project.name
-group = 'net.mack'
-version = 'fabric-' + mc_version + '-' + mod_version + '.' + mapping + '-' + build_number
-
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+archivesBaseName = project.archives_base_name
+group = 'net.mack'
+version = minecraft_version + '.' + yarn_mappings + '-' + mod_version + '-' + build_number
+
 minecraft {
-    refmapName = project.name + '-refmap.json'
+    refmapName = project.archives_base_name + '-refmap.json'
 }
 
 repositories {
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${mc_version}"
-    mappings "net.fabricmc:yarn:${mc_version}.${mapping}"
-    
-    modCompile "net.fabricmc:fabric-loader:${loader}"
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    mappings "net.fabricmc:yarn:${minecraft_version}.${yarn_mappings}"
+
+    modCompile "net.fabricmc:fabric-loader:${loader_version}"
 
     // Fabric API. This is technically optional, but you probably want it anyway.
-    modCompile "net.fabricmc:fabric:${fabric_api}"
+    modCompile "net.fabricmc:fabric:${fabric_version}"
 //
 //    // for @Nullable, import javax.annotation.Nullable
     compile "com.google.code.findbugs:jsr305:3.0.2"
-    
+
 //    compile "io.github.prospector.modmenu:ModMenu:1.1.6"
 }
 
@@ -45,7 +47,7 @@ processResources {
 }
 
 task showAllRepos {
-    println "All repositories for " + project.name
+    println "All repositories for " + project.archives_base_name
     repositories.collect {
         println "\t$it.url"
     }

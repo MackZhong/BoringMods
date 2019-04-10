@@ -9,5 +9,5 @@ pluginManagement {
     }
 }
 
-rootProject.name = name
+// rootProject.name = archives_base_name
 

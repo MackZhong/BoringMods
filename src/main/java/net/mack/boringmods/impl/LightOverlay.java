@@ -4,8 +4,10 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
-import net.mack.boringmods.client.options.ModOption;
-import net.mack.boringmods.client.options.ModOptions;
+import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
+import net.mack.boringmods.client.options.ModConfigs;
+import net.mack.boringmods.client.options.Config;
+import net.mack.boringmods.util.IKeyBinding;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -16,7 +18,6 @@ import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnType;
 import net.minecraft.entity.VerticalEntityPosition;
 import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,7 +26,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sortme.SpawnHelper;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.IWorld;
@@ -42,7 +42,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class LightOverlay {
+public class LightOverlay implements IKeyBinding {
     private FabricKeyBinding keyToggleLightOverlay;
     private Table<Integer, Integer, Boolean> slimeTable = HashBasedTable.create();
 
@@ -56,14 +56,15 @@ public class LightOverlay {
         return instance;
     }
 
-    public FabricKeyBinding getKeyBinding(String category) {
+    public boolean keyBinding(String category) {
         this.keyToggleLightOverlay = FabricKeyBinding.Builder.create(
                 new Identifier("boringmods:toggle_light_overlay"),
                 InputUtil.Type.KEY_KEYBOARD,
                 296,
                 category
         ).build();
-        return this.keyToggleLightOverlay;
+        KeyBindingRegistryImpl.INSTANCE.register(this.keyToggleLightOverlay);
+        return true;
     }
 //
 //    public static int getRange() {
@@ -79,13 +80,13 @@ public class LightOverlay {
 //    }
 
     private void toggle() {
-        ModOption.LIGHT_OVERLAY_ENABLE.toggle(ModOptions.INSTANCE);
+        Config.LIGHT_OVERLAY_ENABLE.toggle(ModConfigs.INSTANCE);
         MinecraftServer server = MinecraftClient.getInstance().getServer();
         boolean overWorld = MinecraftClient.getInstance().world.getDimension().getType() == DimensionType.OVERWORLD;
         if (overWorld && null != server) {
             ServerWorld serverWorld = server.getWorld(DimensionType.OVERWORLD);
             long seed = serverWorld.getSeed();
-            ModOptions.LOGGER.info("World's seed is {}", seed);
+            ModConfigs.LOGGER.info("World's seed is {}", seed);
         }
     }
 //
@@ -138,7 +139,7 @@ public class LightOverlay {
             }
         }
 
-        ModOptions.LOGGER.info("Calculated slime spawn:  {} at {}", can, pos);
+        ModConfigs.LOGGER.info("Calculated slime spawn:  {} at {}", can, pos);
 
         return can;
     }
@@ -184,12 +185,12 @@ public class LightOverlay {
     }
 
     public void render(World world, PlayerEntity playerEntity) {
-        if (ModOption.LIGHT_OVERLAY_ENABLE.getValue(ModOptions.INSTANCE)) {
+        if (Config.LIGHT_OVERLAY_ENABLE.getValue(ModConfigs.INSTANCE)) {
             GlStateManager.disableTexture();
             GlStateManager.disableBlend();
             GlStateManager.depthMask(false);
 
-            int lightOverlayRange = ModOption.LIGHT_OVERLAY_RANGE.getValue(ModOptions.INSTANCE).intValue();
+            int lightOverlayRange = Config.LIGHT_OVERLAY_RANGE.getValue(ModConfigs.INSTANCE).intValue();
             BlockPos playerPos = playerEntity.getBlockPos();
             Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
             Vec3d vecCamera = camera.getPos();

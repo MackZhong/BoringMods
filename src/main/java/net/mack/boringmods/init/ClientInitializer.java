@@ -2,9 +2,8 @@ package net.mack.boringmods.init;
 
 
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
-import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 import net.fabricmc.loader.api.FabricLoader;
-import net.mack.boringmods.client.options.ModOptions;
+import net.mack.boringmods.client.options.ModConfigs;
 import net.mack.boringmods.impl.Excavator;
 import net.mack.boringmods.impl.LightOverlay;
 
@@ -21,16 +20,16 @@ public class ClientInitializer implements net.fabricmc.api.ClientModInitializer 
         KeyBindingRegistry.INSTANCE.addCategory(keyBindingCategory);
 
         Excavator.getInstance().keyBinding(keyBindingCategory);
-        KeyBindingRegistryImpl.INSTANCE.register(LightOverlay.getInstance().getKeyBinding(keyBindingCategory));
+        LightOverlay.getInstance().keyBinding(keyBindingCategory);
 
         if (FabricLoader.getInstance().isModLoaded("modmenu") && modMenuLoaded.compareAndSet(false, true)) {
             try {
                 Class<?> clazz = Class.forName("io.github.prospector.modmenu.api.ModMenuApi");
                 Method method = clazz.getMethod("addConfigOverride", String.class, Runnable.class);
-                method.invoke(null, ModOptions.MOD_ID, ModOptions.INSTANCE);
-                ModOptions.INSTANCE.menuAdded = true;
+                method.invoke(null, ModConfigs.MOD_ID, ModConfigs.INSTANCE);
+                ModConfigs.INSTANCE.menuAdded = true;
             } catch (Exception e) {
-                ModOptions.LOGGER.error("[BoringMods] Failed to add config override for ModMenu!", e);
+                ModConfigs.LOGGER.error("[BoringMods] Failed to add config override for ModMenu!", e);
             }
         }
 
