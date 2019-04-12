@@ -2,30 +2,28 @@ package net.mack.boringmods.client.gui.menu;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.mack.boringmods.client.options.ModConfigs;
 import net.mack.boringmods.client.options.Config;
+import net.mack.boringmods.client.options.ModConfigs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Screen;
-import net.minecraft.client.gui.widget.AbstractButtonWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.client.util.Window;
 import net.minecraft.text.TranslatableTextComponent;
 
 @Environment(EnvType.CLIENT)
 public class ModConfigsScreen extends Screen implements Runnable {
     private final static Config[] SETTING = new Config[]{
-            Config.TUNNEL_WIDTH, Config.LIGHT_OVERLAY_ENABLE,
-            Config.TUNNEL_HEIGHT, Config.LIGHT_OVERLAY_RANGE,
-            Config.TUNNEL_LONG, Config.EXCAVATE_RANGE,
-            Config.PICKUP_DISTANCE, Config.EXCAVATE_MAX_BLOCKS
+            ModConfigs.TUNNEL_WIDTH, ModConfigs.LIGHT_OVERLAY_ENABLE,
+            ModConfigs.TUNNEL_HEIGHT, ModConfigs.LIGHT_OVERLAY_RANGE,
+            ModConfigs.TUNNEL_LONG, ModConfigs.EXCAVATE_RANGE,
+            ModConfigs.PICKUP_DISTANCE, ModConfigs.EXCAVATE_MAX_BLOCKS
     };
 
     private final Screen parent;
     private final ModConfigs options;
 
     public ModConfigsScreen(Screen screen, ModConfigs modOptions) {
-        super(new TranslatableTextComponent("boringmods.configs.title", new Object[0]));
+        super(new TranslatableTextComponent("boringmods.configs.title"));
         this.parent = screen;
         this.options = modOptions;
     }
@@ -47,14 +45,21 @@ public class ModConfigsScreen extends Screen implements Runnable {
                 y += 24;
             }
             if (null != option) {
-                AbstractButtonWidget button = this.addButton(
+                this.addButton(
                         option.createOptionButton(options, x, y, 150)
                 );
             }
             ++index;
         }
 
-        this.addButton(new ButtonWidget(this.width / 2 - 100, this.height - 27, 200, 20, I18n.translate("gui.done", new Object[0]), (buttonWidget_1) -> {
+        y += 24;
+        this.addButton(new ButtonWidget(x1 + 15, y, 120, 20, I18n.translate("gui.cancel"), (buttonWidget) -> {
+            if (null == this.minecraft)
+                return;
+            this.minecraft.openScreen(this.parent);
+        }));
+
+        this.addButton(new ButtonWidget(x2 + 15, y, 120, 20, I18n.translate("gui.done"), (buttonWidget_1) -> {
             this.options.write();
 //            this.client.window.method_4475();
 

@@ -14,6 +14,16 @@
   "quickinfo.config": "\u8bbe\u7f6e",
   "boringmods.category": "\u65e0\u804a\u6a21\u7ec4",
   "key.boringmods.excavate": "\u6316\u6398",
-   "key.boringmods.tunnel": "\u96a7\u9053",
- "key.boringmods.toggle_light_overlay": "\u5207\u6362\u4eae\u5ea6\u6807\u5fd7"
+  "key.boringmods.tunnel": "\u96a7\u9053",
+  "key.boringmods.toggle_light_overlay": "\u5207\u6362\u4eae\u5ea6\u6807\u5fd7",
+  "boringmods.configs.title": "\u65e0\u804a\u6a21\u7ec4\u8bbe\u7f6e",
+  "configs.boringmods.blocks": "%s\u65b9\u5757",
+  "configs.boringmods.tunnel_width": "\u96a7\u9053\u5bbd\u5ea6",
+  "configs.boringmods.tunnel_height": "\u96a7\u9053\u9ad8\u5ea6",
+  "configs.boringmods.tunnel_long": "\u96a7\u9053\u957f\u5ea6",
+  "configs.boringmods.light_overlay": "\u4eae\u5ea6\u6807\u5fd7",
+  "configs.boringmods.light_overlay_range": "\u4eae\u5ea6\u6807\u5fd7\u8303\u56f4",
+  "configs.boringmods.excavate_range": "\u6316\u6398\u8303\u56f4",
+  "configs.boringmods.max_blocks": "\u6700\u5927\u6316\u6398\u6570",
+  "configs.boringmods.pickup_distance": "\u62fe\u53d6\u8ddd\u79bb"
 }

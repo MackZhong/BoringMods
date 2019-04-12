@@ -17,7 +17,7 @@
 
   "environment": "*",
   "entrypoints": {
-    "client": [
+      "client": [
       "net.mack.boringmods.init.ClientInitializer"
     ],
     "main": [
@@ -25,7 +25,14 @@
     ]
   },
   "mixins": [
-    "boringmods.mixins.json"
+    {
+      "config": "boringmods.mixins.client.json",
+      "environment": "client"
+    },
+    {
+      "config": "mousewheelie.client.json",
+      "environment": "client"
+    }
   ],
 
   "requires": {

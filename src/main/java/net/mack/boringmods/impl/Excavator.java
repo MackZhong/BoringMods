@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 import net.mack.boringmods.client.options.ModConfigs;
-import net.mack.boringmods.client.options.Config;
 import net.mack.boringmods.util.IKeyBinding;
 import net.minecraft.block.*;
 import net.minecraft.client.MinecraftClient;
@@ -199,8 +198,8 @@ public class Excavator  implements IKeyBinding {
         }
         ClientConnection connection = networkHandler.getClientConnection();
         int brokenCount = 1;
-        int excavateMaxBlocks = Config.EXCAVATE_MAX_BLOCKS.getValue(ModConfigs.INSTANCE).intValue();
-        double excavateRange = Config.EXCAVATE_RANGE.getValue(ModConfigs.INSTANCE);
+        int excavateMaxBlocks = ModConfigs.INSTANCE.EXCAVATE_MAX_BLOCKS.getValue(ModConfigs.INSTANCE).intValue();
+        double excavateRange = ModConfigs.INSTANCE.EXCAVATE_RANGE.getValue(ModConfigs.INSTANCE);
 //        ModConfigs.LOGGER.info("Excavate max blocks is {}", excavateMaxBlocks);
 //        ModConfigs.LOGGER.info("Excavate range is {}", excavateRange);
         while (brokenCount < excavateMaxBlocks &&

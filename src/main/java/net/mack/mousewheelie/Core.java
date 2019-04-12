@@ -1,4 +1,4 @@
-package net.mack.boringmods.util;
+package net.mack.mousewheelie;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -6,6 +6,8 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 public class Core {
+
+	public static final String MODID = "mousewheelie";
 	public static int scrollFactor = -1;
 
 	public static <T> T getField(Object object, String fieldName) throws IllegalAccessException, NoSuchFieldException {

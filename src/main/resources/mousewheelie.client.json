@@ -1,0 +1,17 @@
+{
+	"required": true,
+	"package": "net.mack.mousewheelie.client.mixin",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [
+		"MixinAbstractFurnaceScreen",
+		"MixinContainerScreen",
+		"MixinCraftingTableScreen",
+		"MixinCreativePlayerInventoryScreen",
+		"MixinMouse",
+		"MixinPlayerInventoryScreen",
+		"MixinRecipeBookGui"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

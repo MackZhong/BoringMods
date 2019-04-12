@@ -6,7 +6,6 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
 import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 import net.mack.boringmods.client.options.ModConfigs;
-import net.mack.boringmods.client.options.Config;
 import net.mack.boringmods.util.IKeyBinding;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -80,7 +79,7 @@ public class LightOverlay implements IKeyBinding {
 //    }
 
     private void toggle() {
-        Config.LIGHT_OVERLAY_ENABLE.toggle(ModConfigs.INSTANCE);
+        ModConfigs.INSTANCE.LIGHT_OVERLAY_ENABLE.toggle(ModConfigs.INSTANCE);
         MinecraftServer server = MinecraftClient.getInstance().getServer();
         boolean overWorld = MinecraftClient.getInstance().world.getDimension().getType() == DimensionType.OVERWORLD;
         if (overWorld && null != server) {
@@ -185,12 +184,12 @@ public class LightOverlay implements IKeyBinding {
     }
 
     public void render(World world, PlayerEntity playerEntity) {
-        if (Config.LIGHT_OVERLAY_ENABLE.getValue(ModConfigs.INSTANCE)) {
+        if (ModConfigs.INSTANCE.LIGHT_OVERLAY_ENABLE.getValue(ModConfigs.INSTANCE)) {
             GlStateManager.disableTexture();
             GlStateManager.disableBlend();
             GlStateManager.depthMask(false);
 
-            int lightOverlayRange = Config.LIGHT_OVERLAY_RANGE.getValue(ModConfigs.INSTANCE).intValue();
+            int lightOverlayRange = ModConfigs.INSTANCE.LIGHT_OVERLAY_RANGE.getValue(ModConfigs.INSTANCE).intValue();
             BlockPos playerPos = playerEntity.getBlockPos();
             Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
             Vec3d vecCamera = camera.getPos();

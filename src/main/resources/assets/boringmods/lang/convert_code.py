@@ -8,7 +8,10 @@ def main(argv):
         print('need argument')
     else:
         print(argv[1])
-        filename, ext = argv[1].split('.')
+        filename = argv[1]
+        ext = 'json'
+        if filename.__contains__('.'):
+            filename, ext = argv[1].split('.')
         print(filename)
         print(ext)
         bakfile = filename + '.bak'

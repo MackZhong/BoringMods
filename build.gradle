@@ -1,7 +1,6 @@
-import net.fabricmc.loom.task.RemapJar
-
 plugins {
-    id 'fabric-loom' version '0.2.0-SNAPSHOT'
+    id 'fabric-loom' version '0.2.1-SNAPSHOT'
+    id "com.github.johnrengelman.shadow" version "4.0.3"
 }
 
 sourceCompatibility = 1.8
@@ -9,7 +8,7 @@ targetCompatibility = 1.8
 
 archivesBaseName = project.archives_base_name
 group = 'net.mack'
-version = minecraft_version + '.' + yarn_mappings + '-' + mod_version + '-' + build_number
+version = project.minecraft_version + '.' + project.yarn_mappings + '-' + project.mod_version + '-' + project.build_number
 
 minecraft {
     refmapName = project.archives_base_name + '-refmap.json'
@@ -19,14 +18,17 @@ repositories {
 }
 
 dependencies {
-    minecraft "com.mojang:minecraft:${minecraft_version}"
-    mappings "net.fabricmc:yarn:${minecraft_version}.${yarn_mappings}"
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.minecraft_version}.${project.yarn_mappings}"
 
-    modCompile "net.fabricmc:fabric-loader:${loader_version}"
+    modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 
     // Fabric API. This is technically optional, but you probably want it anyway.
-    modCompile "net.fabricmc:fabric:${fabric_version}"
+    modCompile "net.fabricmc:fabric:${project.fabric_version}"
 //
+//    modCompile "de.siphalor:mousewheelie:${project.mousewheelie_version}"
+//    include "de.siphalor:mousewheelie:${project.mousewheelie_version}"
+
 //    // for @Nullable, import javax.annotation.Nullable
     compile "com.google.code.findbugs:jsr305:3.0.2"
 
