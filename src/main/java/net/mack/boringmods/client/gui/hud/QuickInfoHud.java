@@ -8,7 +8,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.resource.language.I18n;
@@ -161,7 +160,7 @@ public class QuickInfoHud extends DrawableHelper {
             if (target instanceof LivingEntity){
                 LivingEntity living = (LivingEntity) target;
                 displayName += String.format("%s(%2.1f/%2.1f)",
-                        TextFormat.RESET,
+                        TextFormat.OBFUSCATED,
                         living.getHealth(),living.getHealthMaximum(),living.canBreatheInWater());
             }
             infos.add(displayName);
@@ -243,7 +242,7 @@ public class QuickInfoHud extends DrawableHelper {
                 Fluid fluid = fluidState.getFluid();
                 infos.add(TextFormat.UNDERLINE + String.valueOf(Registry.FLUID.getId(fluid)));
                 BlockState blockState = fluidState.getBlockState();
-                infos.add(((fluid instanceof LavaFluid) ? TextFormat.RED : TextFormat.RESET) +
+                infos.add(((fluid instanceof LavaFluid) ? TextFormat.RED : TextFormat.OBFUSCATED) +
                         blockState.getBlock().getTextComponent().getFormattedText());
 
                 // properties

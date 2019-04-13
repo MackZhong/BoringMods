@@ -70,14 +70,14 @@ public class Excavator  implements IKeyBinding {
     public boolean keyBinding(String category) {
         this.keyExcavate = FabricKeyBinding.Builder.create(
                 new Identifier("boringmods:excavate"),
-                InputUtil.Type.KEY_KEYBOARD,
+                InputUtil.Type.KEYSYM,
                 96,
                 category
         ).build();
         KeyBindingRegistryImpl.INSTANCE.register(this.keyExcavate);
         this.keyTunnel = FabricKeyBinding.Builder.create(
                 new Identifier("boringmods:tunnel"),
-                InputUtil.Type.KEY_KEYBOARD,
+                InputUtil.Type.KEYSYM,
                 220,
                 category
         ).build();

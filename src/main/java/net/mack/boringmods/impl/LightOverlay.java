@@ -58,7 +58,7 @@ public class LightOverlay implements IKeyBinding {
     public boolean keyBinding(String category) {
         this.keyToggleLightOverlay = FabricKeyBinding.Builder.create(
                 new Identifier("boringmods:toggle_light_overlay"),
-                InputUtil.Type.KEY_KEYBOARD,
+                InputUtil.Type.KEYSYM,
                 296,
                 category
         ).build();
