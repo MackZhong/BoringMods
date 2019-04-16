@@ -29,7 +29,9 @@ public abstract class MixinContainerScreen extends Screen implements IContainerS
 
 	@Shadow @Final protected Container container;
 
-	@Inject(method = "mouseDragged", at = @At("RETURN"))
+	@Inject(method = "mouseDragged"
+            , remap = false
+            , at = @At("RETURN"))
 	public void onMouseDragged(double x2, double y2, int button, double x1, double y1, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
 		if(button == 0 && hasShiftDown()) {
 			Slot hoveredSlot = getSlotAt(x2, y2);

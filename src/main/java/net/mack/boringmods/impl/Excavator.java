@@ -224,7 +224,7 @@ public class Excavator  implements IKeyBinding {
                     if (!(world.getBlockState(p).getBlock() instanceof SpawnerBlock)) {
                         world.breakBlock(p, !player.isCreative());
                     }
-                    connection.sendPacket(createBreakPacket(p));
+                    connection.send(createBreakPacket(p));
                     brokenBlocks.add(p);
                     brokenCount = brokenBlocks.size();
                     exhaust = (0.005F * brokenCount) * (brokenCount / 8.0F + 1);
@@ -237,7 +237,7 @@ public class Excavator  implements IKeyBinding {
             nextToBreak.remove(currentPos);
         }
         if (!player.isCreative()) {
-            connection.sendPacket(createEndPacket(brokenCount - 1, exhaust));
+            connection.send(createEndPacket(brokenCount - 1, exhaust));
         }
     }
 
@@ -292,7 +292,7 @@ public class Excavator  implements IKeyBinding {
                             world.getFluidState(p).isEmpty() &&
                             player.isUsingEffectiveTool(blockState)) {
                         world.breakBlock(p, !player.isCreative());
-                        connection.sendPacket(createBreakPacket(p));
+                        connection.send(createBreakPacket(p));
                         brokenCount++;
                         exhaust = (0.005F * brokenCount) * (brokenCount / 8.0F + 1);
                     }
@@ -302,7 +302,7 @@ public class Excavator  implements IKeyBinding {
         }
 
         if (!player.isCreative()) {
-            connection.sendPacket(createEndPacket(brokenCount - 1, exhaust));
+            connection.send(createEndPacket(brokenCount - 1, exhaust));
         }
     }
 

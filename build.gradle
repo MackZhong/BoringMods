@@ -49,7 +49,7 @@ processResources {
 }
 
 task showAllRepos {
-    println "All repositories for " + project.archives_base_name
+    println "All repositories for ${project.archives_base_name}" 
     repositories.collect {
         println "\t$it.url"
     }
