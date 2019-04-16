@@ -27,10 +27,11 @@ public class MixinMouse {
     private double y;
 
     // Thanks to Danielshe Lnet/minecraft/client/gui/ParentElement;mouseScrolled(DDD)Z
-    @Inject(method = "onMouseScroll"
+    @Inject(method = "onMouseScroll(JDD)V"
             , at = @At(value = "INVOKE"
-            , target = "Lnet/minecraft/client/gui/ParentElement;mouseScrolled(DDD)Z"
-            , remap = false
+            , target = "Lnet/minecraft/client/gui/Screen;mouseScrolled(DDD)Z"
+            , args = "log=true"
+//            , remap = false
             , ordinal = 0)
             , cancellable = true
             , locals = LocalCapture.CAPTURE_FAILSOFT)

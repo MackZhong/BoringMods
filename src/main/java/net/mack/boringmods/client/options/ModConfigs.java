@@ -2,6 +2,8 @@ package net.mack.boringmods.client.options;
 
 import com.google.gson.Gson;
 import net.fabricmc.loader.api.FabricLoader;
+import net.mack.boringmods.client.gui.menu.ModConfigsScreen;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.I18n;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,7 +12,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class ModConfigs {
+public class ModConfigs implements Runnable{
     public static final String MOD_ID = "boringmods";
     public static final Logger LOGGER = LogManager.getLogger();
     private static final Path configFile = new File(FabricLoader.getInstance().getConfigDirectory(), "boringmods.json").toPath();
@@ -158,5 +160,24 @@ public class ModConfigs {
                     double d = doubleModOption.getValue(options);
                     return doubleModOption.getKeyName() + I18n.translate("configs.boringmods.blocks", (int) d);
                 });
+    }
+
+    /**
+     * When an object implementing interface <code>Runnable</code> is used
+     * to create a thread, starting the thread causes the object's
+     * <code>run</code> method to be called in that separately executing
+     * thread.
+     * <p>
+     * The general contract of the method <code>run</code> is that it may
+     * take any action whatsoever.
+     *
+     * @see Thread#run()
+     */
+    @Override
+    public void run() {
+        ModConfigsScreen screen = new ModConfigsScreen(
+                MinecraftClient.getInstance().currentScreen,
+                ModConfigs.INSTANCE);
+        MinecraftClient.getInstance().openScreen(screen);
     }
 }

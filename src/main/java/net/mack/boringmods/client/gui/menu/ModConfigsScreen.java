@@ -11,7 +11,7 @@ import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.TranslatableTextComponent;
 
 @Environment(EnvType.CLIENT)
-public class ModConfigsScreen extends Screen implements Runnable {
+public class ModConfigsScreen extends Screen {
     private final static Config[] SETTING = new Config[]{
             ModConfigs.TUNNEL_WIDTH, ModConfigs.LIGHT_OVERLAY_ENABLE,
             ModConfigs.TUNNEL_HEIGHT, ModConfigs.LIGHT_OVERLAY_RANGE,
@@ -73,25 +73,5 @@ public class ModConfigsScreen extends Screen implements Runnable {
     public void render(int int_1, int int_2, float float_1) {
         this.renderBackground();
         super.render(int_1, int_2, float_1);
-    }
-
-
-    /**
-     * When an object implementing interface <code>Runnable</code> is used
-     * to create a thread, starting the thread causes the object's
-     * <code>run</code> method to be called in that separately executing
-     * thread.
-     * <p>
-     * The general contract of the method <code>run</code> is that it may
-     * take any action whatsoever.
-     *
-     * @see Thread#run()
-     */
-    @Override
-    public void run() {
-        ModConfigsScreen screen = new ModConfigsScreen(
-                MinecraftClient.getInstance().currentScreen,
-                ModConfigs.INSTANCE);
-        MinecraftClient.getInstance().openScreen(screen);
     }
 }
