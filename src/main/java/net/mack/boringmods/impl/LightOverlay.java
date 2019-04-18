@@ -197,7 +197,7 @@ public class LightOverlay implements IKeyBinding {
                 long seed = serverWorld.getSeed();
                 ArrayList<BlockPos> slimeBlocks = new ArrayList<>();
                 SlimeEntity slime = new SlimeEntity(EntityType.SLIME, serverWorld);
-                BlockPos.iterateBoxPositions(playerPos.add(-lightOverlayRange, -lightOverlayRange, -lightOverlayRange),
+                BlockPos.iterate(playerPos.add(-lightOverlayRange, -lightOverlayRange, -lightOverlayRange),
                         playerPos.add(lightOverlayRange, 3, lightOverlayRange)).forEach(pos -> {
                     BlockPos downPos = pos.down();
                     if (world.getBlockState(downPos).allowsSpawning(world, downPos, EntityType.SLIME) &&
@@ -214,7 +214,7 @@ public class LightOverlay implements IKeyBinding {
             }
 
             ArrayList<BlockPos> dangerousBlocks = new ArrayList<>();
-            BlockPos.iterateBoxPositions(playerPos.add(-lightOverlayRange, -lightOverlayRange, -lightOverlayRange),
+            BlockPos.iterate(playerPos.add(-lightOverlayRange, -lightOverlayRange, -lightOverlayRange),
                     playerPos.add(lightOverlayRange, 3, lightOverlayRange)).forEach(pos -> {
                 if (world.getBiome(pos).getMaxSpawnLimit() > 0) {
                     OverlayType type = this.getOverlayType(pos, world, playerEntity);

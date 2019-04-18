@@ -273,9 +273,9 @@ public class Excavator  implements IKeyBinding {
         float exhaust = 0;
         int brokenCount = 1;
         int maxBlocks = ModConfigs.INSTANCE.tunnelHeight * ModConfigs.INSTANCE.tunnelWidth * ModConfigs.INSTANCE.tunnelLong;
-        for (BlockPos posB : BlockPos.iterateBoxPositions(posLB, posRB)) {
+        for (BlockPos posB : BlockPos.iterate(posLB, posRB)) {
             BlockPos posT = posB.up(ModConfigs.INSTANCE.tunnelHeight - 1);
-            for (BlockPos posN : BlockPos.iterateBoxPositions(posB, posT)) {
+            for (BlockPos posN : BlockPos.iterate(posB, posT)) {
                 BlockPos p = posN;
                 for (int d = 0; d < ModConfigs.INSTANCE.tunnelLong; ++d) {
                     if (brokenCount >= maxBlocks ||
