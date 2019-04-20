@@ -3,12 +3,12 @@ plugins {
     id "com.github.johnrengelman.shadow" version "4.0.3"
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 
 archivesBaseName = project.archives_base_name
-group = 'net.mack'
 version = project.minecraft_version + '.' + project.yarn_mappings + '-' + project.mod_version + '-' + project.build_number
+group = project.maven_group
 
 minecraft {
     refmapName = project.archives_base_name + '-refmap.json'
@@ -20,7 +20,6 @@ repositories {
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.minecraft_version}+${project.yarn_mappings}"
-
     modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
 
     // Fabric API. This is technically optional, but you probably want it anyway.
@@ -46,6 +45,10 @@ processResources {
     from(sourceSets.main.resources.srcDirs) {
         exclude "fabric.mod.json"
     }
+}
+
+tasks.withType(JavaCompile){
+    options.encoding = "UTF-8"
 }
 
 task showAllRepos {

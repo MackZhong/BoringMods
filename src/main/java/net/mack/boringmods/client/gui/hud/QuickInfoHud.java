@@ -136,13 +136,13 @@ public class QuickInfoHud extends DrawableHelper {
                 I18n.translate("quickinfo." + facing.asString())));
 
         infos.add(getTimeDesc());
-        ChunkPos posChunk = new ChunkPos(pos);
-        if (!Objects.equals(this.chunkPos, posChunk)) {
-            this.chunkPos = posChunk;
-            this.resetChunk();
-        }
-        World world = this.getWorld();
-        infos.add(TextFormat.GOLD + world.getBiome(pos).getTextComponent().getFormattedText());
+//        ChunkPos posChunk = new ChunkPos(pos);
+//        if (!Objects.equals(this.chunkPos, posChunk)) {
+//            this.chunkPos = posChunk;
+//            this.resetChunk();
+//        }
+//        World world = this.getWorld();
+        infos.add(TextFormat.GOLD + this.client.world.getBiome(pos).getTextComponent().getFormattedText());
 
         ClientPlayNetworkHandler net = this.client.getNetworkHandler();
         TagManager tagManager = null;
@@ -184,11 +184,11 @@ public class QuickInfoHud extends DrawableHelper {
                 // Lighting
                 if (((BlockHitResult) this.client.hitResult).getSide() == Direction.UP) {
                     pos = pos.up();
-//                    ChunkPos posChunk = new ChunkPos(pos);
-//                    if (!Objects.equals(this.chunkPos, posChunk)) {
-//                        this.chunkPos = posChunk;
-//                        this.resetChunk();
-//                    }
+                    ChunkPos posChunk = new ChunkPos(pos);
+                    if (!Objects.equals(this.chunkPos, posChunk)) {
+                        this.chunkPos = posChunk;
+                        this.resetChunk();
+                    }
                     if (this.client.world.isBlockLoaded(pos)) {
                         WorldChunk chunk = this.getClientChunk();
                         if (!chunk.isEmpty()) {
@@ -196,6 +196,7 @@ public class QuickInfoHud extends DrawableHelper {
                                     chunk.getLightLevel(pos, 0), this.client.world.getLightLevel(LightType.SKY, pos), this.client.world.getLightLevel(LightType.BLOCK, pos)));
                             chunk = this.getChunk();
                             if (null != chunk) {
+                                World world = this.getWorld();
                                 LightingProvider provider = world.getChunkManager().getLightingProvider();
                                 infos.add(I18n.translate("quickinfo.light.server",
                                         provider.get(LightType.SKY).getLightLevel(pos), provider.get(LightType.BLOCK).getLightLevel(pos)));
@@ -285,7 +286,7 @@ public class QuickInfoHud extends DrawableHelper {
 
     private World getWorld() {
 //        return DataFixUtils.orElse(Optional.ofNullable(this.client.getServer()).map((integratedServer) -> integratedServer.getWorld(this.client.world.dimension.getType())), this.client.world);
-        return (World)DataFixUtils.orElse(Optional.ofNullable(this.client.getServer()).map((integratedServer_1) -> {
+        return (World) DataFixUtils.orElse(Optional.ofNullable(this.client.getServer()).map((integratedServer_1) -> {
             return integratedServer_1.getWorld(this.client.world.dimension.getType());
         }), this.client.world);
     }

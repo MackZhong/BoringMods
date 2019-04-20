@@ -76,13 +76,13 @@ public class LightOverlay implements IKeyBinding {
 
     private void toggle() {
         ModConfigs.INSTANCE.LIGHT_OVERLAY_ENABLE.toggle(ModConfigs.INSTANCE);
-        MinecraftServer server = MinecraftClient.getInstance().getServer();
-        boolean overWorld = MinecraftClient.getInstance().world.getDimension().getType() == DimensionType.OVERWORLD;
-        if (overWorld && null != server) {
-            ServerWorld serverWorld = server.getWorld(DimensionType.OVERWORLD);
-            long seed = serverWorld.getSeed();
-            ModConfigs.LOGGER.info("World's seed is {}", seed);
-        }
+//        MinecraftServer server = MinecraftClient.getInstance().getServer();
+//        boolean overWorld = MinecraftClient.getInstance().world.getDimension().getType() == DimensionType.OVERWORLD;
+//        if (overWorld && null != server) {
+//            ServerWorld serverWorld = server.getWorld(DimensionType.OVERWORLD);
+//            long seed = serverWorld.getSeed();
+//            ModConfigs.LOGGER.info("World's seed is {}", seed);
+//        }
     }
 //
 //    public static FabricKeyBinding getKeyToggleLightOverlay() {
