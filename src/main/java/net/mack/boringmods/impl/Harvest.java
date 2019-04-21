@@ -1,5 +1,6 @@
 package net.mack.boringmods.impl;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.fabricmc.loader.api.FabricLoader;
@@ -21,9 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 
 public class Harvest implements UseBlockCallback {
@@ -33,13 +32,26 @@ public class Harvest implements UseBlockCallback {
     private HarvestConfig config;
 
     public void onInitialize() {
-        this.config = new HarvestConfig();
         File configFile = new File(FabricLoader.getInstance().getConfigDirectory(), "harvest.json");
-        try(FileWriter writer = new FileWriter(configFile)){
-            writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(this.config));
+        try (FileReader reader = new FileReader(configFile)) {
+            this.config = new Gson().fromJson(reader, HarvestConfig.class);
+            if (null != this.config)
+                ModConfigs.LOGGER.info("[BoringMods]Successfully loaded harvest config.");
+        } catch (Exception ioe1) {
+            ModConfigs.LOGGER.error("[BoringMods]Failed to read from Harvest config file, generating a default one.\n", ioe1);
+            ioe1.printStackTrace();
         }
-        catch (IOException ioe2){
-            ModConfigs.LOGGER.error("[BoringMods]Failed to generate new Harvest config file.\n", ioe2);
+
+        if (null == this.config) {
+            this.config = new HarvestConfig();
+            try (FileWriter writer = new FileWriter(configFile)) {
+                GsonBuilder builder = new GsonBuilder();
+                Gson json = builder.setPrettyPrinting().create();
+                writer.write(json.toJson(this.config));
+            } catch (Exception ioe2) {
+                ModConfigs.LOGGER.error("[BoringMods]Failed to generate new Harvest config file.\n", ioe2);
+                ioe2.printStackTrace();
+            }
         }
 
         UseBlockCallback.EVENT.register(this);

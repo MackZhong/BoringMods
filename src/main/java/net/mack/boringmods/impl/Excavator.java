@@ -315,7 +315,7 @@ public class Excavator  implements IKeyBinding {
 //                    for (int y = startY; y <= 1; ++y) {
 //                    BlockPos currentPos = pos.add(x, y, z);
 //                    if (!(0 == x && 0 == y && 0 == z)
-//                            && world.getBlockState(currentPos).getBlock() == block) {
+//                            && world.getBlockState(currentPos).getCrop() == block) {
 //                        neighbours.add(currentPos);
 //                    }
 //                }

@@ -1,11 +1,11 @@
 package net.mack.boringmods.impl;
 
 import com.google.gson.*;
+import com.google.gson.annotations.JsonAdapter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemProvider;
-import net.minecraft.item.ItemStack;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -14,19 +14,20 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.function.Predicate;
 
+@JsonAdapter(HarvestCrop.Adapter.class)
 public class HarvestCrop implements Predicate<BlockState> {
     private final BlockState mature;
-    private Block block;
+    private Block crop;
     private Item seed;
 
     public BlockState getMature(){
         return this.mature;
     }
 
-    public Block getBlock(){
-        if (null == this.block)
-            this.block = this.mature.getBlock();
-        return this.block;
+    public Block getCrop(){
+        if (null == this.crop)
+            this.crop = this.mature.getBlock();
+        return this.crop;
     }
 
     public Item getSeed(){
@@ -54,7 +55,7 @@ public class HarvestCrop implements Predicate<BlockState> {
         @Override
         public HarvestCrop deserialize(JsonElement element, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject json = element.getAsJsonObject();
-            Block block = Registry.BLOCK.get(new Identifier(json.getAsJsonPrimitive("block").getAsString()));
+            Block block = Registry.BLOCK.get(new Identifier(json.getAsJsonPrimitive("crop").getAsString()));
             BlockState state = block.getDefaultState();
             JsonObject stateObject = json.getAsJsonObject("states");
             for (Map.Entry<String, JsonElement> e : stateObject.entrySet()) {
@@ -72,7 +73,7 @@ public class HarvestCrop implements Predicate<BlockState> {
         @Override
         public JsonElement serialize(HarvestCrop src, Type typeOfSrc, JsonSerializationContext context) {
             JsonObject object = new JsonObject();
-            object.addProperty("block", Registry.BLOCK.getId(src.getBlock()).toString());
+            object.addProperty("crop", Registry.BLOCK.getId(src.getCrop()).toString());
             object.addProperty("seed", Registry.ITEM.getId(src.getSeed()).toString());
 
             String stateString = src.mature.toString();
