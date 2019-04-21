@@ -2,16 +2,19 @@ package net.mack.boringmods.impl;
 
 import com.google.gson.*;
 import com.google.gson.annotations.JsonAdapter;
+import javafx.beans.property.StringProperty;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemProvider;
+import net.minecraft.state.property.IntegerProperty;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 @JsonAdapter(HarvestCrop.Adapter.class)
@@ -62,8 +65,11 @@ public class HarvestCrop implements Predicate<BlockState> {
                 Property property = block.getStateFactory().getProperty(e.getKey());
                 if (property != null) {
                     String valueString = e.getValue().getAsString();
-                    Comparable value = (Comparable) property.getValue(valueString).get();
-                    state = state.with(property, value);
+                    Optional op = property.getValue(valueString);
+                    if (op.isPresent()) {
+                        Comparable value = (Comparable) op.get();
+                        state = state.with(property, value);
+                    }
                 }
             }
             Item seed = Registry.ITEM.get(new Identifier(json.getAsJsonObject("seed").getAsString()));

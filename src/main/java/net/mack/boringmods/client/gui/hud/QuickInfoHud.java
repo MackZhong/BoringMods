@@ -1,11 +1,10 @@
 package net.mack.boringmods.client.gui.hud;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.datafixers.DataFixUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
-import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 import net.mack.boringmods.client.options.ModConfigs;
 import net.mack.boringmods.impl.QuickInfo;
 import net.minecraft.block.Block;
@@ -15,7 +14,6 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.resource.language.I18n;
-import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
@@ -33,6 +31,7 @@ import net.minecraft.tag.TagManager;
 import net.minecraft.text.TextFormat;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -46,6 +45,7 @@ import net.minecraft.world.chunk.light.LightingProvider;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Environment(EnvType.CLIENT)
 public class QuickInfoHud extends DrawableHelper {
@@ -127,16 +127,17 @@ public class QuickInfoHud extends DrawableHelper {
     }
 
     private List<String> getInfos() {
-        List<String> infos = new ArrayList<>();
+        List<String> infos = Lists.newArrayList();
         if (this.client.hasReducedDebugInfo()) {
+            infos.add("Debug Info");
             return infos;
         }
 
-        BlockPos pos = this.player.getBlockPos();
-        pos = new BlockPos(pos.getX(), (int) this.player.getBoundingBox().minY, pos.getZ());
+        BlockPos playerPos = this.player.getBlockPos();
+        playerPos = new BlockPos(playerPos.getX(), (int) this.player.getBoundingBox().minY, playerPos.getZ());
         Direction facing = this.player.getHorizontalFacing();
         infos.add(String.format("%d, %d, %d %s",
-                pos.getX(), pos.getY(), pos.getZ(),
+                playerPos.getX(), playerPos.getY(), playerPos.getZ(),
                 I18n.translate("quickinfo." + facing.asString())));
 
         infos.add(getTimeDesc());
@@ -146,7 +147,7 @@ public class QuickInfoHud extends DrawableHelper {
 //            this.resetChunk();
 //        }
 //        World world = this.getWorld();
-        infos.add(TextFormat.GOLD + this.client.world.getBiome(pos).getTextComponent().getFormattedText());
+        infos.add(TextFormat.GOLD + this.client.world.getBiome(playerPos).getTextComponent().getFormattedText());
 
         ClientPlayNetworkHandler net = this.client.getNetworkHandler();
         TagManager tagManager = null;
@@ -154,9 +155,12 @@ public class QuickInfoHud extends DrawableHelper {
             tagManager = net.getTagManager();
         }
 
+        StringBuilder displayName = new StringBuilder();
+
         // Entity
-        Entity target = this.client.targetedEntity;
-        if (null != target) {
+        if (this.client.hitResult instanceof EntityHitResult) {
+            EntityHitResult entityResult = (EntityHitResult)this.client.hitResult;
+            Entity target = entityResult.getEntity();// this.client.targetedEntity;
             TextFormat format = TextFormat.GRAY;
             if (target instanceof Monster) {
                 format = TextFormat.RED;
@@ -164,48 +168,81 @@ public class QuickInfoHud extends DrawableHelper {
                 format = TextFormat.GREEN;
             }
 
-            String displayName = format + target.getName().getFormattedText() + "/" + format + target.getDisplayName().getFormattedText();
+            displayName
+                    .append(format)
+                    .append(target.getName().getFormattedText())
+                    .append("/")
+                    .append(format)
+                    .append(target.getDisplayName().getFormattedText());
             if (target instanceof LivingEntity) {
                 LivingEntity living = (LivingEntity) target;
-                displayName += String.format("%s(%2.1f/%2.1f)",
-                        TextFormat.GRAY,
-                        living.getHealth(), living.getHealthMaximum());
+                displayName
+                        .append(TextFormat.GRAY)
+                        .append(String.format("(%2.1f/%2.1f)", living.getHealth(), living.getHealthMaximum()));
             }
-            infos.add(displayName);
+            infos.add(displayName.toString());
+
             if (null != target.getCustomName())
                 infos.add("CustomName: " + format + target.getCustomName().getFormattedText());
             if (QuickInfo.INSTANCE.detail())
                 infos.add(TextFormat.WHITE + String.valueOf(Registry.ENTITY_TYPE.getId(target.getType())));
-        } else if (this.client.hitResult.getType() == HitResult.Type.BLOCK) {
+        } else if (this.client.hitResult instanceof BlockHitResult) {
+            BlockPos targetPos = ((BlockHitResult) this.client.hitResult).getBlockPos();
+            BlockState blockState = this.client.world.getBlockState(targetPos);
             // Block
-            pos = ((BlockHitResult) this.client.hitResult).getBlockPos();
-            BlockState blockState = this.client.world.getBlockState(pos);
             if (!blockState.isAir()) {
                 Block block = blockState.getBlock();
-                infos.add(block.getTextComponent().getFormattedText() + "/" + block.getRenderLayer().name());
+                displayName
+                        .append(block.getTextComponent().getFormattedText());
+
+                for (Property<?> property : blockState.getProperties()) {
+                    if (property.getName().equals("age")) {
+                        IntegerProperty keyAge = (IntegerProperty) property;
+//                    Object[] values = key.getValues().toArray();
+                        Integer maxAge = 0;
+                        for (Integer v : keyAge.getValues()) {
+                            if (v > maxAge) {
+                                maxAge = v;
+                            }
+                        }
+
+                        Integer ageValue = blockState.get(keyAge);
+                        TextFormat format2;
+                        if (ageValue.equals(maxAge)) {
+                            format2 = TextFormat.GOLD;
+                        } else {
+                            format2 = TextFormat.GREEN;
+                        }
+                        displayName
+                                .append(format2)
+                                .append(String.format("(%d/%d)", ageValue, maxAge));
+                    }
+                }
+                infos.add(displayName.toString());
 
                 if (QuickInfo.INSTANCE.detail()) {
-                    infos.add(TextFormat.WHITE + String.valueOf(Registry.BLOCK.getId(block)));
+                    infos.add(TextFormat.WHITE + String.valueOf(Registry.BLOCK.getId(block)) +
+                            "/" + block.getRenderLayer().name());
 
                     // Lighting
                     if (((BlockHitResult) this.client.hitResult).getSide() == Direction.UP) {
-                        pos = pos.up();
-                        ChunkPos posChunk = new ChunkPos(pos);
+                        BlockPos upPos = targetPos.up();
+                        ChunkPos posChunk = new ChunkPos(upPos);
                         if (!Objects.equals(this.chunkPos, posChunk)) {
                             this.chunkPos = posChunk;
                             this.resetChunk();
                         }
-                        if (this.client.world.isBlockLoaded(pos)) {
+                        if (this.client.world.isBlockLoaded(upPos)) {
                             WorldChunk chunk = this.getClientChunk();
                             if (!chunk.isEmpty()) {
                                 infos.add(I18n.translate("quickinfo.light.client",
-                                        chunk.getLightLevel(pos, 0), this.client.world.getLightLevel(LightType.SKY, pos), this.client.world.getLightLevel(LightType.BLOCK, pos)));
+                                        chunk.getLightLevel(upPos, 0), this.client.world.getLightLevel(LightType.SKY, upPos), this.client.world.getLightLevel(LightType.BLOCK, upPos)));
                                 chunk = this.getChunk();
                                 if (null != chunk) {
                                     World world = this.getWorld();
                                     LightingProvider provider = world.getChunkManager().getLightingProvider();
                                     infos.add(I18n.translate("quickinfo.light.server",
-                                            provider.get(LightType.SKY).getLightLevel(pos), provider.get(LightType.BLOCK).getLightLevel(pos)));
+                                            provider.get(LightType.SKY).getLightLevel(upPos), provider.get(LightType.BLOCK).getLightLevel(upPos)));
 //                            this.lightingArray = provider.get(LightType.BLOCK_LIGHT).getChunkLightArray(pos.getX(), pos.getY(), pos.getZ());
                                 }
                             }
@@ -214,27 +251,27 @@ public class QuickInfoHud extends DrawableHelper {
 
                     // properties
                     for (Property<?> property : blockState.getProperties()) {
-                        if (property.getName().equals("age")) {
-                            IntegerProperty key = (IntegerProperty) property;
-                            Object[] values = key.getValues().toArray();
-                            Integer maxAge = 0;
-                            for (Object v : values) {
-                                if ((Integer) v > maxAge) {
-                                    maxAge = (Integer) v;
-                                }
-                            }
-                            Integer age = blockState.get(key);
-                            TextFormat format;
-                            if (maxAge.equals(age)) {
-                                format = TextFormat.GOLD;
-                            } else {
-                                format = TextFormat.GREEN;
-                            }
-                            infos.add(String.format(Locale.getDefault(), "%s%d/%d", format, age, maxAge));
-                        } else {
-                            infos.add(String.format("%s=%s", property.getName(), blockState.get(property)));
-                            infos.add(property.getValues().toString());
-                        }
+//                        if (!property.getName().equals("age")) {
+//                            IntegerProperty key = (IntegerProperty) property;
+//                            Object[] values = key.getValues().toArray();
+//                            Integer maxAge = 0;
+//                            for (Object v : values) {
+//                                if ((Integer) v > maxAge) {
+//                                    maxAge = (Integer) v;
+//                                }
+//                            }
+//                            Integer age = blockState.get(key);
+//                            TextFormat format;
+//                            if (maxAge.equals(age)) {
+//                                format = TextFormat.GOLD;
+//                            } else {
+//                                format = TextFormat.GREEN;
+//                            }
+//                            infos.add(String.format(Locale.getDefault(), "%s%d/%d", format, age, maxAge));
+//                        } else {
+                            infos.add(TextFormat.AQUA + property.getName() + "=" + blockState.get(property));
+                            infos.add(TextFormat.WHITE + property.getValues().toString());
+//                        }
                     }
 
                     // tags
@@ -246,26 +283,30 @@ public class QuickInfoHud extends DrawableHelper {
                 }
             }
         }
+        else{
+            infos.add(TextFormat.RED + "Unknown HitResult.");
+        }
 
         // Fluid
         if (null != this.hitFluid && this.hitFluid.getType() == HitResult.Type.BLOCK) {
-            pos = ((BlockHitResult) this.hitFluid).getBlockPos();
-            FluidState fluidState = this.client.world.getFluidState(pos);
+            BlockPos fluidPos = ((BlockHitResult) this.hitFluid).getBlockPos();
+            FluidState fluidState = this.client.world.getFluidState(fluidPos);
+            BlockState fluidBlockState = fluidState.getBlockState();
             if (!fluidState.isEmpty()) {
                 Fluid fluid = fluidState.getFluid();
                 infos.add(TextFormat.UNDERLINE + String.valueOf(Registry.FLUID.getId(fluid)));
-                BlockState blockState = fluidState.getBlockState();
+//                BlockState fluidBlockState = fluidState.getBlockState();
                 infos.add(((fluid instanceof LavaFluid) ? TextFormat.RED : TextFormat.GRAY) +
-                        blockState.getBlock().getTextComponent().getFormattedText());
+                        fluidBlockState.getBlock().getTextComponent().getFormattedText());
 
                 // properties
                 Boolean falling = fluidState.get(BaseFluid.FALLING);
                 infos.add(String.format("Falling: %b, Level: %d", falling, fluid.getLevel(fluidState)));
-                for (Property<?> property : blockState.getProperties()) {
+                for (Property<?> property : fluidBlockState.getProperties()) {
                     if (Properties.FALLING == property || Properties.FLUID_BLOCK_LEVEL == property || Properties.FLUID_LEVEL == property) {
                         continue;
                     }
-                    infos.add(String.format("%s=%s", property.getName(), blockState.get(property)));
+                    infos.add(String.format("%s=%s", property.getName(), fluidBlockState.get(property)));
                     infos.add(property.getValues().toString());
                 }
 
@@ -293,7 +334,7 @@ public class QuickInfoHud extends DrawableHelper {
 
     private World getWorld() {
 //        return DataFixUtils.orElse(Optional.ofNullable(this.client.getServer()).map((integratedServer) -> integratedServer.getWorld(this.client.world.dimension.getType())), this.client.world);
-        return (World) DataFixUtils.orElse(Optional.ofNullable(this.client.getServer()).map((integratedServer_1) -> {
+        return DataFixUtils.orElse(Optional.ofNullable(this.client.getServer()).map((integratedServer_1) -> {
             return integratedServer_1.getWorld(this.client.world.dimension.getType());
         }), this.client.world);
     }
