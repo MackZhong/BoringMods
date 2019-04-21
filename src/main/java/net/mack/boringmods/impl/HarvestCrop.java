@@ -3,6 +3,9 @@ package net.mack.boringmods.impl;
 import com.google.gson.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemProvider;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -14,6 +17,11 @@ import java.util.function.Predicate;
 public class HarvestCrop implements Predicate<BlockState> {
     private final BlockState mature;
     private Block block;
+    private Item seed;
+
+    public BlockState getMature(){
+        return this.mature;
+    }
 
     public Block getBlock(){
         if (null == this.block)
@@ -21,8 +29,13 @@ public class HarvestCrop implements Predicate<BlockState> {
         return this.block;
     }
 
-    public HarvestCrop(BlockState state) {
+    public Item getSeed(){
+        return this.seed;
+    }
+
+    public HarvestCrop(BlockState state, ItemProvider seedProvider) {
         this.mature = state;
+        this.seed = seedProvider.getItem();
     }
 
     /**
@@ -52,13 +65,15 @@ public class HarvestCrop implements Predicate<BlockState> {
                     state = state.with(property, value);
                 }
             }
-            return new HarvestCrop(state);
+            Item seed = Registry.ITEM.get(new Identifier(json.getAsJsonObject("seed").getAsString()));
+            return new HarvestCrop(state, seed);
         }
 
         @Override
         public JsonElement serialize(HarvestCrop src, Type typeOfSrc, JsonSerializationContext context) {
             JsonObject object = new JsonObject();
             object.addProperty("block", Registry.BLOCK.getId(src.getBlock()).toString());
+            object.addProperty("seed", Registry.ITEM.getId(src.getSeed()).toString());
 
             String stateString = src.mature.toString();
             String[] properties = stateString.substring(stateString.indexOf("[") + 1, stateString.length() - 1).split(",");

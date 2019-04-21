@@ -18,7 +18,7 @@
   "environment": "*",
   "entrypoints": {
       "client": [
-      "net.mack.boringmods.init.ClientInitializer"
+      "net.mack.boringmods.init.ClientMod"
     ],
     "main": [
       "net.mack.boringmods.init.ModInitializer"

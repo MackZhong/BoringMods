@@ -4,7 +4,10 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.datafixers.DataFixUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.keybinding.FabricKeyBinding;
+import net.fabricmc.fabric.impl.client.keybinding.KeyBindingRegistryImpl;
 import net.mack.boringmods.client.options.ModConfigs;
+import net.mack.boringmods.impl.QuickInfo;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -12,6 +15,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.Monster;
@@ -153,7 +157,6 @@ public class QuickInfoHud extends DrawableHelper {
         // Entity
         Entity target = this.client.targetedEntity;
         if (null != target) {
-            infos.add(TextFormat.UNDERLINE + String.valueOf(Registry.ENTITY_TYPE.getId(target.getType())));
             TextFormat format = TextFormat.GRAY;
             if (target instanceof Monster) {
                 format = TextFormat.RED;
@@ -161,8 +164,7 @@ public class QuickInfoHud extends DrawableHelper {
                 format = TextFormat.GREEN;
             }
 
-            infos.add("Name: " + format + target.getName().getFormattedText());
-            String displayName = "DisplayName: " + format + target.getDisplayName().getFormattedText();
+            String displayName = format + target.getName().getFormattedText() + "/" + format + target.getDisplayName().getFormattedText();
             if (target instanceof LivingEntity) {
                 LivingEntity living = (LivingEntity) target;
                 displayName += String.format("%s(%2.1f/%2.1f)",
@@ -172,69 +174,74 @@ public class QuickInfoHud extends DrawableHelper {
             infos.add(displayName);
             if (null != target.getCustomName())
                 infos.add("CustomName: " + format + target.getCustomName().getFormattedText());
+            if (QuickInfo.INSTANCE.detail())
+                infos.add(TextFormat.WHITE + String.valueOf(Registry.ENTITY_TYPE.getId(target.getType())));
         } else if (this.client.hitResult.getType() == HitResult.Type.BLOCK) {
             // Block
             pos = ((BlockHitResult) this.client.hitResult).getBlockPos();
             BlockState blockState = this.client.world.getBlockState(pos);
             if (!blockState.isAir()) {
                 Block block = blockState.getBlock();
-                infos.add(TextFormat.UNDERLINE + String.valueOf(Registry.BLOCK.getId(block)));
                 infos.add(block.getTextComponent().getFormattedText() + "/" + block.getRenderLayer().name());
 
-                // Lighting
-                if (((BlockHitResult) this.client.hitResult).getSide() == Direction.UP) {
-                    pos = pos.up();
-                    ChunkPos posChunk = new ChunkPos(pos);
-                    if (!Objects.equals(this.chunkPos, posChunk)) {
-                        this.chunkPos = posChunk;
-                        this.resetChunk();
-                    }
-                    if (this.client.world.isBlockLoaded(pos)) {
-                        WorldChunk chunk = this.getClientChunk();
-                        if (!chunk.isEmpty()) {
-                            infos.add(I18n.translate("quickinfo.light.client",
-                                    chunk.getLightLevel(pos, 0), this.client.world.getLightLevel(LightType.SKY, pos), this.client.world.getLightLevel(LightType.BLOCK, pos)));
-                            chunk = this.getChunk();
-                            if (null != chunk) {
-                                World world = this.getWorld();
-                                LightingProvider provider = world.getChunkManager().getLightingProvider();
-                                infos.add(I18n.translate("quickinfo.light.server",
-                                        provider.get(LightType.SKY).getLightLevel(pos), provider.get(LightType.BLOCK).getLightLevel(pos)));
+                if (QuickInfo.INSTANCE.detail()) {
+                    infos.add(TextFormat.WHITE + String.valueOf(Registry.BLOCK.getId(block)));
+
+                    // Lighting
+                    if (((BlockHitResult) this.client.hitResult).getSide() == Direction.UP) {
+                        pos = pos.up();
+                        ChunkPos posChunk = new ChunkPos(pos);
+                        if (!Objects.equals(this.chunkPos, posChunk)) {
+                            this.chunkPos = posChunk;
+                            this.resetChunk();
+                        }
+                        if (this.client.world.isBlockLoaded(pos)) {
+                            WorldChunk chunk = this.getClientChunk();
+                            if (!chunk.isEmpty()) {
+                                infos.add(I18n.translate("quickinfo.light.client",
+                                        chunk.getLightLevel(pos, 0), this.client.world.getLightLevel(LightType.SKY, pos), this.client.world.getLightLevel(LightType.BLOCK, pos)));
+                                chunk = this.getChunk();
+                                if (null != chunk) {
+                                    World world = this.getWorld();
+                                    LightingProvider provider = world.getChunkManager().getLightingProvider();
+                                    infos.add(I18n.translate("quickinfo.light.server",
+                                            provider.get(LightType.SKY).getLightLevel(pos), provider.get(LightType.BLOCK).getLightLevel(pos)));
 //                            this.lightingArray = provider.get(LightType.BLOCK_LIGHT).getChunkLightArray(pos.getX(), pos.getY(), pos.getZ());
+                                }
                             }
                         }
                     }
-                }
 
-                // properties
-                for (Property<?> property : blockState.getProperties()) {
-                    if (property.getName().equals("age")) {
-                        IntegerProperty key = (IntegerProperty) property;
-                        Object[] values = key.getValues().toArray();
-                        Integer maxAge = 0;
-                        for (Object v : values) {
-                            if ((Integer) v > maxAge) {
-                                maxAge = (Integer) v;
+                    // properties
+                    for (Property<?> property : blockState.getProperties()) {
+                        if (property.getName().equals("age")) {
+                            IntegerProperty key = (IntegerProperty) property;
+                            Object[] values = key.getValues().toArray();
+                            Integer maxAge = 0;
+                            for (Object v : values) {
+                                if ((Integer) v > maxAge) {
+                                    maxAge = (Integer) v;
+                                }
                             }
-                        }
-                        Integer age = blockState.get(key);
-                        TextFormat format;
-                        if (maxAge.equals(age)) {
-                            format = TextFormat.GOLD;
+                            Integer age = blockState.get(key);
+                            TextFormat format;
+                            if (maxAge.equals(age)) {
+                                format = TextFormat.GOLD;
+                            } else {
+                                format = TextFormat.GREEN;
+                            }
+                            infos.add(String.format(Locale.getDefault(), "%s%d/%d", format, age, maxAge));
                         } else {
-                            format = TextFormat.GREEN;
+                            infos.add(String.format("%s=%s", property.getName(), blockState.get(property)));
+                            infos.add(property.getValues().toString());
                         }
-                        infos.add(String.format(Locale.getDefault(), "%s%d/%d", format, age, maxAge));
-                    } else {
-                        infos.add(String.format("%s=%s", property.getName(), blockState.get(property)));
-                        infos.add(property.getValues().toString());
                     }
-                }
 
-                // tags
-                if (null != tagManager) {
-                    for (Identifier id : tagManager.blocks().getTagsFor(block)) {
-                        infos.add(String.format("#%s", id));
+                    // tags
+                    if (null != tagManager) {
+                        for (Identifier id : tagManager.blocks().getTagsFor(block)) {
+                            infos.add(String.format("#%s", id));
+                        }
                     }
                 }
             }

@@ -45,11 +45,7 @@ public class LightOverlay implements IKeyBinding {
         NONE, WARNING, DANGEROUS
     }
 
-    private final static LightOverlay instance = new LightOverlay();
-
-    public static LightOverlay getInstance() {
-        return instance;
-    }
+    public final static LightOverlay INSTANCE = new LightOverlay();
 
     public boolean keyBinding(String category) {
         this.keyToggleLightOverlay = FabricKeyBinding.Builder.create(

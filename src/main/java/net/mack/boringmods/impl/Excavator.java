@@ -78,7 +78,7 @@ public class Excavator  implements IKeyBinding {
         this.keyTunnel = FabricKeyBinding.Builder.create(
                 new Identifier("boringmods:tunnel"),
                 InputUtil.Type.KEYSYM,
-                220,
+                92,
                 category
         ).build();
         KeyBindingRegistryImpl.INSTANCE.register(this.keyTunnel);
@@ -198,8 +198,8 @@ public class Excavator  implements IKeyBinding {
         }
         ClientConnection connection = networkHandler.getClientConnection();
         int brokenCount = 1;
-        int excavateMaxBlocks = ModConfigs.INSTANCE.EXCAVATE_MAX_BLOCKS.getValue(ModConfigs.INSTANCE).intValue();
-        double excavateRange = ModConfigs.INSTANCE.EXCAVATE_RANGE.getValue(ModConfigs.INSTANCE);
+        int excavateMaxBlocks = ModConfigs.EXCAVATE_MAX_BLOCKS.getValue(ModConfigs.INSTANCE).intValue();
+        double excavateRange = ModConfigs.EXCAVATE_RANGE.getValue(ModConfigs.INSTANCE);
 //        ModConfigs.LOGGER.info("Excavate max blocks is {}", excavateMaxBlocks);
 //        ModConfigs.LOGGER.info("Excavate range is {}", excavateRange);
         while (brokenCount < excavateMaxBlocks &&

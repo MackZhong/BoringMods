@@ -12,6 +12,6 @@ public abstract class MixinMinecraftClient {
 
     @Inject(method = "handleInputEvents()V", at = @At("RETURN"))
     private void handleInputEvents(CallbackInfo callbackInfo) {
-        LightOverlay.getInstance().handleInput();
+        LightOverlay.INSTANCE.handleInput();
     }
 }

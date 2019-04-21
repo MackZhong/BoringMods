@@ -7,21 +7,23 @@ import net.mack.boringmods.client.gui.menu.ModConfigsScreen;
 import net.mack.boringmods.client.options.ModConfigs;
 import net.mack.boringmods.impl.Excavator;
 import net.mack.boringmods.impl.LightOverlay;
+import net.mack.boringmods.impl.QuickInfo;
 
 import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class ClientInitializer implements net.fabricmc.api.ClientModInitializer {
+public class ClientMod implements net.fabricmc.api.ClientModInitializer {
     private org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("boringmods");
     private final static String keyBindingCategory = "boringmods.category";
-    public static AtomicBoolean modMenuLoaded = new AtomicBoolean(false);
+    private static AtomicBoolean modMenuLoaded = new AtomicBoolean(false);
 
     @Override
     public void onInitializeClient() {
         KeyBindingRegistry.INSTANCE.addCategory(keyBindingCategory);
 
         Excavator.getInstance().keyBinding(keyBindingCategory);
-        LightOverlay.getInstance().keyBinding(keyBindingCategory);
+        LightOverlay.INSTANCE.keyBinding(keyBindingCategory);
+        QuickInfo.INSTANCE.keyBinding(keyBindingCategory);
 
         if (FabricLoader.getInstance().isModLoaded("modmenu") && modMenuLoaded.compareAndSet(false, true)) {
             try {
