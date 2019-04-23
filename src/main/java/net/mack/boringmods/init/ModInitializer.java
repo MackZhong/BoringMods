@@ -8,7 +8,7 @@ public class ModInitializer implements net.fabricmc.api.ModInitializer {
 
     @Override
     public void onInitialize() {
-        Excavator.getInstance().registerServerSidePacket();
+        Excavator.INSTANCE.registerServerSidePacket();
         Harvest.INSTANCE.onInitialize();
 
         logger.info("Boring Mods Initialization.");

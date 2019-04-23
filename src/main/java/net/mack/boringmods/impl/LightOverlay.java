@@ -205,7 +205,7 @@ public class LightOverlay implements IKeyBinding {
                     }
                 });
 
-                GlStateManager.lineWidth(2.0F);
+                GlStateManager.lineWidth(0.5F);
                 this.renderSlimeBlocks(vecCamera, slimeBlocks);
             }
 
@@ -251,19 +251,22 @@ public class LightOverlay implements IKeyBinding {
     }
 
     private void renderSlimeBlocks(Vec3d vecCamera, ArrayList<BlockPos> slimeBlocks) {
-        double d0 = vecCamera.x;
-        double d1 = vecCamera.y - 0.005D;
-        double d2 = vecCamera.z;
-        Color color = Color.BLUE;
+        double dx = vecCamera.x;
+        double dy = vecCamera.y - 0.005D;
+        double dz = vecCamera.z;
+        Color color = Color.blue;
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBufferBuilder();
         buffer.begin(4, VertexFormats.POSITION_COLOR);
         for (BlockPos pos : slimeBlocks) {
-//            buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2).color(color.getRed(), color.getGreen(), color.getBlue(), 50).next();
-            buffer.vertex(pos.getX() - d0, pos.getY() - d1, pos.getZ() - d2 + 1).color(color.getRed(), color.getGreen(), color.getBlue(), 50).next();
-            buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2 + 1).color(color.getRed(), color.getGreen(), color.getBlue(), 50).next();
-            buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2).color(color.getRed(), color.getGreen(), color.getBlue(), 50).next();
+//            buffer.vertex(pos.getX() - dx + 1, pos.getY() - dy, pos.getZ() - dz).color(color.getRed(), color.getGreen(), color.getBlue(), 50).next();
+            buffer.vertex(pos.getX() - dx + 0.42, pos.getY() - dy, pos.getZ() - dz + 0.62).color(color.getRed(), color.getGreen(), color.getBlue(), 10).next();
+            buffer.vertex(pos.getX() - dx + 0.62, pos.getY() - dy, pos.getZ() - dz + 0.62).color(color.getRed(), color.getGreen(), color.getBlue(), 50).next();
+            buffer.vertex(pos.getX() - dx + 0.62, pos.getY() - dy, pos.getZ() - dz + 0.42).color(color.getRed(), color.getGreen(), color.getBlue(), 100).next();
+            buffer.vertex(pos.getX() - dx + 0.38, pos.getY() - dy, pos.getZ() - dz + 0.58).color(color.getRed(), color.getGreen(), color.getBlue(), 150).next();
+            buffer.vertex(pos.getX() - dx + 0.58, pos.getY() - dy, pos.getZ() - dz + 0.38).color(color.getRed(), color.getGreen(), color.getBlue(), 200).next();
+            buffer.vertex(pos.getX() - dx + 0.38, pos.getY() - dy, pos.getZ() - dz + 0.38).color(color.getRed(), color.getGreen(), color.getBlue(), 250).next();
         }
         tessellator.draw();
     }
@@ -294,16 +297,16 @@ public class LightOverlay implements IKeyBinding {
         double d1 = vecCamera.y - 0.005D;
         double d2 = vecCamera.z;
 //        Color green = Color.GREEN;
-        Color blue = Color.BLUE;
+        Color color = Color.green;
 
         buffer.begin(3, VertexFormats.POSITION_COLOR);
 //        buffer.vertex(pos.getX() - d0, pos.getY() - d1, pos.getZ() - d2).color(green.getRed(), green.getGreen(), green.getBlue(), 20).next();
 //        buffer.vertex(pos.getX() - d0, pos.getY() - d1, pos.getZ() - d2 + 1).color(green.getRed(), green.getGreen(), green.getBlue(), 50).next();
 //        buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2).color(green.getRed(), green.getGreen(), green.getBlue(), 100).next();
-        buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2).color(blue.getRed(), blue.getGreen(), blue.getBlue(), 50).next();
-        buffer.vertex(pos.getX() - d0, pos.getY() - d1, pos.getZ() - d2 + 1).color(blue.getRed(), blue.getGreen(), blue.getBlue(), 50).next();
-        buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2 + 1).color(blue.getRed(), blue.getGreen(), blue.getBlue(), 50).next();
-        buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2).color(blue.getRed(), blue.getGreen(), blue.getBlue(), 50).next();
+        buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2).color(color.getRed(), color.getGreen(), color.getBlue(), 10).next();
+        buffer.vertex(pos.getX() - d0, pos.getY() - d1, pos.getZ() - d2 + 1).color(color.getRed(), color.getGreen(), color.getBlue(), 10).next();
+        buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2 + 1).color(color.getRed(), color.getGreen(), color.getBlue(), 10).next();
+        buffer.vertex(pos.getX() - d0 + 1, pos.getY() - d1, pos.getZ() - d2).color(color.getRed(), color.getGreen(), color.getBlue(), 10).next();
         tessellator.draw();
     }
 

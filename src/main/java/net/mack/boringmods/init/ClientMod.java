@@ -2,8 +2,8 @@ package net.mack.boringmods.init;
 
 
 import net.fabricmc.fabric.api.client.keybinding.KeyBindingRegistry;
+import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.fabricmc.loader.api.FabricLoader;
-import net.mack.boringmods.client.gui.menu.ModConfigsScreen;
 import net.mack.boringmods.client.options.ModConfigs;
 import net.mack.boringmods.impl.Excavator;
 import net.mack.boringmods.impl.LightOverlay;
@@ -21,9 +21,14 @@ public class ClientMod implements net.fabricmc.api.ClientModInitializer {
     public void onInitializeClient() {
         KeyBindingRegistry.INSTANCE.addCategory(keyBindingCategory);
 
-        Excavator.getInstance().keyBinding(keyBindingCategory);
+        Excavator.INSTANCE.keyBinding(keyBindingCategory);
         LightOverlay.INSTANCE.keyBinding(keyBindingCategory);
         QuickInfo.INSTANCE.keyBinding(keyBindingCategory);
+
+        ClientTickCallback.EVENT.register(e ->
+        {
+//            if(keyBinding.isPressed()) System.out.println("was pressed!");
+        });
 
         if (FabricLoader.getInstance().isModLoaded("modmenu") && modMenuLoaded.compareAndSet(false, true)) {
             try {

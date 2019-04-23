@@ -15,6 +15,6 @@ public abstract class MixinBlockBreak {
     @Inject(method = "onBreak",
             at = @At(value = "HEAD"))
     private void onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player, CallbackInfo ci) {
-        Excavator.getInstance().handle(world,pos, state, player);
+        Excavator.INSTANCE.handle(world,pos, state, player);
     }
 }

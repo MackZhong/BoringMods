@@ -26,11 +26,7 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 
 public class Excavator  implements IKeyBinding {
-    private final static Excavator instance = new Excavator();
-
-    public static Excavator getInstance() {
-        return instance;
-    }
+    public final static Excavator INSTANCE = new Excavator();
 
     private org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger("boringmods");
 
