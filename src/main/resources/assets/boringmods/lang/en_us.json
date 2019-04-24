@@ -15,6 +15,7 @@
   "key.boringmods.excavate": "Excavate",
   "key.boringmods.tunnel": "Tunnel",
   "key.boringmods.toggle_light_overlay": "Toggle light overlay",
+  "key.quickinfo:detail_info": "Detail Infos",
   "boringmods.configs.title": "Config Boring Mods",
   "configs.boringmods.blocks": "%s block(s)",
   "configs.boringmods.tunnel_width": "Tunnel's width",

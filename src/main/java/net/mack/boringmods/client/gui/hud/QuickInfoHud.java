@@ -43,9 +43,10 @@ import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.chunk.light.LightingProvider;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Environment(EnvType.CLIENT)
 public class QuickInfoHud extends DrawableHelper {
@@ -159,7 +160,7 @@ public class QuickInfoHud extends DrawableHelper {
 
         // Entity
         if (this.client.hitResult instanceof EntityHitResult) {
-            EntityHitResult entityResult = (EntityHitResult)this.client.hitResult;
+            EntityHitResult entityResult = (EntityHitResult) this.client.hitResult;
             Entity target = entityResult.getEntity();// this.client.targetedEntity;
             TextFormat format = TextFormat.GRAY;
             if (target instanceof Monster) {
@@ -251,27 +252,8 @@ public class QuickInfoHud extends DrawableHelper {
 
                     // properties
                     for (Property<?> property : blockState.getProperties()) {
-//                        if (!property.getName().equals("age")) {
-//                            IntegerProperty key = (IntegerProperty) property;
-//                            Object[] values = key.getValues().toArray();
-//                            Integer maxAge = 0;
-//                            for (Object v : values) {
-//                                if ((Integer) v > maxAge) {
-//                                    maxAge = (Integer) v;
-//                                }
-//                            }
-//                            Integer age = blockState.get(key);
-//                            TextFormat format;
-//                            if (maxAge.equals(age)) {
-//                                format = TextFormat.GOLD;
-//                            } else {
-//                                format = TextFormat.GREEN;
-//                            }
-//                            infos.add(String.format(Locale.getDefault(), "%s%d/%d", format, age, maxAge));
-//                        } else {
-                            infos.add(TextFormat.AQUA + property.getName() + "=" + blockState.get(property));
-                            infos.add(TextFormat.WHITE + property.getValues().toString());
-//                        }
+                        infos.add(TextFormat.AQUA + property.getName() + "=" + blockState.get(property));
+                        infos.add(TextFormat.WHITE + property.getValues().toString());
                     }
 
                     // tags
@@ -282,8 +264,7 @@ public class QuickInfoHud extends DrawableHelper {
                     }
                 }
             }
-        }
-        else{
+        } else {
             infos.add(TextFormat.RED + "Unknown HitResult.");
         }
 

@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.event.client.ClientTickCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.mack.boringmods.client.options.ModConfigs;
 import net.mack.boringmods.impl.Excavator;
+import net.mack.boringmods.impl.Harvest;
 import net.mack.boringmods.impl.LightOverlay;
 import net.mack.boringmods.impl.QuickInfo;
 
@@ -19,6 +20,8 @@ public class ClientMod implements net.fabricmc.api.ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        Harvest.INSTANCE.onInitialize();
+
         KeyBindingRegistry.INSTANCE.addCategory(keyBindingCategory);
 
         Excavator.INSTANCE.keyBinding(keyBindingCategory);

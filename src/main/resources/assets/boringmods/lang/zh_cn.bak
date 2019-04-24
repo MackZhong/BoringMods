@@ -16,6 +16,7 @@
   "key.boringmods.excavate": "挖掘",
   "key.boringmods.tunnel": "隧道",
   "key.boringmods.toggle_light_overlay": "切换亮度标志",
+  "key.quickinfo:detail_info": "扩展信息",
   "boringmods.configs.title": "无聊模组设置",
   "configs.boringmods.blocks": "%s方块",
   "configs.boringmods.tunnel_width": "隧道宽度",

@@ -12,7 +12,7 @@ public class QuickInfo {
 
     public boolean keyBinding(String category) {
         this.keyDetail = FabricKeyBinding.Builder.create(
-                new Identifier("boringmods:detail_info"),
+                new Identifier("quickinfo:detail_info"),
                 InputUtil.Type.KEYSYM,
                 344,
                 category

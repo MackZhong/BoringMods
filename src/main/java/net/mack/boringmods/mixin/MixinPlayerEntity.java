@@ -4,7 +4,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.mack.boringmods.client.options.ModConfigs;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -13,7 +12,6 @@ import net.minecraft.util.math.BoundingBox;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -31,7 +29,7 @@ public abstract class MixinPlayerEntity extends LivingEntity {
     //
     // pickup distance
     //
-    @Redirect(method = "updateMovement",
+    @Redirect(method = "updateState",
             at = @At(
                     value = "INVOKE"
 //                    , args = "log=true"
