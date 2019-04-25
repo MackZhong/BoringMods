@@ -6,8 +6,8 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
-archivesBaseName = project.archives_base_name
-version = project.minecraft_version + '.' + project.yarn_mappings + '-' + project.mod_version + '-' + project.build_number
+archivesBaseName = project.archives_base_name + '-' + project.minecraft_version + '.' + project.yarn_mappings
+version =  project.mod_version + '+build.' + project.build_number
 group = project.maven_group
 
 minecraft {
@@ -15,6 +15,19 @@ minecraft {
 }
 
 repositories {
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include "fabric.mod.json"
+        expand "version": project.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "fabric.mod.json"
+    }
 }
 
 dependencies {
@@ -32,19 +45,6 @@ dependencies {
     compile "com.google.code.findbugs:jsr305:3.0.2"
 
 //    compile "io.github.prospector.modmenu:ModMenu:1.1.6"
-}
-
-processResources {
-    inputs.property "version", project.version
-
-    from(sourceSets.main.resources.srcDirs) {
-        include "fabric.mod.json"
-        expand "version": project.version
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude "fabric.mod.json"
-    }
 }
 
 tasks.withType(JavaCompile){

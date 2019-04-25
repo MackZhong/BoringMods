@@ -1,5 +1,7 @@
 package net.mack.mousewheelie.client.mixin;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.mack.mousewheelie.util.IRecipeBookGui;
 import net.mack.mousewheelie.util.IScrollableRecipeBook;
 import net.minecraft.client.gui.ingame.AbstractPlayerInventoryScreen;
@@ -12,6 +14,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+@Environment(EnvType.CLIENT)
 @Mixin(PlayerInventoryScreen.class)
 public abstract class MixinPlayerInventoryScreen extends AbstractPlayerInventoryScreen implements IScrollableRecipeBook {
 	@Shadow @Final private RecipeBookGui recipeBook;

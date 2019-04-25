@@ -1,6 +1,8 @@
 package net.mack.boringmods.mixin;
 
 import com.google.common.collect.Lists;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.mack.boringmods.client.options.ModConfigs;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.ItemStack;
@@ -12,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.List;
 
+@Environment(EnvType.CLIENT)
 @Mixin(CrossbowItem.class)
 public abstract class MixinCrossbowItem {
     @Redirect(

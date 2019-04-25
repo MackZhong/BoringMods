@@ -1,5 +1,7 @@
 package net.mack.mousewheelie.client.mixin;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.mack.mousewheelie.util.IContainerScreen;
 import net.mack.mousewheelie.util.IScrollableRecipeBook;
 import net.mack.mousewheelie.util.ISpecialScrollableScreen;
@@ -13,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+@Environment(EnvType.CLIENT)
 @Mixin(Mouse.class)
 public class MixinMouse {
 

@@ -2,17 +2,15 @@
   "required": true,
   "package": "net.mack.boringmods.mixin",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [
+  "client": [
     "MixinArrowEntity",
     "MixinBlockBreak",
     "MixinCrossbowItem",
     "MixinGameRenderer",
     "MixinInGameHud",
-    "MixinLivingEntity",
     "MixinMainMenuScreen",
     "MixinMinecraftClient",
-    "MixinPauseMenuScreen",
-    "MixinPlayerEntity"
+    "MixinPauseMenuScreen"
   ],
   "injectors": {
     "defaultRequire": 1

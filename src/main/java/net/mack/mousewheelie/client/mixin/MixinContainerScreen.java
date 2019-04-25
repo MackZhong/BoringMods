@@ -1,5 +1,7 @@
 package net.mack.mousewheelie.client.mixin;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.mack.mousewheelie.Core;
 import net.mack.mousewheelie.util.IContainerScreen;
 import net.minecraft.client.gui.ContainerScreen;
@@ -17,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+@Environment(EnvType.CLIENT)
 @Mixin(ContainerScreen.class)
 public abstract class MixinContainerScreen extends Screen implements IContainerScreen {
 	protected MixinContainerScreen(TextComponent textComponent_1) {

@@ -1,10 +1,9 @@
 {
   "schemaVersion": 1,
   "id": "boringmods",
-  "version": "${version}",
-
   "name": "Boring Mods",
   "description": "Minecraft Mods boring.",
+  "version": "${version}",
   "authors": [
     "Mack Fire"
   ],
@@ -24,6 +23,12 @@
       "net.mack.boringmods.init.ModInitializer"
     ]
   },
+  "requires": {
+    "fabricloader": ">=0.4.2",
+    "fabric": "^0.2.7"
+  },
+  "recommends": {},
+
   "mixins": [
     {
       "config": "boringmods.mixins.client.json",
@@ -32,11 +37,10 @@
     {
       "config": "mousewheelie.client.json",
       "environment": "client"
+    },
+    {
+      "config": "boringmods.mixins.common.json",
+      "environment": "*"
     }
-  ],
-
-  "requires": {
-    "fabricloader": ">=0.4.0",
-    "fabric": "*"
-  }
+  ]
 }

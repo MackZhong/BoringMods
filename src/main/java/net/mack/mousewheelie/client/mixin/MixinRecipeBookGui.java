@@ -1,5 +1,7 @@
 package net.mack.mousewheelie.client.mixin;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.mack.mousewheelie.Core;
 import net.mack.mousewheelie.util.IRecipeBookGui;
 import net.minecraft.client.gui.DrawableHelper;
@@ -14,6 +16,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 import java.util.List;
 
+@Environment(EnvType.CLIENT)
 @Mixin(RecipeBookGui.class)
 public abstract class MixinRecipeBookGui extends DrawableHelper implements Element, IRecipeBookGui {
 

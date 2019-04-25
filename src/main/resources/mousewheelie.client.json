@@ -2,7 +2,7 @@
   "required": true,
   "package": "net.mack.mousewheelie.client.mixin",
   "compatibilityLevel": "JAVA_8",
-  "mixins": [
+  "client": [
     "MixinAbstractFurnaceScreen",
     "MixinContainerScreen",
     "MixinCraftingTableScreen",
