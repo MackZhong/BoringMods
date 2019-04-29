@@ -42,7 +42,6 @@ import net.minecraft.world.chunk.ChunkPos;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.chunk.light.LightingProvider;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -54,11 +53,11 @@ public class QuickInfoHud extends DrawableHelper {
     private final TextRenderer fontRenderer;
     private HitResult hitFluid;
     private Entity player;
-    @Nullable
+//    @Nullable
     private WorldChunk chunkClient;
-    @Nullable
+//    @Nullable
     private CompletableFuture<WorldChunk> chunkFuture;
-    @Nullable
+//    @Nullable
     private ChunkPos chunkPos;
 //    @Nullable
 //    private ChunkNibbleArray lightingArray;
@@ -320,7 +319,7 @@ public class QuickInfoHud extends DrawableHelper {
         }), this.client.world);
     }
 
-    @Nullable
+//    @Nullable
     private WorldChunk getChunk() {
         if (null == this.chunkFuture) {
             IntegratedServer integratedServer = this.client.getServer();

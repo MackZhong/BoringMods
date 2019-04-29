@@ -42,7 +42,7 @@ dependencies {
 //    include "de.siphalor:mousewheelie:${project.mousewheelie_version}"
 
 //    // for @Nullable, import javax.annotation.Nullable
-    compile "com.google.code.findbugs:jsr305:3.0.2"
+//    compile "com.google.code.findbugs:jsr305:3.0.2"
 
 //    compile "io.github.prospector.modmenu:ModMenu:1.1.6"
 }

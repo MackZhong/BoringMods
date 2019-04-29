@@ -1,0 +1,2 @@
+@rem  -lac=0 -dgs=1 -udv=1 -lac=0 -rsy=1
+java -jar E:\Dev\Fabric\fernflower.jar -rbr=0 -rsy=1 -din=1 -dc4=1 -das=1 -hes=0 -hdc=0 -dgs=1 -rgn=1 -lit=1 -asc=1 -nns=1 -uto=1 -udv=1 -fdi=1 -ind="    " -lac=0 -nls=1 E:\Dev\GradleUserHome\caches\fabric-loom\minecraft-1.14-mapped-6\net\minecraft\stat tmp\src\net\minecraft\stat
